@@ -142,6 +142,12 @@ typedef struct def_da_header_s def_da_header_t;
          out,sizeof(*(_da)->items));  \
 })
 
+#define da_pop_first(da,out) ({           \
+    typeof(da) _da = (da);                \
+    __da_pop_first((def_da_header_t*)     \
+        (_da),out,sizeof(*(_da)->items)); \
+})
+
 #define da_first(da,out) ({             \
     typeof(da) _da = (da);              \
     __da_first((def_da_header_t*)(_da), \
