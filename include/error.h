@@ -40,6 +40,9 @@ enum fc_error_e {
 
     fce_da_insert_nullptr,
     fce_da_insert_outofbounds,
+
+    fce_da_remove_index_outofbounds,
+    fce_da_remove_nullptr,
 };
 
 typedef enum fc_error_e fc_error_t;

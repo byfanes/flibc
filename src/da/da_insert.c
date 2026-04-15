@@ -16,6 +16,6 @@ fc_error_t __da_insert
     ptr_header_t src = { .base = (char*)da->items + n_size*idx,
                          .len = (da->count-idx)*n_size, };
     ptr_header_t dst = { .base = (char*)da->items + n_size*(idx+1),
-                         .len = (da->count-idx)*n_size, };
+                         .len = src.len, };
     return fc_memmove(dst,src);
 }
