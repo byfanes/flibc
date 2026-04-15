@@ -1,6 +1,6 @@
 # --- Toolchain & Flags ---
 CC      := gcc
-CFLAGS  := -ffreestanding -fno-builtin -nostdinc -Iinclude/ -Wall -Wextra -ggdb -fsanitize=address
+CFLAGS  := -ffreestanding -fno-builtin -nostdinc -Iinclude/ -Wall -Wextra
 AR      := ar
 ARFLAGS := rcs
 

@@ -29,6 +29,9 @@ enum fc_error_e {
 
     fce_da_get_outofbounds,
     fce_da_get_nullptr,
+
+    fce_da_unordered_remove_nullptr,
+    fce_da_unordered_remove_outofbounds,
 };
 
 typedef enum fc_error_e fc_error_t;
