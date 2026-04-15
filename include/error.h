@@ -43,6 +43,9 @@ enum fc_error_e {
 
     fce_da_remove_index_outofbounds,
     fce_da_remove_nullptr,
+
+    fce_da_pop_nullptr,
+    fce_da_pop_empty,
 };
 
 typedef enum fc_error_e fc_error_t;
