@@ -5,11 +5,10 @@
 fc_error_t __da_get
 (def_da_header_t* da, uint32_t idx, uint32_t n_size, void* out)
 {
-    fc_error_t res = fce_success;
     if(!da->items) {
         return fce_da_get_nullptr;
     }
-    if(i >= _da->count) {
+    if(idx >= da->count) {
         return fce_da_get_outofbounds;
     }
     ptr_header_t out_src = { .base = out, .len = n_size, };

@@ -25,6 +25,7 @@ fc_error_t fc_realloc(uint32_t n, void** set);
 fc_error_t fc_free(void** ptr);
 
 fc_error_t fc_memset(ptr_header_t ptr, uint8_t c);
+fc_error_t fc_memswap(ptr_header_t lhs, ptr_header_t rhs);
 fc_error_t fc_memmove(ptr_header_t dst, ptr_header_t src);
 fc_error_t fc_memcpy(ptr_header_t dst, ptr_header_t src);
 fc_error_t fc_memcmp(ptr_header_t lhs, ptr_header_t rhs, bool* res);

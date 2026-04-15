@@ -3,7 +3,7 @@
 
 enum fc_error_e {
     fce_success = 0,
-    
+
     fce_mem_malloc_zero,
     fce_mem_malloc_nullptr,
     fce_mem_malloc_mmap_failed,
@@ -24,6 +24,9 @@ enum fc_error_e {
     fce_mem_realloc_nullptr,
     fce_mem_realloc_shrink,
 
+    fce_mem_memswap_nullptr,
+    fce_mem_memswap_diffsize,
+
     fce_da_truncate_nullptr,
     fce_da_zeroed_nullptr,
 
@@ -32,6 +35,7 @@ enum fc_error_e {
 
     fce_da_unordered_remove_nullptr,
     fce_da_unordered_remove_outofbounds,
+
 };
 
 typedef enum fc_error_e fc_error_t;
