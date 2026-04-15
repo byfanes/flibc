@@ -77,8 +77,10 @@ typedef struct def_da_header_s def_da_header_t;
 
 #define da_clear(da) do { da->count = 0; } while(0)
 
+#define da_truncate(da,len) __da_truncate((def_da_header_t*), len)
+
 fc_error_t __da_reserve(def_da_header_t* da, uint32_t n_size, uint32_t amount);
 fc_error_t __da_init_cap(def_da_header_t* da, uint32_t n_size, uint32_t amount);
-
+fc_error_t __da_truncate(def_da_header_t* da, uint32_t len);
 
 #endif /* __FLIBC_DA_H__ */
