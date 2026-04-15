@@ -111,10 +111,29 @@ typedef struct def_da_header_s def_da_header_t;
          sizeof(*(_da)->items),out); \
 })
 
-#define da_swap(da,lhs,rhs) ({                     \
-    typeof(da) _da = (da);                         \
-    __da_unordered_remove((def_da_header_t*)(_da), \
+#define da_swap(da,lhs,rhs) ({           \
+    typeof(da) _da = (da);               \
+    __da_swap((def_da_header_t*)(_da),   \
          lhs,rhs,sizeof(*(_da)->items)); \
+})
+
+#define da_insert(da,idx,element) ({            \
+    typeof(da) _da = (da);                      \
+    def_da_header_t* _def_da = (void*)(_da);    \
+    fc_error_t _res = fce_success;              \
+    _res = __da_insert((def_da_header_t*)(_da), \
+                idx,sizeof(*(_da)->items));     \
+    if (_res == fce_success) {                  \
+        _da->items[idx] = element;              \
+        _def_da->count++;                       \
+    }                                           \
+    _res;                                       \
+})
+
+#define da_remove(da,idx) ({             \
+    typeof(da) _da = (da);               \
+    __da_remove((def_da_header_t*)(_da), \
+         idx,sizeof(*(_da)->items));     \
 })
 
 fc_error_t __da_reserve(def_da_header_t* da, uint32_t n_size, uint32_t amount);
@@ -123,5 +142,7 @@ fc_error_t __da_truncate(def_da_header_t* da, uint32_t len);
 fc_error_t __da_unordered_remove(def_da_header_t* da, uint32_t idx, uint32_t n_size, void* out);
 fc_error_t __da_get(def_da_header_t* da, uint32_t idx, uint32_t n_size, void* out);
 fc_error_t __da_swap(def_da_header_t* da, uint32_t lhs, uint32_t rhs, uint32_t n_size);
+fc_error_t __da_insert(def_da_header_t* da, uint32_t idx, uint32_t n_size);
+fc_error_t __da_remove(def_da_header_t* da, uint32_t idx, uint32_t n_size);
 
 #endif /* __FLIBC_DA_H__ */
