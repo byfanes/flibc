@@ -36,5 +36,10 @@ fc_error_t fc_memcmp_min(ptr_header_t lhs, ptr_header_t rhs, bool* res);
 #define realloc(n,x) fc_realloc(n,(void*)x)
 #define free(x) fc_free((void*)x)
 #define memset fc_memset
+#define memswap fc_memswap
+#define memmove fc_memmove
+#define memcpy fc_memcpy
+#define memcmp fc_memcmp
+#define memcmp_min fc_memcmp_min
 
 #endif /* __FLIBC_MEMORY_H__ */

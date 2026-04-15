@@ -1,4 +1,6 @@
+#include "error.h"
 #include "stdtypes.h"
+#include "stdlib.h"
 
 /* 
  * The "canary" value. 
@@ -16,22 +18,5 @@ uintptr_t __stack_chk_guard = 0x595e9fbd94fda766; /* 64-bit */
  */
 void __stack_chk_fail(void) 
 {
-    /* 
-     * A buffer overflow happened! The program is unsafe to continue.
-     * Since you don't have printf yet, the easiest way to crash safely
-     * is an infinite loop or a sys_exit system call.
-     */
-     
-    /* Option A: Infinite loop (Hangs the program) */
-    while (1) {}
-
-    /* Option B: Linux x86_64 sys_exit (Aborts immediately) */
-    /*
-    __asm__ volatile (
-        "mov $60, %%rax\n"
-        "mov $134, %%rdi\n" // Exit code 134 usually means Abort
-        "syscall\n"
-        ::: "rax", "rdi"
-    );
-    */
+    exit(fce_ssp_fail);
 }

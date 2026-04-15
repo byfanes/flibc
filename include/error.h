@@ -36,6 +36,7 @@ enum fc_error_e {
     fce_da_unordered_remove_nullptr,
     fce_da_unordered_remove_outofbounds,
 
+    fce_ssp_fail,
 };
 
 typedef enum fc_error_e fc_error_t;
