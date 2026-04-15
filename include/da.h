@@ -31,6 +31,26 @@ struct def_da_header_s {
 
 typedef struct def_da_header_s def_da_header_t;
 
+#define da_pushs(da, ...) ({                                                        \
+    typeof(da) _da = (da);                                                          \
+    def_da_header_t* _def_da = (void*)_da;                                          \
+    typeof(*(_da)->items) total[] = {__VA_ARGS__};                                  \
+    uint32_t count = sizeof(total)/sizeof(total[0]);                                \
+    fc_error_t _err = __da_reserve                                                  \
+    (_def_da, sizeof(*(_da)->items),count);                                         \
+    if (_err == fce_success) {                                                      \
+        ptr_header_t dst,src;                                                       \
+        src = (ptr_header_t) { .base = total, .len = count*sizeof(*(_da)->items) }; \
+        dst = (ptr_header_t) { .base = &_da->items[_da->count], .len=src.len };     \
+        if((_err = fc_memcpy(dst,src))) {                                           \
+            return _err;                                                            \
+        }                                                                           \
+        _def_da->count += count;                                                    \
+    }                                                                               \
+    _err;                                                                           \
+})
+
+
 #define da_push(da, element) ({             \
     typeof(da) _da = (da);                  \
     def_da_header_t* _def_da = (void*)_da;  \
