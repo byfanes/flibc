@@ -18,6 +18,9 @@ enum fc_error_e {
     fce_mem_memcpy_smaller,
     fce_mem_memcpy_nullptr,
 
+    fce_mem_memmove_smaller,
+    fce_mem_memmove_nullptr,
+
     fce_mem_realloc_nullptr,
     fce_mem_realloc_shrink,
 };
