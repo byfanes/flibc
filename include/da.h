@@ -79,6 +79,23 @@ typedef struct def_da_header_s def_da_header_t;
 
 #define da_truncate(da,len) __da_truncate((def_da_header_t*), len)
 
+#define da_get(da,i,out) ({                \
+    typeof(da) _da = (da);                 \
+    uint32_t _idx = (i);                   \
+    fc_error_t _res = fce_success;         \
+    if(!_da->items) {                      \
+        _res = fce_da_get_nullptr;         \
+    }                                      \
+    else {                                 \
+        if(i < _da->count) {               \
+            *out = _da->items[i];          \
+        } else {                           \
+            _res = fce_da_get_outofbounds; \
+        }                                  \
+    }                                      \
+    _res;                                  \
+})
+
 fc_error_t __da_reserve(def_da_header_t* da, uint32_t n_size, uint32_t amount);
 fc_error_t __da_init_cap(def_da_header_t* da, uint32_t n_size, uint32_t amount);
 fc_error_t __da_truncate(def_da_header_t* da, uint32_t len);

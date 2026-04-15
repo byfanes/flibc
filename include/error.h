@@ -24,7 +24,11 @@ enum fc_error_e {
     fce_mem_realloc_nullptr,
     fce_mem_realloc_shrink,
 
-    fce_da_truncate_nullptr
+    fce_da_truncate_nullptr,
+    fce_da_zeroed_nullptr,
+
+    fce_da_get_outofbounds,
+    fce_da_get_nullptr,
 };
 
 typedef enum fc_error_e fc_error_t;
