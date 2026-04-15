@@ -142,6 +142,11 @@ typedef struct def_da_header_s def_da_header_t;
          out,sizeof(*(_da)->items));  \
 })
 
+#define da_first(da,out) ({             \
+    typeof(da) _da = (da);              \
+    __da_first((def_da_header_t*)(_da), \
+         out,sizeof(*(_da)->items));    \
+})
 
 fc_error_t __da_reserve(def_da_header_t* da, uint32_t n_size, uint32_t amount);
 fc_error_t __da_init_cap(def_da_header_t* da, uint32_t n_size, uint32_t amount);
