@@ -54,6 +54,29 @@ typedef struct def_da_header_s def_da_header_t;
     __da_init_cap((def_da_header_t*)_da, sizeof(*(_da)->items), cap); \
 })
 
+#define da_to_ptr(da) ({                        \
+    typeof(da) _da = (da);                      \
+    (ptr_header_t) {                            \
+        .base = _da->items,                     \
+        .len = sizeof(*_da->items) * _da->count \
+    };                                          \
+})
+
+#define da_zeroed(da) ({                   \
+    typeof(da) _da = (da);                 \
+    fc_error_t _res = fce_success;         \
+    if(!_da->items) {                      \
+        _res = fce_da_zeroed_nullptr;      \
+    }                                      \
+    else {                                 \
+        ptr_header_t src = da_to_ptr(_da); \
+        _res = fc_memset(src,0);           \
+    }                                      \
+    _res;                                  \
+})
+
+#define da_clear(da) do { da->count = 0; } while(0)
+
 fc_error_t __da_reserve(def_da_header_t* da, uint32_t n_size, uint32_t amount);
 fc_error_t __da_init_cap(def_da_header_t* da, uint32_t n_size, uint32_t amount);
 
