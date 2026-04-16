@@ -30,13 +30,16 @@ typedef struct def_slice_s def_slice_t;
 #define slice_to_def(s) ((def_slice_t) {.base = (byte_t*)s.base,.len = s.len*(sizeof(*s.base))})
 
 #define def_compare(type)                              \
-bool type ## _compare(type *a,type *b) {               \
+bool compare_ ## type (type *a,type *b) {              \
     def_slice_t lhs = { .base = (byte_t*)a, .len = sizeof(type) }; \
     def_slice_t rhs = { .base = (byte_t*)b, .len = sizeof(type) }; \
     bool res = false;                                  \
     fc_memcmp(lhs,rhs,&res);                           \
     return res;                                        \
 }
+
+#define add_compare_func(type,a,b) \
+    bool compare_ ## type (type *a,type *b)
 
 def_slice_t conv_heap_to_ptr(void* ptr);
 
