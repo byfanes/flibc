@@ -38,10 +38,10 @@ static inline def_slice_t _fmt_from_slice(def_slice_t slice) {
     uint32_t __args_count = N_VA_ARGS(__VA_ARGS__); \
     fc_arg_t __args[N_VA_ARGS(__VA_ARGS__) > 0 ? N_VA_ARGS(__VA_ARGS__) : 1] = \
         { FOREACH(TO_FC_ARG_COMMA, __VA_ARGS__) }; \
-    __printf(fmt_slice, __args, __args_count); \
+    __printf(fmt_slice, (fc_args_t){.args = __args,.count = __args_count}); \
 })
 
-fc_error_t __printf(def_slice_t fmt, fc_arg_t* args, uint32_t count);
+fc_error_t __printf(def_slice_t fmt, fc_args_t args);
 
 
 #endif /* __FLIBC_STDIO_H__ */

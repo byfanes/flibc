@@ -105,10 +105,8 @@ fc_error_t parse_arg
 }
 
 fc_error_t __printf
-(def_slice_t fmt, fc_arg_t* args, uint32_t count)
+(def_slice_t fmt, fc_args_t args)
 {
-    (void)args;
-    (void)count;
     char buf[FLIBC_STACK_THRESHOLD] = {0};
     uint32_t max = FLIBC_STACK_THRESHOLD;
     uint32_t idx = 0;
@@ -122,14 +120,14 @@ fc_error_t __printf
         bool isHex = false;
         if(fmt.base[i+1] == 'x' || fmt.base[i+1] == 'X') { i++; isHex = true; }
 
-        if(arg_i >= count) { return fce_printf_need_more_args; }
-        if((res = parse_arg(&tmp,&idx,&max,args[arg_i++],buf,isHex))) { return res; }
+        if(arg_i >= args.count) { return fce_printf_need_more_args; }
+        if((res = parse_arg(&tmp,&idx,&max,args.args[arg_i++],buf,isHex))) { return res; }
     }
     if(fmt.base[i] != '%') {
         tmp[idx++] = fmt.base[i];
     } else {
-        if(arg_i >= count) { return fce_printf_need_more_args; }
-        if((res = parse_arg(&tmp,&idx,&max,args[arg_i++],buf,false))) { return res; }
+        if(arg_i >= args.count) { return fce_printf_need_more_args; }
+        if((res = parse_arg(&tmp,&idx,&max,args.args[arg_i++],buf,false))) { return res; }
     }
     syscall_3(syscall_write,UNIX_STDOUT,tmp,idx);
     if(tmp != buf) { if((res = fc_free((void**)&tmp))) { return res; } }

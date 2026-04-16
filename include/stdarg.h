@@ -12,6 +12,8 @@ enum fc_type_e {
 };
 
 typedef enum fc_type_e fc_type_t;
+typedef struct fc_arg_s fc_arg_t;
+typedef struct fc_args_s fc_args_t;
 
 struct fc_arg_s {
     fc_type_t type;
@@ -30,7 +32,10 @@ struct fc_arg_s {
     } data;
 };
 
-typedef struct fc_arg_s fc_arg_t;
+struct fc_args_s {
+    fc_arg_t* args;
+    const uint32_t count;
+};
 
 static inline fc_arg_t _arg_char(char x)
 { return (fc_arg_t){.type = _type_char,     .data._char = x}; }
