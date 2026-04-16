@@ -7,7 +7,7 @@ fc_error_t fc_realloc
     if(!set) { return fce_mem_realloc_nullptr; }
     uint32_t count = 0;
     if(*set) {
-        heap_header_t* base = (void*)((heap_header_t*)*set - 1);
+        heap_header_t* base = ((heap_header_t*)*set - 1);
         count = base->alloced;
         if(count > n) { return fce_mem_realloc_shrink; }
     }

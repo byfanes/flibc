@@ -17,7 +17,7 @@ fc_error_t __da_pop_first
     def_slice_t dst = { .base = da->items, .len = src.len, };
 
     def_slice_t out_src = { .base = da->items, .len = n_size, };
-    def_slice_t out_dst = { .base = out, .len = n_size, };
+    def_slice_t out_dst = { .base = (byte_t*)out, .len = n_size, };
     da->count--;
     if(out) {
         if((res = fc_memcpy(out_dst,out_src))) { return res; }

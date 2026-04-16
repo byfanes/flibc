@@ -3,6 +3,7 @@
 
 #include "stdtypes.h"
 #include "memory.h"
+#include "features.h"
 
 /* This macro will be used with multiplying sizeof(*da->base) */
 #ifndef FLIBC_DA_INIT
@@ -16,7 +17,7 @@
         const uint32_t capacity;   \
     } da_ ## type
 
-#define da(type) da_ ## type
+#define da(type) CONCAT(da_,type)
 
 struct def_da_header_s {
     byte_t* items;
@@ -34,9 +35,9 @@ typedef struct def_da_header_s def_da_header_t;
     fc_error_t _err = __da_reserve                                                  \
     (_def_da, sizeof(*(_da)->items),count);                                         \
     if (_err == fce_success) {                                                      \
-        def_slice_t dst,src;                                                       \
-        src = (def_slice_t) { .base = total, .len = count*sizeof(*(_da)->items) }; \
-        dst = (def_slice_t) { .base = &_da->items[_da->count], .len=src.len };     \
+        def_slice_t dst,src;                                                        \
+        src = (def_slice_t) { .base = total, .len = count*sizeof(*(_da)->items) };  \
+        dst = (def_slice_t) { .base = &_da->items[_da->count], .len=src.len };      \
         if((_err = fc_memcpy(dst,src))) {                                           \
             return _err;                                                            \
         }                                                                           \

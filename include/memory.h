@@ -4,8 +4,6 @@
 #include "stdtypes.h"
 #include "error.h"
 
-typedef uint8_t byte_t;
-
 struct heap_header_s {
     uint32_t alloced;
     uint32_t raw_alloced;
@@ -17,7 +15,7 @@ struct heap_header_s {
         const uint32_t len; \
     } slice_ ## type
 
-#define slice(type) slice_ ## type
+#define slice(type) CONCAT(slice_,type)
 
 struct def_slice_s {
     byte_t* base;

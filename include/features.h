@@ -9,6 +9,10 @@
 #define _Noreturn [[noreturn]]
 #endif
 
+#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
+#define typeof __typeof__
+#endif
+
 #define __unreachable() \
     for(;;) __builtin_unreachable();
 

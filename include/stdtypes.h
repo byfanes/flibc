@@ -57,6 +57,7 @@ typedef uint32_t uintptr_t;
 #error "Unsupported pointer size"
 #endif
 
+typedef uint8_t byte_t;
 typedef uint8_t u8;
 typedef  int8_t i8;
 typedef uint16_t u16;
@@ -68,5 +69,8 @@ typedef  int64_t i64;
 
 #define NULL {0}
 #define nullptr ((void*)0)
+
+#define CONCAT_IMPL(a, b) a ## b
+#define CONCAT(a, b) CONCAT_IMPL(a, b)
 
 #endif /* __FLIBC_STDTYPES_H__ */
