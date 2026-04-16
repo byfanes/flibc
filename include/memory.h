@@ -11,19 +11,13 @@ struct heap_header_s {
     uint32_t raw_alloced;
 };
 
-#define can_be_slice_named(type,name) \
+#define can_be_slice(type)  \
     typedef struct {        \
-        type *base;   \
+        type *base;         \
         const uint32_t len; \
-    } name
+    } slice_ ## type
 
-#define can_be_slice(type)            \
-    typedef struct type ## _slice_s { \
-        type *base;   \
-        const uint32_t len; \
-    } type ## _slice_t
-
-#define slice(type) type ## _slice_t
+#define slice(type) slice_ ## type
 
 struct def_slice_s {
     byte_t* base;

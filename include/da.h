@@ -9,21 +9,14 @@
 #define FLIBC_DA_INIT 32
 #endif /* FLIBC_DA_INIT */
 
-#define can_be_da_named(type,name) \
-    typedef struct {               \
-        type *items;               \
-        const uint32_t count;      \
-        const uint32_t capacity;   \
-    } name
-
 #define can_be_da(type)            \
-    typedef struct type ## _da_s { \
+    typedef struct { \
         type *items;               \
         const uint32_t count;      \
         const uint32_t capacity;   \
-    } type ## _da_t
+    } da_ ## type
 
-#define da(type) type ## _da_t
+#define da(type) da_ ## type
 
 struct def_da_header_s {
     byte_t* items;
