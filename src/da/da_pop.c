@@ -17,9 +17,8 @@ fc_error_t __da_pop
         return fce_success;
     }
     
-    ptr_header_t src = { .base = (char*)da->items + n_size*(da->count-1),
-                         .len = n_size, };
-    ptr_header_t dst = { .base = out, .len = n_size, };
+    def_slice_t src = { .base = da->items + n_size*(da->count-1), .len = n_size, };
+    def_slice_t dst = { .base = out, .len = n_size, };
     da->count--;
     return fc_memcpy(dst,src);
 }

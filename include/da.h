@@ -23,8 +23,10 @@
         const uint32_t capacity;   \
     } type ## _da_t
 
+#define da(type) type ## _da_t
+
 struct def_da_header_s {
-    void* items;
+    byte_t* items;
     uint32_t count;
     uint32_t capacity;
 };
@@ -39,9 +41,9 @@ typedef struct def_da_header_s def_da_header_t;
     fc_error_t _err = __da_reserve                                                  \
     (_def_da, sizeof(*(_da)->items),count);                                         \
     if (_err == fce_success) {                                                      \
-        ptr_header_t dst,src;                                                       \
-        src = (ptr_header_t) { .base = total, .len = count*sizeof(*(_da)->items) }; \
-        dst = (ptr_header_t) { .base = &_da->items[_da->count], .len=src.len };     \
+        def_slice_t dst,src;                                                       \
+        src = (def_slice_t) { .base = total, .len = count*sizeof(*(_da)->items) }; \
+        dst = (def_slice_t) { .base = &_da->items[_da->count], .len=src.len };     \
         if((_err = fc_memcpy(dst,src))) {                                           \
             return _err;                                                            \
         }                                                                           \
@@ -76,7 +78,7 @@ typedef struct def_da_header_s def_da_header_t;
 
 #define da_to_ptr(da) ({                        \
     typeof(da) _da = (da);                      \
-    (ptr_header_t) {                            \
+    (def_slice_t) {                            \
         .base = _da->items,                     \
         .len = sizeof(*_da->items) * _da->count \
     };                                          \
@@ -89,7 +91,7 @@ typedef struct def_da_header_s def_da_header_t;
         _res = fce_da_zeroed_nullptr;      \
     }                                      \
     else {                                 \
-        ptr_header_t src = da_to_ptr(_da); \
+        def_slice_t src = da_to_ptr(_da);  \
         _res = fc_memset(src,0);           \
     }                                      \
     _res;                                  \

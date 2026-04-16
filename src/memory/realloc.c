@@ -14,8 +14,8 @@ fc_error_t fc_realloc
     void* ptr = 0;
     fc_error_t res = fce_success;
     if((res = fc_malloc(n,&ptr))) { return res; }
-    ptr_header_t src = conv_heap_to_ptr(*set);
-    ptr_header_t dst = conv_heap_to_ptr(ptr);
+    def_slice_t src = conv_heap_to_ptr(*set);
+    def_slice_t dst = conv_heap_to_ptr(ptr);
     if((res = fc_memcpy(dst,src))) { return res; }
     if((res = fc_free(set))) { return res; }
     *set = ptr;

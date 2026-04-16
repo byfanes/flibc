@@ -12,10 +12,10 @@ fc_error_t __da_unordered_remove
     if(idx >= da->count) {
         return fce_da_unordered_remove_outofbounds;
     }
-    ptr_header_t idx_src = { .base = (char*)da->items + idx*n_size , .len = n_size, };
-    ptr_header_t last_src = { .base = (char*)da->items + (da->count-1)*n_size , .len = n_size, };
+    def_slice_t idx_src = { .base = da->items + idx*n_size , .len = n_size, };
+    def_slice_t last_src = { .base = da->items + (da->count-1)*n_size , .len = n_size, };
     if(out) {
-        ptr_header_t out_src = { .base = out, .len = n_size, };
+        def_slice_t out_src = { .base = out, .len = n_size, };
         if((res = fc_memcpy(out_src,idx_src))) { return res; }
     }
     if((res = fc_memcpy(idx_src,last_src))) { return res; }

@@ -13,11 +13,11 @@ fc_error_t __da_pop_first
     }
     fc_error_t res = fce_success;
 
-    ptr_header_t src = { .base = (char*)da->items + n_size, .len = n_size*(da->count-1), };
-    ptr_header_t dst = { .base = (char*)da->items, .len = src.len, };
+    def_slice_t src = { .base = da->items + n_size, .len = n_size*(da->count-1), };
+    def_slice_t dst = { .base = da->items, .len = src.len, };
 
-    ptr_header_t out_src = { .base = (char*)da->items, .len = n_size, };
-    ptr_header_t out_dst = { .base = out, .len = n_size, };
+    def_slice_t out_src = { .base = da->items, .len = n_size, };
+    def_slice_t out_dst = { .base = out, .len = n_size, };
     da->count--;
     if(out) {
         if((res = fc_memcpy(out_dst,out_src))) { return res; }

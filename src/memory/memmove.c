@@ -2,14 +2,14 @@
 #include "error.h"
 
 fc_error_t fc_memmove
-(ptr_header_t dst, ptr_header_t src)
+(def_slice_t dst, def_slice_t src)
 {
     if(!dst.base || !src.base) { return fce_mem_memmove_nullptr; }
     if(src.len > dst.len) { return fce_mem_memmove_smaller; }
-    char* pdst = dst.base;
-    char* psrc = src.base;
-    char buf[4096] = {0};
-    char* tmp = {0};
+    byte_t* pdst = dst.base;
+    byte_t* psrc = src.base;
+    byte_t buf[4096] = {0};
+    byte_t* tmp = {0};
     fc_error_t res = fce_success;
     if(src.len <= 4096) {
         tmp = buf;
@@ -18,7 +18,7 @@ fc_error_t fc_memmove
             return res;
         }
     }
-    char* tmp2 = tmp;
+    byte_t* tmp2 = tmp;
     for(uint32_t i = 0; i < src.len; ++i) {
         *(tmp++) = *(psrc++);
     }

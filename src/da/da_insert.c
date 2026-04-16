@@ -13,9 +13,7 @@ fc_error_t __da_insert
         return fce_da_insert_outofbounds;
     }
     if ((res = __da_reserve(da,n_size,1))) { return res; }
-    ptr_header_t src = { .base = (char*)da->items + n_size*idx,
-                         .len = (da->count-idx)*n_size, };
-    ptr_header_t dst = { .base = (char*)da->items + n_size*(idx+1),
-                         .len = src.len, };
+    def_slice_t src = { .base = da->items + n_size*idx, .len = (da->count-idx)*n_size, };
+    def_slice_t dst = { .base = da->items + n_size*(idx+1), .len = src.len, };
     return fc_memmove(dst,src);
 }

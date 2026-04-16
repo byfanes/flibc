@@ -12,7 +12,7 @@ fc_error_t __da_first
         return fce_da_first_empty;
     }
 
-    ptr_header_t src = { .base = (char*)da->items, .len = n_size, };
-    ptr_header_t dst = { .base = out, .len = n_size, };
+    def_slice_t src = { .base = da->items, .len = n_size, };
+    def_slice_t dst = { .base = out, .len = n_size, };
     return fc_memcpy(dst,src);
 }
