@@ -73,4 +73,6 @@ typedef  int64_t i64;
 #define CONCAT_IMPL(a, b) a ## b
 #define CONCAT(a, b) CONCAT_IMPL(a, b)
 
+#define FLIBC_STACK_THRESHOLD 4096
+
 #endif /* __FLIBC_STDTYPES_H__ */

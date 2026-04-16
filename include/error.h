@@ -55,6 +55,9 @@ enum fc_error_e {
 
     fce_da_pop_first_nullptr,
     fce_da_pop_first_empty,
+
+    fce_printf_unknown,
+    fce_printf_need_more_args,
 };
 
 typedef enum fc_error_e fc_error_t;

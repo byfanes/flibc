@@ -8,10 +8,10 @@ fc_error_t fc_memmove
     if(src.len > dst.len) { return fce_mem_memmove_smaller; }
     byte_t* pdst = dst.base;
     byte_t* psrc = src.base;
-    byte_t buf[4096] = {0};
+    byte_t buf[FLIBC_STACK_THRESHOLD] = {0};
     byte_t* tmp = {0};
     fc_error_t res = fce_success;
-    if(src.len <= 4096) {
+    if(src.len <= FLIBC_STACK_THRESHOLD) {
         tmp = buf;
     } else {
         if((res = fc_malloc(src.len,(void**)&tmp))) {
@@ -25,7 +25,7 @@ fc_error_t fc_memmove
     for(uint32_t i = 0; i < src.len; ++i) {
         *(pdst++) = *(tmp2++);
     }
-    if(src.len > 4096) {
+    if(src.len > FLIBC_STACK_THRESHOLD) {
         return fc_free((void**)&tmp);
     } else {
         return fce_success;
