@@ -11,8 +11,8 @@ fc_error_t __da_remove
     if(idx >= da->count) {
         return fce_da_remove_index_outofbounds;
     }
-    def_slice_t src = { .base = da->items + n_size*(idx+1), .len = (da->count-idx-1)*n_size, };
-    def_slice_t dst = { .base = da->items + n_size*idx,.len = src.len, };
+    def_slice_t src = { .base = da->items + n_size*(idx+1), .count = (da->count-idx-1)*n_size, };
+    def_slice_t dst = { .base = da->items + n_size*idx, .count = src.count, };
     da->count--;
     return fc_memmove(dst,src);
 }

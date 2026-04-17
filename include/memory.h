@@ -12,25 +12,25 @@ struct heap_header_s {
 #define can_be_slice(type)  \
     typedef struct {        \
         type *base;         \
-        const uint32_t len; \
+        const uint32_t count; \
     } slice_ ## type
 
 #define slice(type) CONCAT(slice_,type)
 
 struct def_slice_s {
     byte_t* base;
-    const uint32_t len;
+    const uint32_t count;
 };
 
 typedef struct heap_header_s heap_header_t;
 typedef struct def_slice_s def_slice_t;
 
-#define slice_to_def(s) ((def_slice_t) {.base = (byte_t*)s.base,.len = s.len*(sizeof(*s.base))})
+#define slice_to_def(s) ((def_slice_t) {.base = (byte_t*)s.base,.count = s.count*(sizeof(*s.base))})
 
 #define def_compare(type)                              \
 bool compare_ ## type (type *a,type *b) {              \
-    def_slice_t lhs = { .base = (byte_t*)a, .len = sizeof(type) }; \
-    def_slice_t rhs = { .base = (byte_t*)b, .len = sizeof(type) }; \
+    def_slice_t lhs = { .base = (byte_t*)a, .count = sizeof(type) }; \
+    def_slice_t rhs = { .base = (byte_t*)b, .count = sizeof(type) }; \
     bool res = false;                                  \
     fc_memcmp(lhs,rhs,&res);                           \
     return res;                                        \

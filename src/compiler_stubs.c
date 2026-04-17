@@ -3,7 +3,7 @@
 
 struct def_slice_s {
     byte_t* base;
-    const uint32_t len;
+    const uint32_t count;
 };
 
 typedef struct def_slice_s def_slice_t;

@@ -12,7 +12,7 @@ fc_error_t __da_last
         return fce_da_last_empty;
     }
 
-    def_slice_t src = { .base = da->items + (da->count-1)*n_size, .len = n_size, };
-    def_slice_t dst = { .base = (byte_t*)out, .len = n_size, };
+    def_slice_t src = { .base = da->items + (da->count-1)*n_size, .count = n_size, };
+    def_slice_t dst = { .base = (byte_t*)out, .count = n_size, };
     return fc_memcpy(dst,src);
 }

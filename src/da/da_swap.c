@@ -11,7 +11,7 @@ fc_error_t __da_swap
     if(lhs >= da->count || rhs >= da->count) {
         return fce_da_get_outofbounds;
     }
-    def_slice_t lhs_src = { .base = da->items + lhs*n_size , .len = n_size, };
-    def_slice_t rhs_src = { .base = da->items + rhs*n_size , .len = n_size, };
+    def_slice_t lhs_src = { .base = da->items + lhs*n_size , .count = n_size, };
+    def_slice_t rhs_src = { .base = da->items + rhs*n_size , .count = n_size, };
     return fc_memswap(lhs_src,rhs_src);
 }

@@ -14,6 +14,6 @@ fc_error_t vsprintf
     uint32_t needed = 0;
     fc_error_t res = fce_success;
     if((res = __printf_size(fmt,args,&needed))) { return res; }
-    if(needed > buf.len) { return fce_printf_small_buffer; }
+    if(needed > buf.count) { return fce_printf_small_buffer; }
     return __printf_format(buf,fmt,args);
 }

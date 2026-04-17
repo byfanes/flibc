@@ -17,7 +17,7 @@ can_be_slice(char);
 static inline def_slice_t _fmt_from_str(const char* str) {
     uint32_t i = 0;
     while(str[i++]);
-    return (def_slice_t){ .base = (byte_t*)str, .len = i - 1 };
+    return (def_slice_t){ .base = (byte_t*)str, .count = i - 1 };
 }
 
 static inline def_slice_t _fmt_from_slice(def_slice_t slice) {

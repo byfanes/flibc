@@ -36,8 +36,8 @@ typedef struct def_da_header_s def_da_header_t;
     (_def_da, sizeof(*(_da)->items),count);                                         \
     if (_err == fce_success) {                                                      \
         def_slice_t dst,src;                                                        \
-        src = (def_slice_t) { .base = total, .len = count*sizeof(*(_da)->items) };  \
-        dst = (def_slice_t) { .base = &_da->items[_da->count], .len=src.len };      \
+        src = (def_slice_t) { .base = total, .count = count*sizeof(*(_da)->items) };\
+        dst = (def_slice_t) { .base = &_da->items[_da->count], .count=src.count };  \
         if((_err = fc_memcpy(dst,src))) {                                           \
             return _err;                                                            \
         }                                                                           \
@@ -70,12 +70,12 @@ typedef struct def_da_header_s def_da_header_t;
     __da_init_cap((def_da_header_t*)_da, sizeof(*(_da)->items), cap); \
 })
 
-#define da_to_ptr(da) ({                        \
-    typeof(da) _da = (da);                      \
-    (def_slice_t) {                            \
-        .base = _da->items,                     \
-        .len = sizeof(*_da->items) * _da->count \
-    };                                          \
+#define da_to_ptr(da) ({                          \
+    typeof(da) _da = (da);                        \
+    (def_slice_t) {                               \
+        .base = _da->items,                       \
+        .count = sizeof(*_da->items) * _da->count \
+    };                                            \
 })
 
 #define da_zeroed(da) ({                   \
@@ -93,7 +93,7 @@ typedef struct def_da_header_s def_da_header_t;
 
 #define da_clear(da) do { da->count = 0; } while(0)
 
-#define da_truncate(da,len) __da_truncate((def_da_header_t*), len)
+#define da_truncate(da,c) __da_truncate((def_da_header_t*), c)
 
 #define da_get(da,i,out) ({             \
     typeof(da) _da = (da);              \

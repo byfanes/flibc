@@ -91,7 +91,7 @@ fc_error_t __printf_format
     uint32_t i = 0;
     fc_error_t res = fce_success;
 
-    for(;i < fmt.len - 1; ++i) {
+    for(;i < fmt.count - 1; ++i) {
         if(fmt.base[i] != '%') { start[idx++] = fmt.base[i]; continue; }
         if(fmt.base[i + 1] == '%') { start[idx++] = '%'; i++; continue; }
         bool isHex = false;
