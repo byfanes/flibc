@@ -109,7 +109,9 @@
 #define syscall_munmap 11
 #define syscall_exit 60
 
+#define UNIX_STDIN 0
 #define UNIX_STDOUT 1
+#define UNIX_STDERR 2
 #define MMAP_FAILED (void*)-1
 #define MAP_PRIVATE 0x02
 #define MAP_ANONYMOUS 0x20

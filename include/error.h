@@ -60,6 +60,12 @@ enum fc_error_e {
     fce_printf_need_more_args,
     fce_printf_need_less_args,
     fce_printf_small_buffer,
+    fce_printf_nullptr,
+
+    fce_fwrite_unknown,
+    fce_fwrite_nullptr,
+    fce_fwrite_failed,
+    fce_fwrite_partial,
 };
 
 typedef enum fc_error_e fc_error_t;

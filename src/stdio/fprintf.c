@@ -9,8 +9,8 @@ extern fc_error_t __printf_size(def_slice_t fmt, fc_args_t args, uint32_t* out);
 
 #define MAX_BUF 4096
 
-fc_error_t vprintf
-(def_slice_t fmt, fc_args_t args)
+fc_error_t vfprintf
+(file_t* file,def_slice_t fmt, fc_args_t args)
 {
     fc_error_t res = fce_success;
     uint32_t size = 0;
@@ -22,7 +22,7 @@ fc_error_t vprintf
     } else { tmp = buf; }
     def_slice_t sl = {(byte_t*)tmp,size};
     if((res = __printf_format(sl,fmt,args))) { return res; }
-    res = fwrite(stdout,sl);
+    res = fwrite(file,sl);
     if (size > MAX_BUF) {
         fc_error_t res2 = fc_free((void**)&tmp);
         return (res) ? res : res2;

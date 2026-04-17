@@ -62,8 +62,9 @@ fc_error_t __printf_size
     uint32_t arg_i = 0;
     uint32_t count = 0;
     uint32_t _out = 0;
-    *out = 0;
     fc_error_t res = fce_success;
+    if(!fmt.base || (!args.args && args.count) || !out) { return fce_printf_nullptr; }
+    *out = 0;
     for(;i < fmt.count - 1; ++i) {
         if(fmt.base[i] != '%') { count++; continue; }
         if(fmt.base[i + 1] == '%') { count++; i++; continue; }

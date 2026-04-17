@@ -1,11 +1,12 @@
 
 #include "stdio.h"
+#include "stdlib.h"
 #include "error.h"
 #include "stdtypes.h"
 #include "memory.h"
 #include "stdarg.h"
 
-static inline uint32_t write_decimal_to_buf
+uint32_t write_decimal_to_buf
 (uint64_t num,char* tmp)
 {
     uint32_t count = 0;
@@ -17,10 +18,10 @@ static inline uint32_t write_decimal_to_buf
     return count;
 }
 
-static inline uint32_t write_hex_to_buf
+uint32_t write_hex_to_buf
 (uint64_t num,char* tmp)
 {
-    char hexDigits[] = "0123456789ABCDEF";
+    static const char hexDigits[] = "0123456789ABCDEF";
     uint32_t count = 0;
     if(num == 0) { tmp[count++] = '0'; }
     while(num) {
@@ -32,7 +33,7 @@ static inline uint32_t write_hex_to_buf
     return count;
 }
 
-static inline void write_num_to_buf
+void write_num_to_buf
 (char* start,uint32_t* idx,bool isHex,uint64_t num)
 {
     char tmp[128] = {0};
@@ -49,12 +50,13 @@ static inline void write_num_to_buf
     *idx += count;
 }
 
-static inline fc_error_t parse_arg
+fc_error_t parse_arg
 (char* start,uint32_t* idx,fc_arg_t arg,bool isHex)
 {
     fc_error_t res = fce_success;
     int64_t num = 0;
-
+    volatile fc_arg_t dbg = arg;
+    arg = dbg;
     switch (arg.type) {
         default: case _type_unknown: { return fce_printf_unknown; };
         case _type_i8:  { num = arg.data._i8;  } break;
@@ -90,8 +92,8 @@ fc_error_t __printf_format
     uint32_t arg_i = 0;
     uint32_t i = 0;
     fc_error_t res = fce_success;
-
-    for(;i < fmt.count - 1; ++i) {
+    if (fmt.count == 0) return res;
+    for(;i + 1 < fmt.count ; ++i) {
         if(fmt.base[i] != '%') { start[idx++] = fmt.base[i]; continue; }
         if(fmt.base[i + 1] == '%') { start[idx++] = '%'; i++; continue; }
         bool isHex = false;
