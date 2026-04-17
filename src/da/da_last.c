@@ -14,5 +14,6 @@ fc_error_t __da_last
 
     def_slice_t src = { .base = da->items + (da->count-1)*n_size, .count = n_size, };
     def_slice_t dst = { .base = (byte_t*)out, .count = n_size, };
+    memcpy_sized(&dst.base,&out,sizeof(void*));
     return fc_memcpy(dst,src);
 }

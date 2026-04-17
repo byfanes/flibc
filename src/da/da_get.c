@@ -11,7 +11,8 @@ fc_error_t __da_get
     if(idx >= da->count) {
         return fce_da_get_outofbounds;
     }
-    def_slice_t out_src = { .base = (byte_t*)out, .count = n_size, };
+    def_slice_t out_src = { .base = nullptr, .count = n_size, };
+    memcpy_sized(&out_src.base,&out,sizeof(void*));
     def_slice_t idx_src = { .base = da->items + idx*n_size , .count = n_size, };
     return fc_memcpy(out_src,idx_src);
 }

@@ -52,10 +52,13 @@ bool compare_ ## type (type *a,type *b) {              \
 
 def_slice_t conv_heap_to_ptr(void* ptr);
 
-fc_error_t fc_malloc(uint32_t n, void** set);
-fc_error_t fc_calloc(uint32_t n, void** set);
-fc_error_t fc_realloc(uint32_t n, void** set);
-fc_error_t fc_free(void** ptr);
+void memcpy_sized(void* dst,void* src,uint32_t size);
+void memset_sized(void* dst,uint8_t c,uint32_t size);
+
+fc_error_t fc_malloc(uint32_t n, void* set);
+fc_error_t fc_calloc(uint32_t n, void* set);
+fc_error_t fc_realloc(uint32_t n, void* set);
+fc_error_t fc_free(void* ptr);
 
 fc_error_t fc_memset(def_slice_t ptr, uint8_t c);
 fc_error_t fc_memswap(def_slice_t lhs, def_slice_t rhs);
@@ -64,10 +67,10 @@ fc_error_t fc_memcpy(def_slice_t dst, def_slice_t src);
 fc_error_t fc_memcmp(def_slice_t lhs, def_slice_t rhs, bool* res);
 fc_error_t fc_memcmp_min(def_slice_t lhs, def_slice_t rhs, bool* res);
 
-#define malloc(n,x) fc_malloc(n,(void*)x)
-#define calloc(n,x) fc_calloc(n,(void*)x)
-#define realloc(n,x) fc_realloc(n,(void*)x)
-#define free(x) fc_free((void*)x)
+#define malloc(n,x) fc_malloc(n,x)
+#define calloc(n,x) fc_calloc(n,x)
+#define realloc(n,x) fc_realloc(n,x)
+#define free(x) fc_free(x)
 #define memset fc_memset
 #define memswap fc_memswap
 #define memmove fc_memmove

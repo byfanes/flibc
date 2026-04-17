@@ -13,6 +13,7 @@ fc_error_t __da_first
     }
 
     def_slice_t src = { .base = da->items, .count = n_size, };
-    def_slice_t dst = { .base = (byte_t*)out, .count = n_size, };
+    def_slice_t dst = { .base = nullptr, .count = n_size, };
+    memcpy_sized(&dst.base,&out,sizeof(void*));
     return fc_memcpy(dst,src);
 }

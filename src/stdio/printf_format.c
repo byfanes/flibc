@@ -36,7 +36,8 @@ uint32_t write_hex_to_buf
 void write_num_to_buf
 (char* start,uint32_t* idx,bool isHex,uint64_t num)
 {
-    char tmp[128] = {0};
+    /* No need & bug: Do NOT zero the tmp buffer via tmp = {0} */
+    char tmp[128];
     uint32_t count = 0;
     if (isHex) {
         count = write_hex_to_buf(num,tmp);
@@ -55,8 +56,6 @@ fc_error_t parse_arg
 {
     fc_error_t res = fce_success;
     int64_t num = 0;
-    volatile fc_arg_t dbg = arg;
-    arg = dbg;
     switch (arg.type) {
         default: case _type_unknown: { return fce_printf_unknown; };
         case _type_i8:  { num = arg.data._i8;  } break;
@@ -87,7 +86,8 @@ fc_error_t parse_arg
 fc_error_t __printf_format
 (def_slice_t buf,def_slice_t fmt, fc_args_t args)
 {
-    char* start = (char*)buf.base;
+    char* start = 0;
+    memcpy_sized(&start,&buf.base,sizeof(void*));
     uint32_t idx = 0;
     uint32_t arg_i = 0;
     uint32_t i = 0;

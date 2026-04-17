@@ -14,17 +14,17 @@ fc_error_t vprintf
 {
     fc_error_t res = fce_success;
     uint32_t size = 0;
-    char buf[MAX_BUF] = {0};
-    char* tmp = 0;
+    uint8_t buf[MAX_BUF] = {0};
+    uint8_t* tmp = 0;
     if ((res = __printf_size(fmt,args,&size))) { return res; }
     if (size > MAX_BUF) {
-        if ((res = fc_malloc(size,(void**)&tmp))) { return res; }
+        if ((res = fc_malloc(size,&tmp))) { return res; }
     } else { tmp = buf; }
-    def_slice_t sl = {(byte_t*)tmp,size};
+    def_slice_t sl = (def_slice_t){ .base = tmp, .count = size};
     if((res = __printf_format(sl,fmt,args))) { return res; }
     res = fwrite(stdout,sl);
     if (size > MAX_BUF) {
-        fc_error_t res2 = fc_free((void**)&tmp);
+        fc_error_t res2 = fc_free(&tmp);
         return (res) ? res : res2;
     }
     return res;

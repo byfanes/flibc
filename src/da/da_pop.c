@@ -18,7 +18,8 @@ fc_error_t __da_pop
     }
     
     def_slice_t src = { .base = da->items + n_size*(da->count-1), .count = n_size, };
-    def_slice_t dst = { .base = (byte_t*)out, .count = n_size, };
+    def_slice_t dst = { .base = nullptr, .count = n_size, };
+    memcpy_sized(&dst.base,&out,sizeof(void*));
     da->count--;
     return fc_memcpy(dst,src);
 }

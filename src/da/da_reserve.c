@@ -14,11 +14,11 @@ fc_error_t __da_reserve
         uint32_t new_cap = (da->capacity == 0) ? FLIBC_DA_INIT : (da->capacity * 2);
         new_cap = (new_cap > (amount + da->capacity)) ? new_cap : (amount + da->capacity)*2;
         if (da->items) {
-            if ((res = fc_realloc(new_cap * n_size, (void**)&da->items))) {
+            if ((res = fc_realloc(new_cap * n_size, &da->items))) {
                 return res;
             }
         } else {
-            if ((res = fc_calloc(new_cap * n_size, (void**)&da->items))) {
+            if ((res = fc_calloc(new_cap * n_size, &da->items))) {
                 return res;
             }
         }

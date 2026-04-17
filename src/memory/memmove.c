@@ -14,9 +14,7 @@ fc_error_t fc_memmove
     if(src.count <= FLIBC_STACK_THRESHOLD) {
         tmp = buf;
     } else {
-        if((res = fc_malloc(src.count,(void**)&tmp))) {
-            return res;
-        }
+        if((res = fc_malloc(src.count,&tmp))) { return res; }
     }
     byte_t* tmp2 = tmp;
     for(uint32_t i = 0; i < src.count; ++i) {
@@ -26,7 +24,7 @@ fc_error_t fc_memmove
         *(pdst++) = *(tmp2++);
     }
     if(src.count > FLIBC_STACK_THRESHOLD) {
-        return fc_free((void**)&tmp);
+        return fc_free(&tmp);
     } else {
         return fce_success;
     }

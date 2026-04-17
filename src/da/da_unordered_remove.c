@@ -15,7 +15,8 @@ fc_error_t __da_unordered_remove
     def_slice_t idx_src = { .base = da->items + idx*n_size , .count = n_size, };
     def_slice_t last_src = { .base = da->items + (da->count-1)*n_size , .count = n_size, };
     if(out) {
-        def_slice_t out_src = { .base = (byte_t*)out, .count = n_size, };
+        def_slice_t out_src = { .base = nullptr, .count = n_size, };
+        memcpy_sized(&out_src,&out,sizeof(void*));
         if((res = fc_memcpy(out_src,idx_src))) { return res; }
     }
     if((res = fc_memcpy(idx_src,last_src))) { return res; }

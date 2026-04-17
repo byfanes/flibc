@@ -8,18 +8,15 @@ struct def_slice_s {
 
 typedef struct def_slice_s def_slice_t;
 
-extern fc_error_t fc_memset(def_slice_t ptr, uint8_t c);
-extern fc_error_t fc_memcpy(def_slice_t dst, def_slice_t src);
+extern void memset_sized(void* dst,uint8_t c,uint32_t size);
+extern void memcpy_sized(void* dst,void* src,uint32_t size);
 
 void* memset(void* dest, int c, uint32_t n) {
-    def_slice_t slice = { dest, n };
-    fc_memset(slice, (uint8_t)c);
+    memset_sized(dest,c,n);
     return dest;
 }
 
 void* memcpy(void* dest, const void* src, uint32_t n) {
-    def_slice_t dst_slice = { dest, n };
-    def_slice_t src_slice = { (void*)src, n };
-    fc_memcpy(dst_slice, src_slice);
+    memcpy_sized(dest, (void*)src, n);
     return dest;
 }

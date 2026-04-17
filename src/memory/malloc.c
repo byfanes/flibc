@@ -3,11 +3,11 @@
 #include "syscall.h"
 
 fc_error_t fc_malloc
-(uint32_t size, void** set)
+(uint32_t size, void* set)
 {
     if(!size) { return fce_mem_malloc_zero; }
     if(!set) { return fce_mem_malloc_nullptr; }
-    void* base = 0;
+    heap_header_t* base = 0;
     heap_header_t header = {0};
     
     header.alloced = size;
@@ -20,7 +20,8 @@ fc_error_t fc_malloc
 
     if(base == MMAP_FAILED)
     { return fce_mem_malloc_mmap_failed; }
-    *set = ((heap_header_t*)base + 1);
-    *(heap_header_t*)base = header;
+    *base = header;
+    base++;
+    memcpy_sized(set,&base,sizeof(void*));
     return fce_success;
 }
