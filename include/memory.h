@@ -17,6 +17,17 @@ struct heap_header_s {
 
 #define slice(type) CONCAT(slice_,type)
 
+can_be_slice(uint64_t);
+can_be_slice(uint32_t);
+can_be_slice(uint16_t);
+can_be_slice(uint8_t);
+can_be_slice(int64_t);
+can_be_slice(int32_t);
+can_be_slice(int16_t);
+can_be_slice(int8_t);
+can_be_slice(char);
+can_be_slice(byte_t);
+
 struct def_slice_s {
     byte_t* base;
     const uint32_t count;

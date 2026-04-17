@@ -6,9 +6,7 @@
 #include "features.h"
 
 /* This macro will be used with multiplying sizeof(*da->base) */
-#ifndef FLIBC_DA_INIT
 #define FLIBC_DA_INIT 32
-#endif /* FLIBC_DA_INIT */
 
 #define can_be_da(type)            \
     typedef struct { \
@@ -19,6 +17,17 @@
 
 #define da(type) CONCAT(da_,type)
 
+can_be_da(uint64_t);
+can_be_da(uint32_t);
+can_be_da(uint16_t);
+can_be_da(uint8_t);
+can_be_da(int64_t);
+can_be_da(int32_t);
+can_be_da(int16_t);
+can_be_da(int8_t);
+can_be_da(char);
+can_be_da(byte_t);
+
 struct def_da_header_s {
     byte_t* items;
     uint32_t count;
@@ -26,6 +35,22 @@ struct def_da_header_s {
 };
 
 typedef struct def_da_header_s def_da_header_t;
+
+#define da_push_slice(da, sl) ({                                                    \
+    typeof(da) _da = (da);                                                          \
+    typeof(sl) _sl = (sl);                                                          \
+    def_da_header_t* _def_da = (void*)_da;                                          \
+    fc_error_t _err = __da_reserve                                                  \
+    (_def_da, sizeof(*(_da)->items),_sl.count);                                     \
+    if (_err == fce_success) {                                                      \
+        def_slice_t dst = (def_slice_t) { .base = &_da->items[_da->count], .count=_sl.count };  \
+        if((_err = fc_memcpy(dst,sl))) {                                            \
+            return _err;                                                            \
+        }                                                                           \
+        _def_da->count += _sl.count;                                                \
+    }                                                                               \
+    _err;                                                                           \
+})
 
 #define da_pushs(da, ...) ({                                                        \
     typeof(da) _da = (da);                                                          \
@@ -35,9 +60,8 @@ typedef struct def_da_header_s def_da_header_t;
     fc_error_t _err = __da_reserve                                                  \
     (_def_da, sizeof(*(_da)->items),count);                                         \
     if (_err == fce_success) {                                                      \
-        def_slice_t dst,src;                                                        \
-        src = (def_slice_t) { .base = total, .count = count*sizeof(*(_da)->items) };\
-        dst = (def_slice_t) { .base = &_da->items[_da->count], .count=src.count };  \
+        def_slice_t src = (def_slice_t) { .base = total, .count = count*sizeof(*(_da)->items) };\
+        def_slice_t dst = (def_slice_t) { .base = &_da->items[_da->count], .count=src.count };  \
         if((_err = fc_memcpy(dst,src))) {                                           \
             return _err;                                                            \
         }                                                                           \
@@ -45,7 +69,6 @@ typedef struct def_da_header_s def_da_header_t;
     }                                                                               \
     _err;                                                                           \
 })
-
 
 #define da_push(da, element) ({             \
     typeof(da) _da = (da);                  \
@@ -91,9 +114,9 @@ typedef struct def_da_header_s def_da_header_t;
     _res;                                  \
 })
 
-#define da_clear(da) do { da->count = 0; } while(0)
+#define da_clear(da) do { def_da_header_t* _da = (def_da_header_t*)(da);_da->count = 0; } while(0)
 
-#define da_truncate(da,c) __da_truncate((def_da_header_t*), c)
+#define da_truncate(da,c) __da_truncate((def_da_header_t*)da, c)
 
 #define da_get(da,i,out) ({             \
     typeof(da) _da = (da);              \
