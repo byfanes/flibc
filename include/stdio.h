@@ -31,6 +31,7 @@ static inline def_slice_t _fmt_from_slice(def_slice_t slice) {
 )(fmt)
 
 #define printf(fmt, ...) _printf(FORMAT_TO_SLICE(fmt) __VA_OPT__(,) __VA_ARGS__)
+#define sprintf(buf,fmt, ...) _sprintf(buf,FORMAT_TO_SLICE(fmt) __VA_OPT__(,) __VA_ARGS__)
 
 #define TO_FC_ARG_COMMA(x) to_arg(x),
 
@@ -38,10 +39,18 @@ static inline def_slice_t _fmt_from_slice(def_slice_t slice) {
     uint32_t __args_count = N_VA_ARGS(__VA_ARGS__); \
     fc_arg_t __args[N_VA_ARGS(__VA_ARGS__) > 0 ? N_VA_ARGS(__VA_ARGS__) : 1] = \
         { FOREACH(TO_FC_ARG_COMMA, __VA_ARGS__) }; \
-    __printf(fmt_slice, (fc_args_t){.args = __args,.count = __args_count}); \
+    vprintf(fmt_slice, (fc_args_t){.args = __args,.count = __args_count}); \
 })
 
-fc_error_t __printf(def_slice_t fmt, fc_args_t args);
+#define _sprintf(buf,fmt_slice, ...) ({ \
+    uint32_t __args_count = N_VA_ARGS(__VA_ARGS__); \
+    fc_arg_t __args[N_VA_ARGS(__VA_ARGS__) > 0 ? N_VA_ARGS(__VA_ARGS__) : 1] = \
+        { FOREACH(TO_FC_ARG_COMMA, __VA_ARGS__) }; \
+    vsprintf(buf,fmt_slice, (fc_args_t){.args = __args,.count = __args_count}); \
+})
 
+fc_error_t vsprintf(def_slice_t buf,def_slice_t fmt, fc_args_t args);
+fc_error_t vprintf(def_slice_t fmt, fc_args_t args);
+fc_error_t vfprintf(file_t file,def_slice_t fmt, fc_args_t args);
 
 #endif /* __FLIBC_STDIO_H__ */
