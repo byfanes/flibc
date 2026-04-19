@@ -1,6 +1,8 @@
 #ifndef __FLIBC_STDARG_H__
 #define __FLIBC_STDARG_H__
 
+#include "features.h"
+
 enum fc_type_e {
     _type_unknown = 0,
     _type_char, _type_i8,  _type_u8,
@@ -8,7 +10,7 @@ enum fc_type_e {
     _type_i32, _type_u32,
     _type_i64, _type_u64,
     _type_char_ptr,
-    _type_void_ptr,
+    _type_void_ptr
 };
 
 typedef enum fc_type_e fc_type_t;
@@ -34,35 +36,42 @@ struct fc_arg_s {
 
 struct fc_args_s {
     fc_arg_t* args;
-    const uint32_t count;
+    uint32_t count;
 };
 
-static inline fc_arg_t _arg_char(char x)
-{ return (fc_arg_t){.type = _type_char,     .data._char = x}; }
-static inline fc_arg_t _arg_i8(signed char x)
-{ return (fc_arg_t){.type = _type_i8,       .data._i8   = x}; }
-static inline fc_arg_t _arg_u8(unsigned char x)
-{ return (fc_arg_t){.type = _type_u8,       .data._u8   = x}; }
+INLINE fc_arg_t _arg_char(char x)
+{ fc_arg_t ret; ret.type = _type_char; ret.data._char = x; return ret; }
 
-static inline fc_arg_t _arg_i16(signed short x)
-{ return (fc_arg_t){.type = _type_i16,      .data._i16  = x}; }
-static inline fc_arg_t _arg_u16(unsigned short x)
-{ return (fc_arg_t){.type = _type_u16,      .data._u16  = x}; }
+INLINE fc_arg_t _arg_i8(int8_t x)
+{ fc_arg_t ret; ret.type = _type_i8; ret.data._i8 = x; return ret; }
 
-static inline fc_arg_t _arg_i32(signed int x)
-{ return (fc_arg_t){.type = _type_i32,      .data._i32  = x}; }
-static inline fc_arg_t _arg_u32(unsigned int x)
-{ return (fc_arg_t){.type = _type_u32,      .data._u32  = x}; }
+INLINE fc_arg_t _arg_u8(uint8_t x)
+{ fc_arg_t ret; ret.type = _type_u8; ret.data._u8 = x; return ret; }
 
-static inline fc_arg_t _arg_i64(long long int x)
-{ return (fc_arg_t){.type = _type_i64,      .data._i64  = x}; }
-static inline fc_arg_t _arg_u64(unsigned long long int x)
-{ return (fc_arg_t){.type = _type_u64, .data._u64 = x}; }
+INLINE fc_arg_t _arg_i16(int16_t x)
+{ fc_arg_t ret; ret.type = _type_i16; ret.data._i16 = x; return ret; }
 
-static inline fc_arg_t _arg_cptr(char* x)
-{ return (fc_arg_t){.type = _type_char_ptr, .data._cptr = x}; }
-static inline fc_arg_t _arg_vptr(void* x)
-{ return (fc_arg_t){.type = _type_void_ptr, .data._vptr = x}; }
+INLINE fc_arg_t _arg_u16(uint16_t x)
+{ fc_arg_t ret; ret.type = _type_u16; ret.data._u16 = x; return ret; }
+
+INLINE fc_arg_t _arg_i32(int32_t x)
+{ fc_arg_t ret; ret.type = _type_i32; ret.data._i32 = x; return ret; }
+
+INLINE fc_arg_t _arg_u32(uint32_t x)
+{fc_arg_t ret;ret.type = _type_u32;ret.data._u32 = x;return ret; }
+
+INLINE fc_arg_t _arg_i64(int64_t x)
+{fc_arg_t ret;ret.type = _type_i64;ret.data._i64 = x;return ret; }
+
+INLINE fc_arg_t _arg_u64(uint64_t x)
+{fc_arg_t ret;ret.type = _type_u64;ret.data._u64 = x;return ret; }
+
+INLINE fc_arg_t _arg_cptr(char* x)
+{ fc_arg_t ret; ret.type = _type_char_ptr; ret.data._cptr = x; return ret; }
+
+INLINE fc_arg_t _arg_vptr (void* x)
+{ fc_arg_t ret; ret.type = _type_void_ptr; ret.data._vptr = x; return ret; }
+
 
 #define to_arg(x) \
 _Generic((x), \

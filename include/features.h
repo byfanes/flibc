@@ -1,13 +1,24 @@
 #ifndef __FLIBC_FEATURES_H__
 #define __FLIBC_FEATURES_H__
 
-#define INTERNAL static inline
 
 #if defined(__GNUC__)
 #define _Noreturn __attribute__((__noreturn__))
 #else /* defined(__GNUC__) */
 #define _Noreturn [[noreturn]]
 #endif
+
+#if __STDC_VERSION__ >= 199901L
+#define INLINE inline
+#elif defined(__GNUC__) || defined(__clang__)
+#define INLINE __inline__
+#elif defined(_MSC_VER)
+#define INLINE __inline
+#else
+#define INLINE
+#endif
+
+#define INTERNAL static INLINE
 
 #if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
 #define typeof __typeof__

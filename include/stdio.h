@@ -18,13 +18,15 @@ extern file_t* const stdout;
 extern file_t* const stdin;
 extern file_t* const stderr;
 
-static inline def_slice_t _fmt_from_str(const char* str) {
+INTERNAL def_slice_t _fmt_from_str(const char* str) {
     uint32_t i = 0;
+    def_slice_t ret;
     while(str[i++]);
-    return (def_slice_t){ .base = (byte_t*)str, .count = i - 1 };
+    set_slice(&ret, (byte_t*)str, i - 1);
+    return ret;
 }
 
-static inline def_slice_t _fmt_from_slice(def_slice_t slice) {
+INTERNAL def_slice_t _fmt_from_slice(def_slice_t slice) {
     return slice;
 }
 
@@ -40,25 +42,26 @@ static inline def_slice_t _fmt_from_slice(def_slice_t slice) {
 
 #define TO_FC_ARG_COMMA(x) to_arg(x),
 
-#define _printf(fmt_slice, ...) ({ \
+#define make_args(...) \
     uint32_t __args_count = N_VA_ARGS(__VA_ARGS__); \
     fc_arg_t __args[N_VA_ARGS(__VA_ARGS__) > 0 ? N_VA_ARGS(__VA_ARGS__) : 1] = \
         { FOREACH(TO_FC_ARG_COMMA, __VA_ARGS__) }; \
-    vprintf(fmt_slice, (fc_args_t){.args = __args,.count = __args_count}); \
+    fc_args_t __args__; \
+    __args__.args = __args; __args__.count = __args_count;
+
+#define _printf(fmt_slice, ...) ({ \
+    make_args(__VA_ARGS__); \
+    vprintf(fmt_slice, __args__); \
 })
 
 #define _sprintf(buf,fmt_slice, ...) ({ \
-    uint32_t __args_count = N_VA_ARGS(__VA_ARGS__); \
-    fc_arg_t __args[N_VA_ARGS(__VA_ARGS__) > 0 ? N_VA_ARGS(__VA_ARGS__) : 1] = \
-        { FOREACH(TO_FC_ARG_COMMA, __VA_ARGS__) }; \
-    vsprintf(buf,fmt_slice, (fc_args_t){.args = __args,.count = __args_count}); \
+    make_args(__VA_ARGS__); \
+    vsprintf(buf,fmt_slice, __args__); \
 })
 
 #define _fprintf(file,fmt_slice, ...) ({ \
-    uint32_t __args_count = N_VA_ARGS(__VA_ARGS__); \
-    fc_arg_t __args[N_VA_ARGS(__VA_ARGS__) > 0 ? N_VA_ARGS(__VA_ARGS__) : 1] = \
-        { FOREACH(TO_FC_ARG_COMMA, __VA_ARGS__) }; \
-    vfprintf(file,fmt_slice, (fc_args_t){.args = __args,.count = __args_count}); \
+    make_args(__VA_ARGS__); \
+    vfprintf(file,fmt_slice, __args__); \
 })
 
 fc_error_t fwrite(file_t* file,def_slice_t buf);

@@ -5,15 +5,11 @@
 fc_error_t __da_first
 (def_da_header_t* da, void* out, uint32_t n_size)
 {
-    if(!da->items) {
-        return fce_da_first_nullptr;
-    }
-    if(da->count == 0) {
-        return fce_da_first_empty;
-    }
-
-    def_slice_t src = { .base = da->items, .count = n_size, };
-    def_slice_t dst = { .base = nullptr, .count = n_size, };
-    memcpy_sized(&dst.base,&out,sizeof(void*));
-    return fc_memcpy(dst,src);
+    def_slice_t src, dst;
+    if(!da->items) { return fce_da_first_nullptr; }
+    if(da->count == 0) { return fce_da_first_empty; }
+    set_slice(&src, da->items, n_size);
+    set_slice(&dst, nullptr, n_size);
+    memcpy_ptr(&dst.base, &out);
+    return fc_memcpy(dst, src);
 }

@@ -36,21 +36,7 @@ struct def_da_header_s {
 
 typedef struct def_da_header_s def_da_header_t;
 
-#define da_push_slice(da, sl) ({                                                    \
-    typeof(da) _da = (da);                                                          \
-    typeof(sl) _sl = (sl);                                                          \
-    def_da_header_t* _def_da = (void*)_da;                                          \
-    fc_error_t _err = __da_reserve                                                  \
-    (_def_da, sizeof(*(_da)->items),_sl.count);                                     \
-    if (_err == fce_success) {                                                      \
-        def_slice_t dst = (def_slice_t) { .base = &_da->items[_da->count], .count=_sl.count };  \
-        if((_err = fc_memcpy(dst,sl))) {                                            \
-            return _err;                                                            \
-        }                                                                           \
-        _def_da->count += _sl.count;                                                \
-    }                                                                               \
-    _err;                                                                           \
-})
+#define da_push_slice(da, sl) (__da_push_slice((void*)(da), (sl), sizeof(*(sl).base), (sl).count))
 
 #define da_pushs(da, ...) ({                                                        \
     typeof(da) _da = (da);                                                          \
@@ -93,14 +79,6 @@ typedef struct def_da_header_s def_da_header_t;
     __da_init_cap((def_da_header_t*)_da, sizeof(*(_da)->items), cap); \
 })
 
-#define da_to_ptr(da) ({                          \
-    typeof(da) _da = (da);                        \
-    (def_slice_t) {                               \
-        .base = _da->items,                       \
-        .count = sizeof(*_da->items) * _da->count \
-    };                                            \
-})
-
 #define da_zeroed(da) ({                   \
     typeof(da) _da = (da);                 \
     fc_error_t _res = fce_success;         \
@@ -115,7 +93,6 @@ typedef struct def_da_header_s def_da_header_t;
 })
 
 #define da_clear(da) do { def_da_header_t* _da = (def_da_header_t*)(da);_da->count = 0; } while(0)
-
 #define da_truncate(da,c) __da_truncate((def_da_header_t*)da, c)
 
 #define da_get(da,i,out) ({             \
@@ -179,6 +156,7 @@ typedef struct def_da_header_s def_da_header_t;
          out,sizeof(*(_da)->items));   \
 })
 
+fc_error_t __da_push_slice(def_da_header_t* da, def_slice_t sl, uint32_t size, uint32_t count);
 fc_error_t __da_reserve(def_da_header_t* da, uint32_t n_size, uint32_t amount);
 fc_error_t __da_init_cap(def_da_header_t* da, uint32_t n_size, uint32_t amount);
 fc_error_t __da_truncate(def_da_header_t* da, uint32_t len);

@@ -3,6 +3,7 @@
 
 #include "stdtypes.h"
 #include "error.h"
+#include "features.h"
 
 struct heap_header_s {
     uint32_t alloced;
@@ -50,10 +51,29 @@ bool compare_ ## type (type *a,type *b) {              \
 #define add_compare_func(type,a,b) \
     bool compare_ ## type (type *a,type *b)
 
-def_slice_t conv_heap_to_ptr(void* ptr);
+INTERNAL void memcpy_ptr(void* dst,void* src)
+{ *(arch_t*)dst = (arch_t)src; }
 
-void memcpy_sized(void* dst,void* src,uint32_t size);
-void memset_sized(void* dst,uint8_t c,uint32_t size);
+INTERNAL void memset_sized(void* dst,uint8_t c,uint32_t size)
+{ uint32_t i; for(i = 0;i < size;++i) { ((uint8_t*)dst)[i] = c; } }
+
+INTERNAL void memcpy_sized(void* dst,void* src,uint32_t size)
+{ uint32_t i; for(i = 0;i < size;++i) { ((uint8_t*)dst)[i] = ((uint8_t*)src)[i]; } }
+
+void conv_heap_to_ptr(void* ptr,def_slice_t* s);
+
+INTERNAL void set_slice
+(def_slice_t* s, byte_t* base, uint32_t c)
+{
+    s->base = base;
+    memcpy_sized((void*)&s->count,&c,sizeof(uint32_t));
+}
+
+INTERNAL void copy_slice
+(def_slice_t* dst, def_slice_t* src)
+{
+    memcpy_sized(dst,src,sizeof(def_slice_t));
+}
 
 fc_error_t fc_malloc(uint32_t n, void* set);
 fc_error_t fc_calloc(uint32_t n, void* set);

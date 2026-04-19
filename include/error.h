@@ -65,7 +65,7 @@ enum fc_error_e {
     fce_fwrite_unknown,
     fce_fwrite_nullptr,
     fce_fwrite_failed,
-    fce_fwrite_partial,
+    fce_fwrite_partial
 };
 
 typedef enum fc_error_e fc_error_t;

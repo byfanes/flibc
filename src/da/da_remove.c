@@ -5,14 +5,11 @@
 fc_error_t __da_remove
 (def_da_header_t* da, uint32_t idx, uint32_t n_size)
 {
-    if(!da->items) {
-        return fce_da_remove_nullptr;
-    }
-    if(idx >= da->count) {
-        return fce_da_remove_index_outofbounds;
-    }
-    def_slice_t src = { .base = da->items + n_size*(idx+1), .count = (da->count-idx-1)*n_size, };
-    def_slice_t dst = { .base = da->items + n_size*idx, .count = src.count, };
+    def_slice_t src, dst;
+    if(!da->items) { return fce_da_remove_nullptr; }
+    if(idx >= da->count) { return fce_da_remove_index_outofbounds; }
+    set_slice(&src, da->items + n_size*(idx+1), (da->count-idx-1)*n_size);
+    set_slice(&dst, da->items + n_size*idx, src.count);
     da->count--;
-    return fc_memmove(dst,src);
+    return fc_memmove(dst, src);
 }

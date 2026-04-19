@@ -50,9 +50,11 @@ typedef unsigned long long uint64_t;
 #if __SIZEOF_POINTER__ == 8
 typedef int64_t  intptr_t;
 typedef uint64_t uintptr_t;
+typedef uint64_t arch_t;
 #elif __SIZEOF_POINTER__ == 4
 typedef int32_t  intptr_t;
 typedef uint32_t uintptr_t;
+typedef uint32_t arch_t;
 #else
 #error "Unsupported pointer size"
 #endif
@@ -69,6 +71,8 @@ typedef  int64_t i64;
 
 #define NULL {0}
 #define nullptr ((void*)0)
+
+#define arch_size (sizeof(void*))
 
 #define CONCAT_IMPL(a, b) a ## b
 #define CONCAT(a, b) CONCAT_IMPL(a, b)
