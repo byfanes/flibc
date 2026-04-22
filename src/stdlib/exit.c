@@ -5,6 +5,6 @@
 _Noreturn void exit
 (int code)
 {
-    syscall_1(syscall_exit,code);
+    syscall_1(syscall_exit, (arch_t)code);
     __unreachable();
 }

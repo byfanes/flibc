@@ -31,34 +31,30 @@ can_be_slice(byte_t);
 
 struct def_slice_s {
     byte_t* base;
-    const uint32_t count;
+    uint32_t count;
 };
 
 typedef struct heap_header_s heap_header_t;
 typedef struct def_slice_s def_slice_t;
-
-#define slice_to_def(s) ((def_slice_t) {.base = (byte_t*)s.base,.count = s.count*(sizeof(*s.base))})
-
-#define def_compare(type)                              \
-bool compare_ ## type (type *a,type *b) {              \
-    def_slice_t lhs = { .base = (byte_t*)a, .count = sizeof(type) }; \
-    def_slice_t rhs = { .base = (byte_t*)b, .count = sizeof(type) }; \
-    bool res = false;                                  \
-    fc_memcmp(lhs,rhs,&res);                           \
-    return res;                                        \
-}
-
-#define add_compare_func(type,a,b) \
-    bool compare_ ## type (type *a,type *b)
-
+    
 INTERNAL void memcpy_ptr(void* dst,void* src)
 { *(arch_t*)dst = (arch_t)src; }
 
-INTERNAL void memset_sized(void* dst,uint8_t c,uint32_t size)
+INTERNAL void memset_sized(void* dst, uint8_t c, uint32_t size)
 { uint32_t i; for(i = 0;i < size;++i) { ((uint8_t*)dst)[i] = c; } }
 
-INTERNAL void memcpy_sized(void* dst,void* src,uint32_t size)
+INTERNAL void memcpy_sized(void* dst, void* src, uint32_t size)
 { uint32_t i; for(i = 0;i < size;++i) { ((uint8_t*)dst)[i] = ((uint8_t*)src)[i]; } }
+
+#define slice_to_def(s) (__slice_to_def(s, sizeof(*s->items)))
+INTERNAL def_slice_t __slice_to_def(void* s, uint32_t size) {
+    uint32_t c;
+    def_slice_t sl = {0};
+    memcpy_sized(&sl, s, sizeof(def_slice_t));
+    c = sl.count*size;
+    memcpy_sized((void*)&sl.count, &c, sizeof(uint32_t));
+    return sl;
+}
 
 void conv_heap_to_ptr(void* ptr,def_slice_t* s);
 
@@ -87,10 +83,10 @@ fc_error_t fc_memcpy(def_slice_t dst, def_slice_t src);
 fc_error_t fc_memcmp(def_slice_t lhs, def_slice_t rhs, bool* res);
 fc_error_t fc_memcmp_min(def_slice_t lhs, def_slice_t rhs, bool* res);
 
-#define malloc(n,x) fc_malloc(n,x)
-#define calloc(n,x) fc_calloc(n,x)
-#define realloc(n,x) fc_realloc(n,x)
-#define free(x) fc_free(x)
+#define malloc fc_malloc
+#define calloc fc_calloc
+#define realloc fc_realloc
+#define free fc_free
 #define memset fc_memset
 #define memswap fc_memswap
 #define memmove fc_memmove

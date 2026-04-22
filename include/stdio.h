@@ -5,8 +5,9 @@
 #include "stdtypes.h"
 #include "memory.h"
 #include "stdarg.h"
-#include "syscall.h"
 #include "da.h"
+
+#define FLIBC_FILE_BUF_SIZE 4096
 
 struct file_s {
     uint32_t fd;
@@ -14,61 +15,28 @@ struct file_s {
 };
 
 typedef struct file_s file_t;
-extern file_t* const stdout;
-extern file_t* const stdin;
-extern file_t* const stderr;
 
-INTERNAL def_slice_t _fmt_from_str(const char* str) {
-    uint32_t i = 0;
-    def_slice_t ret;
-    while(str[i++]);
-    set_slice(&ret, (byte_t*)str, i - 1);
-    return ret;
-}
+fc_error_t get_stdout(file_t* set);
+fc_error_t get_stdin(file_t* set);
+fc_error_t get_stderr(file_t* set);
 
-INTERNAL def_slice_t _fmt_from_slice(def_slice_t slice) {
-    return slice;
-}
-
-#define FORMAT_TO_SLICE(fmt) _Generic((fmt), \
-    char *:       _fmt_from_str, \
-    const char *: _fmt_from_str, \
-    default:      _fmt_from_slice \
-)(fmt)
-
-#define printf(fmt, ...) _printf(FORMAT_TO_SLICE(fmt) __VA_OPT__(,) __VA_ARGS__)
-#define sprintf(buf,fmt, ...) _sprintf(buf,FORMAT_TO_SLICE(fmt) __VA_OPT__(,) __VA_ARGS__)
-#define fprintf(file,fmt, ...) _fprintf(file,FORMAT_TO_SLICE(fmt) __VA_OPT__(,) __VA_ARGS__)
-
-#define TO_FC_ARG_COMMA(x) to_arg(x),
-
-#define make_args(...) \
-    uint32_t __args_count = N_VA_ARGS(__VA_ARGS__); \
-    fc_arg_t __args[N_VA_ARGS(__VA_ARGS__) > 0 ? N_VA_ARGS(__VA_ARGS__) : 1] = \
-        { FOREACH(TO_FC_ARG_COMMA, __VA_ARGS__) }; \
-    fc_args_t __args__; \
-    __args__.args = __args; __args__.count = __args_count;
-
-#define _printf(fmt_slice, ...) ({ \
-    make_args(__VA_ARGS__); \
-    vprintf(fmt_slice, __args__); \
-})
-
-#define _sprintf(buf,fmt_slice, ...) ({ \
-    make_args(__VA_ARGS__); \
-    vsprintf(buf,fmt_slice, __args__); \
-})
-
-#define _fprintf(file,fmt_slice, ...) ({ \
-    make_args(__VA_ARGS__); \
-    vfprintf(file,fmt_slice, __args__); \
-})
-
+fc_error_t fclose(file_t* file);
 fc_error_t fwrite(file_t* file,def_slice_t buf);
 fc_error_t fflush(file_t* file);
 
-fc_error_t vsprintf(def_slice_t buf,def_slice_t fmt, fc_args_t args);
-fc_error_t vprintf(def_slice_t fmt, fc_args_t args);
-fc_error_t vfprintf(file_t* file,def_slice_t fmt, fc_args_t args);
+def_slice_t fmt_from_cstr(const char* str);
+
+fc_error_t vsprintf_sl(def_slice_t buf, def_slice_t fmt, va_list va);
+fc_error_t vprintf_sl(def_slice_t fmt, va_list va);
+fc_error_t vfprintf_sl(file_t* file, def_slice_t fmt, va_list va);
+
+fc_error_t sprintf_sl(def_slice_t buf, def_slice_t fmt, ...);
+fc_error_t printf_sl(def_slice_t fmt, ...);
+fc_error_t fprintf_sl(file_t* file, def_slice_t fmt, ...);
+
+fc_error_t sprintf(def_slice_t buf,const char* fmt, ...);
+fc_error_t printf(const char* fmt, ...);
+fc_error_t fprintf(file_t* file,const char* fmt, ...);
+
 
 #endif /* __FLIBC_STDIO_H__ */

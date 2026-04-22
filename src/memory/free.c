@@ -5,8 +5,8 @@
 fc_error_t fc_free
 (void* ptr)
 {
-    heap_header_t *sptr, *base;
-    uint32_t cap, res;
+    heap_header_t *sptr = 0, *base = 0;
+    uint32_t cap = 0, res = 0;
     if(!ptr) { return fce_success; }
     memcpy_sized(&sptr, ptr, sizeof(void*));
     if(!sptr) { return fce_success; }

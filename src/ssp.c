@@ -13,6 +13,8 @@ uintptr_t __stack_chk_guard = 0xe2dee396;         /* 32-bit */
 uintptr_t __stack_chk_guard = 0x595e9fbd94fda766; /* 64-bit */
 #endif
 
+void __stack_chk_fail(void);
+
 /* 
  * The function GCC calls when a buffer overflow occurs.
  */

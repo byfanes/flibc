@@ -5,7 +5,7 @@
 fc_error_t __da_pop
 (def_da_header_t* da, void* out, uint32_t n_size)
 {
-    def_slice_t src, dst;
+    def_slice_t src = {0}, dst = {0};
     
     if(!da->items) { return fce_da_pop_nullptr; }
     if(da->count == 0) { return fce_da_pop_empty; }

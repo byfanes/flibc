@@ -5,9 +5,9 @@ fc_error_t fc_realloc
 (uint32_t n, void* set)
 {
     uint8_t *ptr, *newptr;
-    uint32_t count;
-    heap_header_t base;
-    fc_error_t res;
+    uint32_t count = 0;
+    heap_header_t base = {0};
+    fc_error_t res = fce_success;
     def_slice_t src, dst;
     if(!set) { return fce_mem_realloc_nullptr; }
     memcpy_ptr(&ptr, set);

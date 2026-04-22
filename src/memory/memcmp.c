@@ -4,11 +4,11 @@
 fc_error_t fc_memcmp
 (def_slice_t lhs, def_slice_t rhs, bool* res)
 {
-    uint32_t count, i;
+    uint32_t count = 0, i = 0;
     if(!lhs.base || !rhs.base || !res) { return fce_mem_memcmp_nullptr; }
     if(lhs.count != rhs.count) { return fce_mem_memcmp_diffsize; }
     count = lhs.count;
-    for (i = 0; i < count; ++i) {
+    for (; i < count; ++i) {
         if(lhs.base[i] != rhs.base[i]) {
             *res = false;
             return fce_success;

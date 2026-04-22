@@ -57,8 +57,7 @@ enum fc_error_e {
     fce_da_pop_first_empty,
 
     fce_printf_unknown,
-    fce_printf_need_more_args,
-    fce_printf_need_less_args,
+    fce_printf_invalid_format,
     fce_printf_small_buffer,
     fce_printf_nullptr,
 

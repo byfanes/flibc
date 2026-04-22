@@ -4,9 +4,9 @@
 fc_error_t fc_memset
 (def_slice_t ptr,uint8_t c)
 {
-    uint32_t i;
+    uint32_t i = 0;
     if(!ptr.base) { return fce_mem_memset_nullptr;}
-    for(i = 0; i < ptr.count; ++i) {
+    for(; i < ptr.count; ++i) {
         ptr.base[i] = c;
     }
     return fce_success;

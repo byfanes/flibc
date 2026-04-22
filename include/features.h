@@ -4,8 +4,10 @@
 
 #if defined(__GNUC__)
 #define _Noreturn __attribute__((__noreturn__))
+#define __dont_optimize__ volatile
 #else /* defined(__GNUC__) */
 #define _Noreturn [[noreturn]]
+#define __dont_optimize__
 #endif
 
 #if __STDC_VERSION__ >= 199901L

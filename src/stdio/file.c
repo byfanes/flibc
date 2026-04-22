@@ -1,28 +1,31 @@
 #include "stdio.h"
 #include "syscall.h"
 
-file_t __stdout = {
-    .fd = UNIX_STDOUT,
-    .buf = {0},
-};
-file_t* const stdout = &__stdout;
+/* Todo: Null Check */
 
-file_t __stdin = {
-    .fd = UNIX_STDIN,
-    .buf = {0},
-};
-file_t* const stdin = &__stdin;
-
-file_t __stderr = {
-    .fd = UNIX_STDERR,
-    .buf = {0},
-};
-file_t* const stderr = &__stderr;
-
-void __fflush_stdio
-(void)
+fc_error_t get_stdout
+(file_t* set)
 {
-    fflush(stdin);
-    fflush(stdout);
-    fflush(stderr);
+    fc_error_t res = fce_success;
+    set->fd = UNIX_STDOUT;
+    da_init_cap(res, &set->buf, FLIBC_FILE_BUF_SIZE);
+    return res;
+}
+
+fc_error_t get_stdin
+(file_t* set)
+{
+    fc_error_t res = fce_success;
+    set->fd = UNIX_STDIN;
+    da_init_cap(res, &set->buf, FLIBC_FILE_BUF_SIZE);
+    return res;
+}
+
+fc_error_t get_stderr
+(file_t* set)
+{
+    fc_error_t res = fce_success;
+    set->fd = UNIX_STDERR;
+    da_init_cap(res, &set->buf, FLIBC_FILE_BUF_SIZE);
+    return res;
 }

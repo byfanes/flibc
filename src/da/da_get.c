@@ -5,7 +5,7 @@
 fc_error_t __da_get
 (def_da_header_t* da, uint32_t idx, uint32_t n_size, void* out)
 {
-    def_slice_t out_src, idx_src;
+    def_slice_t out_src = {0}, idx_src = {0};
     if(!da->items) { return fce_da_get_nullptr; }
     if(idx >= da->count) { return fce_da_get_outofbounds; }
     set_slice(&out_src, nullptr, n_size);
