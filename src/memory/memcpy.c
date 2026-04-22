@@ -1,12 +1,17 @@
 #include "memory.h"
 #include "error.h"
 
-fc_error_t fc_memcpy
+fc_error_t memcpy
 (def_slice_t dst, def_slice_t src)
 {
+    /* Init variables */
     uint32_t i = 0;
+    
+    /* Validate user inputs */
     if(!dst.base || !src.base) { return fce_mem_memcpy_nullptr; }
     if(src.count > dst.count) { return fce_mem_memcpy_smaller; }
+    
+    /* Iter 'src.count' times on the slices' bases and copy to dst from src */
     for(i = 0; i < src.count; ++i) { *(dst.base++) = *(src.base++); }
     return fce_success;
 }

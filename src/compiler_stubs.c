@@ -1,6 +1,12 @@
 #include "stdtypes.h"
 #include "error.h"
 
+/* This is not a part of the library this part is implemented 
+ * because compiler might have make this signature mandatory
+ * so this part bypasses via supplying it but it will not usable
+ * as the user.
+ */
+
 struct def_slice_s {
     byte_t* base;
     const uint32_t count;

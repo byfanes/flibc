@@ -69,7 +69,7 @@ typedef  int32_t i32;
 typedef uint64_t u64;
 typedef  int64_t i64;
 
-#define NULL {0}
+#define NULL 0
 #define nullptr ((void*)0)
 
 #define arch_size (sizeof(void*))

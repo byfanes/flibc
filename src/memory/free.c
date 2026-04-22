@@ -1,19 +1,33 @@
-#include "memory.h"
+#include "memory_private.h"
 #include "error.h"
 #include "syscall.h"
 
-fc_error_t fc_free
+fc_error_t free
 (void* ptr)
 {
-    heap_header_t *sptr = 0, *base = 0;
+    /* Init variables */
+    heap_header_t *base = 0;
     uint32_t cap = 0, res = 0;
+    
+    /* Validate user inputs */
     if(!ptr) { return fce_success; }
-    memcpy_sized(&sptr, ptr, sizeof(void*));
-    if(!sptr) { return fce_success; }
-    base = (sptr - 1);
+    
+    base = *(void**)ptr;
+    
+    /* Validate user inputs */
+    if(!base) { return fce_success; }
+
+    /* Get shadow header and capacity */
+    base--;
     cap = base->raw_alloced;
+
+    /* Give back the memory to os */
     res = (uint32_t) syscall_2(syscall_munmap, (arch_t)base, cap);
-    if(res != 0) { return (fc_error_t)res; }
-    memset_sized(ptr, 0, sizeof(void*));
+
+    /* Error check */    
+    if(res != 0) { return fce_mem_free_munmap_failed; }
+
+    /* Set pointers state to zero as a correct state */
+    *(void**)ptr = 0;
     return fce_success;
 }

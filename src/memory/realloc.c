@@ -1,26 +1,51 @@
-#include "memory.h"
+#include "memory_private.h"
 #include "error.h"
 
-fc_error_t fc_realloc
+fc_error_t realloc
 (uint32_t n, void* set)
 {
-    uint8_t *ptr, *newptr;
-    uint32_t count = 0;
-    heap_header_t base = {0};
+    /* Init variables */
     fc_error_t res = fce_success;
-    def_slice_t src, dst;
+    heap_header_t *he = 0;
+    uint8_t *ba = 0, *n_ba = 0;
+    uint32_t min = 0, i = 0, prev = 0;
+
+    /* Validate user inputs */
     if(!set) { return fce_mem_realloc_nullptr; }
-    memcpy_ptr(&ptr, set);
-    if(*ptr) {
-        memcpy_sized(&base, ptr - sizeof(heap_header_t), sizeof(heap_header_t));
-        count = base.alloced;
-        if(count > n) { return fce_mem_realloc_shrink; }
+
+    /* Get the pointer back */
+    ba = *(void**)set;
+
+    /* Act as free on new size is zero and has a pointer */
+    if(ba && !n) { return free(set); }
+
+    /* Validate user inputs */
+    if(!n && !ba) { return fce_mem_realloc_invalid; }
+    
+    if(!ba) {
+        /* set -> ptr(NULL) */
+        if((res = malloc(n, set))) { return res; }
+        return res;
     }
-    if((res = fc_malloc(n, &newptr))) { return res; }
-    conv_heap_to_ptr(ptr, &src);
-    conv_heap_to_ptr(newptr, &dst);
-    if((res = fc_memcpy(dst, src))) { return res; }
-    if((res = fc_free(set))) { return res; }
-    memcpy_ptr(set, &ptr);
-    return fce_success;
-}
+    /* set -> ptr(addr) -> data */
+    he = (heap_header_t*)(void*)ba - 1;
+    prev = he->alloced;
+
+    /* Allocate new memory and set it*/
+    if((res = malloc(n, set))) { return res; }
+    
+    /* Get the new pointer back */
+    n_ba = *(void**)set;
+
+    /* Get the min size for copying - shrinking */
+    min = (prev > n) ? n : prev;
+    
+    /* Copy old data */
+    for(; i < min; ++i ) { n_ba[i] = ba[i]; }
+    
+    /* Zero-ing the new part */
+    for(; i < n; ++i ) { n_ba[i] = 0; }
+
+    /* Free old part */
+    return free(&ba);
+ }

@@ -1,6 +1,5 @@
 #include "stdlib.h"
 #include "memory.h"
-#include "stdio.h"
 
 extern int main(int,char**);
 void _start(void);

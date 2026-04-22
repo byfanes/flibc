@@ -12,7 +12,6 @@ enum fc_error_e {
 
     fce_mem_memset_nullptr,
 
-    fce_mem_memcmp_diffsize,
     fce_mem_memcmp_nullptr,
 
     fce_mem_memcpy_smaller,
@@ -22,49 +21,12 @@ enum fc_error_e {
     fce_mem_memmove_nullptr,
 
     fce_mem_realloc_nullptr,
-    fce_mem_realloc_shrink,
+    fce_mem_realloc_invalid,
 
     fce_mem_memswap_nullptr,
     fce_mem_memswap_diffsize,
 
-    fce_da_truncate_nullptr,
-    fce_da_zeroed_nullptr,
-
-    fce_da_get_outofbounds,
-    fce_da_get_nullptr,
-
-    fce_da_unordered_remove_nullptr,
-    fce_da_unordered_remove_outofbounds,
-
     fce_ssp_fail,
-
-    fce_da_insert_nullptr,
-    fce_da_insert_outofbounds,
-
-    fce_da_remove_index_outofbounds,
-    fce_da_remove_nullptr,
-
-    fce_da_pop_nullptr,
-    fce_da_pop_empty,
-
-    fce_da_first_nullptr,
-    fce_da_first_empty,
-
-    fce_da_last_nullptr,
-    fce_da_last_empty,
-
-    fce_da_pop_first_nullptr,
-    fce_da_pop_first_empty,
-
-    fce_printf_unknown,
-    fce_printf_invalid_format,
-    fce_printf_small_buffer,
-    fce_printf_nullptr,
-
-    fce_fwrite_unknown,
-    fce_fwrite_nullptr,
-    fce_fwrite_failed,
-    fce_fwrite_partial
 };
 
 typedef enum fc_error_e fc_error_t;
