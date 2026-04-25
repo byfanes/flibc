@@ -10,6 +10,10 @@
 #define __dont_optimize__
 #endif
 
+#ifndef __STDC_VERSION__
+#define __STDC_VERSION__ 0L
+#endif /* __STDC_VERSION__ - c89 does not have this macro */
+
 #if __STDC_VERSION__ >= 199901L
 #define INLINE inline
 #elif defined(__GNUC__) || defined(__clang__)
