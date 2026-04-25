@@ -5,7 +5,7 @@
 #include "stdtypes.h"
 
 /* DA - Implementation
- * This approach uses shadow data trcik to store count, capacity and itesm pointer.
+ * This approach uses double-pointering to store count, capacity and itesm pointer.
  * It is safe to copy but is is slower. If you want to use something faster you can use chunks(tbd)
  * One down-side of this approach is double memory look-up.
  */
