@@ -25,6 +25,7 @@ can_be_slice(char);
 can_be_slice(byte_t);
 typedef slice(byte_t) def_slice_t;
 
+fc_error_t throw_to_heap(void* out, void* in, uint32_t el_size);
 fc_error_t malloc(uint32_t n, void* set);
 fc_error_t calloc(uint32_t n, void* set);
 fc_error_t realloc(uint32_t n, void* set);

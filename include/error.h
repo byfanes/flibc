@@ -26,6 +26,10 @@ enum fc_error_e {
     fce_mem_memswap_nullptr,
     fce_mem_memswap_diffsize,
 
+    fce_mem_throw_to_heap_out_nullptr,
+    fce_mem_throw_to_heap_in_nullptr,
+    fce_mem_throw_to_heap_zero_size,
+
     fce_da_reserve_nullptr,
     fce_da_reserve_zero_nsize,
     fce_da_reserve_zero_amount,
