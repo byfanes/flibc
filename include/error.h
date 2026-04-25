@@ -26,7 +26,33 @@ enum fc_error_e {
     fce_mem_memswap_nullptr,
     fce_mem_memswap_diffsize,
 
-    fce_ssp_fail,
+    fce_da_reserve_nullptr,
+    fce_da_reserve_zero_nsize,
+    fce_da_reserve_zero_amount,
+
+    fce_da_unordered_remove_nullptr,
+    fce_da_unordered_remove_zero_nsize,
+    fce_da_unordered_remove_out_of_bounds,
+
+    fce_da_swap_nullptr,
+    fce_da_swap_zero_nsize,
+    fce_da_swap_lhs_out_of_bounds,
+    fce_da_swap_rhs_out_of_bounds,
+
+    fce_da_insert_da_nullptr,
+    fce_da_insert_in_nullptr,
+    fce_da_insert_zero_nsize,
+    fce_da_insert_out_of_bounds,
+
+    fce_da_remove_nullptr,
+    fce_da_remove_zero_nsize,
+    fce_da_remove_out_of_bounds,
+
+    fce_da_pop_nullptr,
+    fce_da_pop_zero_nsize,
+    fce_da_pop_out_of_bounds,
+
+    fce_ssp_fail
 };
 
 typedef enum fc_error_e fc_error_t;

@@ -5,13 +5,13 @@
 #include "error.h"
 #include "features.h"
 
+#define slice(type) CONCAT(slice_,type)
+
 #define can_be_slice(type)  \
     typedef struct {        \
         type *base;         \
         const uint32_t count; \
-    } slice_ ## type
-
-#define slice(type) CONCAT(slice_,type)
+    } slice(type)
 
 can_be_slice(uint64_t);
 can_be_slice(uint32_t);
