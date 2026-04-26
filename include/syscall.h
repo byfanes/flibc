@@ -123,8 +123,11 @@ INTERNAL arch_t syscall_6
     return _rax;
 }
 
+#define syscall_read 0
 #define syscall_write 1
 #define syscall_open 2
+#define syscall_close 3
+
 #define syscall_mmap 9
 #define syscall_munmap 11
 #define syscall_exit 60

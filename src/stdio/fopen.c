@@ -12,7 +12,7 @@ fc_error_t fopen
     if(!out) { return fce_fopen_out_nullptr; }
 
     /* Call read syscall */
-    fd = syscall_3(syscall_open, (arch_t)name, O_CREAT | O_RDWR | O_TRUNC , S_IRUSR | S_IWUSR);
+    fd = syscall_3(syscall_open, (arch_t)name, O_CREAT | O_RDWR , S_IRUSR | S_IWUSR);
 
     /* Check return of the syscall */
     if(fd < 0) { return fce_fopen_failed; }

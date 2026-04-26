@@ -66,6 +66,14 @@ enum fc_error_e {
 
     fce_fwrite_nullptr,
 
+    fce_fread_file_nullptr,
+    fce_fread_buf_nullptr,
+    fce_fread_failed,
+    fce_fread_partial,
+
+    fce_fclose_nullptr,
+    fce_fclose_failed,
+
     fce_ssp_fail
 };
 
