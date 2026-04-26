@@ -56,6 +56,16 @@ enum fc_error_e {
     fce_da_pop_zero_nsize,
     fce_da_pop_out_of_bounds,
 
+    fce_fopen_failed,
+    fce_fopen_name_nullptr,
+    fce_fopen_out_nullptr,
+
+    fce_fflush_partial,
+    fce_fflush_nullptr,
+    fce_fflush_failed,
+
+    fce_fwrite_nullptr,
+
     fce_ssp_fail
 };
 
