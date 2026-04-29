@@ -17,32 +17,34 @@ static uint32_t strlen
 void runtime_start(long *stack);
 void runtime_start(long *stack)
 {
+    int ret = 0;
     long i = 0, argc = stack[0];
     char **argv = (char **)(stack + 1);
-    
-    slice(char) ext = {
-        .base = (void*)argv[0],
-        .count = strlen(argv[0])
-    };
-    argv++; argc--;
+    slice_t args[MAX_ARGS_COUNT] = {0}, *args_ptr = 0, ext = {0};
+    slice(slice_t) _args = {0};
 
-    slice_t args[MAX_ARGS_COUNT] = {0};
-    slice_t* args_ptr = 0;
-    
+    if(argc > 0) {
+        ext.base = (void*)argv[0];
+        __set_slice_count(ext, strlen(argv[0]));
+        argv++; argc--;
+    }
+
     if(argc > MAX_ARGS_COUNT) {
         if(malloc(sizeof(slice_t) * (uint32_t)argc, &args_ptr)) { exit(255); }
     } else {
         args_ptr = args;
     }
-    slice(slice_t) _args = { args_ptr, (uint32_t)argc};
-    
+
+    _args.base = args_ptr;
+    __set_slice_count(_args, (uint32_t)argc);
+
     for(; i < argc; ++i) {
         char* a = argv[i];
         args[i].base = a;
         __set_slice_count(args[i], strlen(a));
     }
 
-    int ret = main(ext, _args);
+    ret = main(ext, _args);
 
     if(argc > MAX_ARGS_COUNT) {
         if(free(&args_ptr)) { exit(255); }

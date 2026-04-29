@@ -12,7 +12,7 @@ WARN_CFLAGS := \
   -Wshadow -Wpointer-arith \
   -Wwrite-strings -Wundef \
   -Wfloat-equal -Wcast-align \
-  -Wswitch-default
+  -Wswitch-default -std=c89 -ansi -pedantic -Wpedantic
 
 # FREESTANDING (lib + main)
 FREESTANDING_CFLAGS := \
