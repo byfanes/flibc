@@ -2,7 +2,7 @@
 #include "error.h"
 
 fc_error_t memcpy
-(def_slice_t dst, def_slice_t src)
+(slice_t dst, slice_t src)
 {
     /* Init variables */
     uint32_t i = 0;

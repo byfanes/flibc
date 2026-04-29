@@ -5,7 +5,7 @@ fc_error_t throw_to_heap
 {
     /* Init variables */
     fc_error_t res = fce_success;
-    def_slice_t src = {0}, dst = {0};
+    slice_t src = {0}, dst = {0};
 
     /* Validate user inputs - n_size can not be 0 via sizeof but user implicitly call with it */
     if(!out) { return fce_mem_throw_to_heap_out_nullptr; }

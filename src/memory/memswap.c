@@ -2,10 +2,10 @@
 #include "error.h"
 
 fc_error_t memswap
-(def_slice_t lhs, def_slice_t rhs)
+(slice_t lhs, slice_t rhs)
 {
     /* Init variables */
-    uint8_t c = 0;
+    char c = 0;
     uint32_t i = 0;
     
     /* Validate user inputs */

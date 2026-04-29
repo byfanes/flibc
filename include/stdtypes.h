@@ -59,7 +59,6 @@ typedef int32_t  arch_t;
 #error "Unsupported pointer size"
 #endif
 
-typedef  uint8_t byte_t;
 typedef  uint8_t  u8;
 typedef   int8_t  i8;
 typedef uint16_t u16;

@@ -1,9 +1,9 @@
 #include "memory_private.h"
 
-def_slice_t cstr_to_def
+slice_t cstr_to_def
 (const char* cstr)
 {
-    def_slice_t sl = {0};
+    slice_t sl = {0};
     uint32_t i = 0;
 
     sl.base = (void*)cstr;

@@ -14,7 +14,7 @@ fc_error_t fopen_stdout(file_t** out);
 fc_error_t fopen_stdin(file_t** out);
 
 fc_error_t fflush(file_t* file);
-fc_error_t fwrite(file_t* file, def_slice_t sl);
-fc_error_t fread(file_t* file, def_slice_t* buf);
+fc_error_t fwrite(file_t* file, slice_t sl);
+fc_error_t fread(file_t* file, slice_t* buf);
 
 #endif /* __FLIBC_STDIO_H__ */

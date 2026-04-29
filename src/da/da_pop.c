@@ -6,7 +6,7 @@ fc_error_t __da_pop
     /* Init variables */
     def_da_t *def = da;
     uint32_t i = 0;
-    byte_t* p_out = out;
+    char *p_out = out;
 
     /* Validate user inputs - n_size can not be 0 via sizeof but user implicitly call with it */
     if(!def) { return fce_da_pop_nullptr; }

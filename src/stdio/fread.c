@@ -1,7 +1,7 @@
 #include "stdio_private.h"
 
 fc_error_t fread
-(file_t* file, def_slice_t* buf)
+(file_t* file, slice_t* buf)
 {
     /* Init variables */
     uint32_t count = 0;

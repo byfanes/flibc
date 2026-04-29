@@ -61,7 +61,7 @@ static void test_realloc(void) {
 static void test_memset(void);
 static void test_memset(void) {
     uint8_t buffer[10];
-    def_slice_t slice = { buffer, 10 };
+    slice_t slice = { buffer, 10 };
 
     CHECK_OK(memset(slice, 0xAA));
 
@@ -75,8 +75,8 @@ static void test_memcpy(void) {
     uint8_t src_buf[5] = {1,2,3,4,5};
     uint8_t dst_buf[5] = {0};
 
-    def_slice_t src = { src_buf, 5 };
-    def_slice_t dst = { dst_buf, 5 };
+    slice_t src = { src_buf, 5 };
+    slice_t dst = { dst_buf, 5 };
 
     CHECK_OK(memcpy(dst, src));
 
@@ -89,8 +89,8 @@ static void test_memmove_overlap(void);
 static void test_memmove_overlap(void) {
     uint8_t buf[10] = {0,1,2,3,4,5,6,7,8,9};
 
-    def_slice_t src = { buf, 5 };
-    def_slice_t dst = { buf + 2, 5 };
+    slice_t src = { buf, 5 };
+    slice_t dst = { buf + 2, 5 };
 
     CHECK_OK(memmove(dst, src));
 
@@ -105,9 +105,9 @@ static void test_memcmp(void) {
     uint8_t b[4] = {1,2,3,4};
     uint8_t c[4] = {1,2,3,5};
 
-    def_slice_t sa = { a, 4 };
-    def_slice_t sb = { b, 4 };
-    def_slice_t sc = { c, 4 };
+    slice_t sa = { a, 4 };
+    slice_t sb = { b, 4 };
+    slice_t sc = { c, 4 };
 
     bool res = false;
 
@@ -123,8 +123,8 @@ static void test_memswap(void) {
     uint8_t a[3] = {1,2,3};
     uint8_t b[3] = {4,5,6};
 
-    def_slice_t sa = { a, 3 };
-    def_slice_t sb = { b, 3 };
+    slice_t sa = { a, 3 };
+    slice_t sb = { b, 3 };
 
     CHECK_OK(memswap(sa, sb));
 
@@ -140,8 +140,8 @@ static void test_memcmp_min(void) {
     uint8_t a[5] = {1,2,3,4,5};
     uint8_t b[3] = {1,2,3};
 
-    def_slice_t sa = { a, 5 };
-    def_slice_t sb = { b, 3 };
+    slice_t sa = { a, 5 };
+    slice_t sb = { b, 3 };
 
     bool res = false;
 

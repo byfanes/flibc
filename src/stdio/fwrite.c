@@ -1,12 +1,12 @@
 #include "stdio_private.h"
 
 fc_error_t fwrite
-(file_t* file, def_slice_t sl)
+(file_t* file, slice_t sl)
 {
     /* Init variables */
     fc_error_t res = fce_success;
     arch_t ret = 0;
-    def_slice_t dst = {0};
+    slice_t dst = {0};
 
     /* Validate user inputs */
     if(!file) { return fce_fwrite_nullptr; }

@@ -6,7 +6,7 @@ fc_error_t __da_remove
     /* Init variables */
     def_da_t *def = da;
     uint32_t count  = 0;
-    def_slice_t src = {0}, dst = {0};
+    slice_t src = {0}, dst = {0};
 
     /* Validate user inputs - n_size can not be 0 via sizeof but user implicitly call with it */
     if(!def) { return fce_da_remove_nullptr; }

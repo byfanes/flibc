@@ -2,7 +2,7 @@
 #include "error.h"
 
 fc_error_t memcmp_min
-(def_slice_t lhs, def_slice_t rhs, bool* res)
+(slice_t lhs, slice_t rhs, bool* res)
 {
     /* Init variables */
     uint32_t count = 0, i = 0;

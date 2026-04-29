@@ -2,10 +2,10 @@
 #include "error.h"
 
 fc_error_t memmove
-(def_slice_t dst, def_slice_t src)
+(slice_t dst, slice_t src)
 {
     /* Init variables */
-    byte_t *tmp = 0, *tmp2 = 0, buf[FLIBC_STACK_THRESHOLD] = {0};
+    char *tmp = 0, *tmp2 = 0, buf[FLIBC_STACK_THRESHOLD] = {0};
     void *x_min, *x_max, *y_min, *y_max;
     fc_error_t res = fce_success;
     uint32_t i = 0;

@@ -5,7 +5,7 @@ fc_error_t __da_swap
 {
     /* Init variables */
     def_da_t* def = da;
-    uint32_t i = 0; uint8_t c = 0;
+    uint32_t i = 0; char c = 0;
 
     /* Validate user inputs - n_size can not be 0 via sizeof but user implicitly call with it */
     if(!def) { return fce_da_swap_nullptr; }

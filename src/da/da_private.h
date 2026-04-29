@@ -7,7 +7,7 @@
 typedef struct {
     uint32_t count;
     uint32_t capacity;
-    byte_t* items;
+    char* items;
 } def_da_t;
 
 #endif /* __FLIBC_DA_PRIVATE_H__ */

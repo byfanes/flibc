@@ -2,6 +2,7 @@
 #define __FLIBC_STDLIB_H__
 
 #include "features.h"
+#include "memory.h"
 
 _Noreturn void exit(int code);
 _Noreturn void abort(void);
