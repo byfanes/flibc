@@ -1,7 +1,8 @@
 #include "stdlib.h"
+#include "stdio.h"
 #include "memory/memory_private.h"
 
-extern int main(slice_t, slice(slice_t));
+extern int main(stdio_t, slice_t, slice(slice_t));
 void _start(void);
 
 static uint32_t strlen
@@ -22,6 +23,7 @@ void runtime_start(long *stack)
     char **argv = (char **)(stack + 1);
     slice_t args[MAX_ARGS_COUNT] = {0}, *args_ptr = 0, ext = {0};
     slice(slice_t) _args = {0};
+    stdio_t stdio = {0};
 
     if(argc > 0) {
         ext.base = (void*)argv[0];
@@ -35,6 +37,10 @@ void runtime_start(long *stack)
         args_ptr = args;
     }
 
+    if(fopen_stdin(&stdio.in)) { exit(255); }
+    if(fopen_stdout(&stdio.out)) { exit(255); }
+    if(fopen_stderr(&stdio.err)) { exit(255); }
+
     _args.base = args_ptr;
     __set_slice_count(_args, (uint32_t)argc);
 
@@ -44,11 +50,14 @@ void runtime_start(long *stack)
         __set_slice_count(args[i], strlen(a));
     }
 
-    ret = main(ext, _args);
+    ret = main(stdio, ext, _args);
 
     if(argc > MAX_ARGS_COUNT) {
         if(free(&args_ptr)) { exit(255); }
     }
+    fclose(&stdio.in);
+    fclose(&stdio.out);
+    fclose(&stdio.err);
     exit(ret);
 }
 

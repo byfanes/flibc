@@ -7,6 +7,11 @@
 
 typedef struct file_s file_t;
 
+typedef struct stdio_s stdio_t;
+struct stdio_s {
+    file_t *out, *in, *err;
+};
+
 fc_error_t fclose(file_t** file);
 fc_error_t fopen(const char* name, file_t** out);
 fc_error_t fopen_stderr(file_t** out);
