@@ -2,13 +2,13 @@
 #include "error.h"
 
 fc_error_t realloc
-(uint32_t n, void* set)
+(u32 n, void* set)
 {
     /* Init variables */
     fc_error_t res = fce_success;
     heap_header_t *he = 0;
-    uint8_t *ba = 0, *n_ba = 0;
-    uint32_t min = 0, i = 0, prev = 0;
+    u8 *ba = 0, *n_ba = 0;
+    u32 min = 0, i = 0, prev = 0;
 
     /* Validate user inputs */
     if(!set) { return fce_mem_realloc_nullptr; }

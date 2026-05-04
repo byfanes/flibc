@@ -10,30 +10,29 @@
 #define can_be_slice(type)  \
     typedef struct {        \
         type *base;         \
-        const uint32_t count; \
+        const u32 count; \
     } slice(type)
 
-can_be_slice(uint64_t);
-can_be_slice(uint32_t);
-can_be_slice(uint16_t);
-can_be_slice(uint8_t);
-can_be_slice(int64_t);
-can_be_slice(int32_t);
-can_be_slice(int16_t);
-can_be_slice(int8_t);
-can_be_slice(char);
-typedef slice(char) slice_t;
+can_be_slice(u64);
+can_be_slice(u32);
+can_be_slice(u16);
+can_be_slice(u8);
+can_be_slice(i64);
+can_be_slice(i32);
+can_be_slice(i16);
+can_be_slice(i8);
+typedef slice(u8) slice_t;
 can_be_slice(slice_t);
 
 slice_t cstr_to_def(const char* cstr);
 
-fc_error_t throw_to_heap(void* out, void* in, uint32_t el_size);
-fc_error_t malloc(uint32_t n, void* set);
-fc_error_t calloc(uint32_t n, void* set);
-fc_error_t realloc(uint32_t n, void* set);
+fc_error_t throw_to_heap(void* out, void* in, u32 el_size);
+fc_error_t malloc(u32 n, void* set);
+fc_error_t calloc(u32 n, void* set);
+fc_error_t realloc(u32 n, void* set);
 fc_error_t free(void* ptr);
 
-fc_error_t memset(slice_t ptr, uint8_t c);
+fc_error_t memset(slice_t ptr, u8 c);
 fc_error_t memswap(slice_t lhs, slice_t rhs);
 fc_error_t memmove(slice_t dst, slice_t src);
 fc_error_t memcpy(slice_t dst, slice_t src);

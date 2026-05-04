@@ -5,7 +5,7 @@ fc_error_t fflush
 {
     /* Init variables */
     arch_t ret = 0;
-    uint32_t count = 0;
+    u32 count = 0;
 
     /* Validate user inputs */
     if(!file) { return fce_fflush_nullptr; }

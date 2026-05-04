@@ -5,10 +5,10 @@
 extern int main(stdio_t, slice_t, slice(slice_t));
 void _start(void);
 
-static uint32_t strlen
+static u32 strlen
 (const char* s)
 {
-    uint32_t i = 0;
+    u32 i = 0;
     while(s[i++]) {}
     return i - 1;
 }
@@ -32,7 +32,7 @@ void runtime_start(long *stack)
     }
 
     if(argc > MAX_ARGS_COUNT) {
-        if(malloc(sizeof(slice_t) * (uint32_t)argc, &args_ptr)) { exit(255); }
+        if(malloc(sizeof(slice_t) * (u32)argc, &args_ptr)) { exit(255); }
     } else {
         args_ptr = args;
     }
@@ -42,11 +42,11 @@ void runtime_start(long *stack)
     if(fopen_stderr(&stdio.err)) { exit(255); }
 
     _args.base = args_ptr;
-    __set_slice_count(_args, (uint32_t)argc);
+    __set_slice_count(_args, (u32)argc);
 
     for(; i < argc; ++i) {
         char* a = argv[i];
-        args[i].base = a;
+        args[i].base = (void*)a;
         __set_slice_count(args[i], strlen(a));
     }
 

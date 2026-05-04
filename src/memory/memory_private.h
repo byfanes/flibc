@@ -4,12 +4,12 @@
 #include "memory.h"
 
 struct heap_header_s {
-    uint32_t alloced;
-    uint32_t raw_alloced;
+    u32 alloced;
+    u32 raw_alloced;
 };
 
 typedef struct heap_header_s heap_header_t;
 
-#define __set_slice_count(sl, c) *(uint32_t*)(void*)&(sl.count) = c
+#define __set_slice_count(sl, c) *(u32*)(void*)&(sl.count) = c
 
 #endif /* __FLIBC_MEMORY_PRIVATE_H__ */

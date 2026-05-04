@@ -7,8 +7,10 @@
 
 struct file_s {
     arch_t fd;
-    uint32_t count;
-    char buf[FLIBC_STACK_THRESHOLD];
+    u32 count;
+    u8 buf[FLIBC_STACK_THRESHOLD];
 };
+
+void formatf(slice_t fmt);
 
 #endif /* __FLIBC_STDIO_PRIVATE_H__ */

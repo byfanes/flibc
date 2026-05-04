@@ -3,8 +3,8 @@
 #include "features.h"
 
 _Noreturn void exit
-(int code)
+(arch_t code)
 {
-    syscall_1(syscall_exit, (arch_t)code);
+    syscall_1(syscall_exit, code);
     __unreachable();
 }

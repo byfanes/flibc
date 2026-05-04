@@ -1,7 +1,7 @@
 #include "da_private.h"
 
 fc_error_t __da_reserve_if
-(void* p_da, uint32_t amount, uint32_t n_size)
+(void* p_da, u32 amount, u32 n_size)
 {
     /* Init variables */
     def_da_t* da = 0;

@@ -1,7 +1,7 @@
 #include "memory_private.h"
 
 fc_error_t throw_to_heap
-(void* out, void* in, uint32_t el_size)
+(void* out, void* in, u32 el_size)
 {
     /* Init variables */
     fc_error_t res = fce_success;

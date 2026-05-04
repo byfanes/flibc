@@ -1,11 +1,11 @@
 #include "da_private.h"
 
 fc_error_t __da_swap
-(void* da, uint32_t lhs, uint32_t rhs, uint32_t n_size)
+(void* da, u32 lhs, u32 rhs, u32 n_size)
 {
     /* Init variables */
     def_da_t* def = da;
-    uint32_t i = 0; char c = 0;
+    u32 i = 0; u8 c = 0;
 
     /* Validate user inputs - n_size can not be 0 via sizeof but user implicitly call with it */
     if(!def) { return fce_da_swap_nullptr; }

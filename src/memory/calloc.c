@@ -3,11 +3,11 @@
 #include "syscall.h"
 
 fc_error_t calloc
-(uint32_t size, void* set)
+(u32 size, void* set)
 {
     /* Init variables */
     fc_error_t res = fce_success;
-    uint32_t i = 0; uint8_t *ptr = 0;
+    u32 i = 0; u8 *ptr = 0;
     
     /* Allocate memory - User input validation done here */
     if((res = malloc(size,set))) { return res; }

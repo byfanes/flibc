@@ -5,8 +5,8 @@ fc_error_t memswap
 (slice_t lhs, slice_t rhs)
 {
     /* Init variables */
-    char c = 0;
-    uint32_t i = 0;
+    u8 c = 0;
+    u32 i = 0;
     
     /* Validate user inputs */
     if(!lhs.base || !rhs.base) { return fce_mem_memswap_nullptr; }

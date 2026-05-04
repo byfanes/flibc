@@ -5,9 +5,9 @@
 #include "../memory/memory_private.h"
 
 typedef struct {
-    uint32_t count;
-    uint32_t capacity;
-    char* items;
+    u32 count;
+    u32 capacity;
+    u8* items;
 } def_da_t;
 
 #endif /* __FLIBC_DA_PRIVATE_H__ */

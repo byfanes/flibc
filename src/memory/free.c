@@ -7,7 +7,7 @@ fc_error_t free
 {
     /* Init variables */
     heap_header_t *base = 0;
-    uint32_t cap = 0, res = 0;
+    u32 cap = 0, res = 0;
     
     /* Validate user inputs */
     if(!ptr) { return fce_success; }
@@ -22,7 +22,7 @@ fc_error_t free
     cap = base->raw_alloced;
 
     /* Give back the memory to os */
-    res = (uint32_t) syscall_2(syscall_munmap, (arch_t)base, cap);
+    res = (u32) syscall_2(syscall_munmap, (arch_t)base, cap);
 
     /* Error check */    
     if(res != 0) { return fce_mem_free_munmap_failed; }

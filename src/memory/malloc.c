@@ -3,7 +3,7 @@
 #include "syscall.h"
 
 fc_error_t malloc
-(uint32_t size, void* set)
+(u32 size, void* set)
 {
     /* Init variables */
     heap_header_t header = {0}, *base = 0;
@@ -15,7 +15,7 @@ fc_error_t malloc
     /* Set header alloced is user given size and raw is aligned size */
     header.alloced = size;
     size += sizeof(header);
-    size = (size + 7) & (uint32_t)(~7);
+    size = (size + 7) & (u32)(~7);
     header.raw_alloced = size;
     
     /* Get memory from the os */

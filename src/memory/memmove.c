@@ -5,10 +5,10 @@ fc_error_t memmove
 (slice_t dst, slice_t src)
 {
     /* Init variables */
-    char *tmp = 0, *tmp2 = 0, buf[FLIBC_STACK_THRESHOLD] = {0};
+    u8 *tmp = 0, *tmp2 = 0, buf[FLIBC_STACK_THRESHOLD] = {0};
     void *x_min, *x_max, *y_min, *y_max;
     fc_error_t res = fce_success;
-    uint32_t i = 0;
+    u32 i = 0;
 
     /* Validate user inputs */
     if(!dst.base || !src.base) { return fce_mem_memmove_nullptr; }

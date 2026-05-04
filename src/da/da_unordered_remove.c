@@ -1,12 +1,12 @@
 #include "da_private.h"
 
 fc_error_t __da_unordered_remove
-(void* da, void* out, uint32_t idx, uint32_t n_size)
+(void* da, void* out, u32 idx, u32 n_size)
 {
     /* Init variables */
     def_da_t *def = da;
-    char *p_out = out;
-    uint32_t i = 0;
+    u8 *p_out = out;
+    u32 i = 0;
 
     /* Validate user inputs - n_size can not be 0 via sizeof but user implicitly call with it */
     if(!out && !def) { return fce_da_unordered_remove_nullptr; }

@@ -1,13 +1,13 @@
 #include "da_private.h"
 
 fc_error_t __da_insert
-(void* da, void* in, uint32_t idx, uint32_t n_size)
+(void* da, void* in, u32 idx, u32 n_size)
 {
     /* Init variables */
     fc_error_t res = fce_success;
     def_da_t *def = da;
-    char *p_in = in;
-    uint32_t count = 0, i = 0;
+    u8 *p_in = in;
+    u32 count = 0, i = 0;
     slice_t src = {0}, dst = {0};
 
     /* Validate user inputs - n_size can not be 0 via sizeof but user implicitly call with it */

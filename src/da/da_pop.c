@@ -1,12 +1,12 @@
 #include "da_private.h"
 
 fc_error_t __da_pop
-(void* da, void* out, uint32_t idx, uint32_t n_size)
+(void* da, void* out, u32 idx, u32 n_size)
 {
     /* Init variables */
     def_da_t *def = da;
-    uint32_t i = 0;
-    char *p_out = out;
+    u32 i = 0;
+    u8 *p_out = out;
 
     /* Validate user inputs - n_size can not be 0 via sizeof but user implicitly call with it */
     if(!def) { return fce_da_pop_nullptr; }

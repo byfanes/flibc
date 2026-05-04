@@ -5,7 +5,7 @@ fc_error_t memcmp
 (slice_t lhs, slice_t rhs, bool* res)
 {
     /* Init variables */
-    uint32_t i = 0;
+    u32 i = 0;
 
     /* Validate user inputs */
     if(!lhs.base || !rhs.base || !res) { return fce_mem_memcmp_nullptr; }

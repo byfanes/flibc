@@ -1,17 +1,6 @@
 #ifndef __FLIBC_STDTYPES_H__
 #define __FLIBC_STDTYPES_H__
 
-#ifndef __cplusplus
-
-#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
-    typedef signed char bool;
-    #define true 1
-    #define false 0
-    #define __bool_true_false_are_defined 1
-#endif
-
-#endif /* __cplusplus */
-
 /* 8-bit */
 typedef signed char        int8_t;
 typedef unsigned char      uint8_t;
@@ -67,6 +56,23 @@ typedef uint32_t u32;
 typedef  int32_t i32;
 typedef uint64_t u64;
 typedef  int64_t i64;
+
+#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
+    typedef u8 bool;
+    #define true 1
+    #define false 0
+    #define __bool_true_false_are_defined 1
+#endif
+
+#define  uint8_t ()
+#define   int8_t ()
+#define uint16_t ()
+#define  int16_t ()
+#define uint32_t ()
+#define  int32_t ()
+#define uint64_t ()
+#define  int64_t ()
+
 
 #define NULL 0
 #define nullptr ((void*)0)

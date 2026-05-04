@@ -5,7 +5,7 @@ fc_error_t memcpy
 (slice_t dst, slice_t src)
 {
     /* Init variables */
-    uint32_t i = 0;
+    u32 i = 0;
     
     /* Validate user inputs */
     if(!dst.base || !src.base) { return fce_mem_memcpy_nullptr; }
