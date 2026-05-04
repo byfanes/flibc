@@ -11,8 +11,8 @@ WARN_CFLAGS := \
   -Wstrict-prototypes -Wmissing-prototypes \
   -Wshadow -Wpointer-arith \
   -Wwrite-strings -Wundef \
-  -Wfloat-equal -Wcast-align \
-  -Wswitch-default -std=c89 -ansi -pedantic -Wpedantic
+  -Wfloat-equal -Wcast-align -Wno-int-conversion \
+  -Wswitch-default -std=c89 -ansi -pedantic -Werror
 
 # FREESTANDING (lib + main)
 FREESTANDING_CFLAGS := \

@@ -30,6 +30,10 @@
 #define typeof __typeof__
 #endif
 
+#ifndef _Nullable
+#define _Nullable
+#endif /* _Nullable */
+
 #define __unreachable() \
     for(;;) __builtin_unreachable();
 

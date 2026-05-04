@@ -1,25 +1,21 @@
 #include "stdio_private.h"
 
 fc_error_t fread
-(file_t* file, slice_t* buf)
+(file_t* file, slice_t buf, uint32_t* _Nullable read_count)
 {
     /* Init variables */
-    uint32_t count = 0;
     arch_t ret = 0;
     
     /* Validate user inputs */
     if(!file) { return fce_fread_file_nullptr; }
-    if(!buf || !buf->base) { return fce_fread_buf_nullptr; }
-    count = buf->count;
 
     /* Call read syscall */
-    ret = syscall_3(syscall_read, (arch_t)file->fd, (arch_t)buf->base, count);
+    ret = syscall_3(syscall_read, (arch_t)file->fd, (arch_t)buf.base, buf.count);
 
     /* Check return of the syscall */
     if(ret < 0) { return fce_fread_failed; }
-    if(ret)
-    {__set_slice_count((*buf), (uint32_t)ret);}
-    if(ret < count) { return fce_fread_partial; }
+    if(read_count) { *read_count = (uint32_t)ret; }
+    if(ret < buf.count) { return fce_fread_partial; }
 
     return fce_success;
 }
