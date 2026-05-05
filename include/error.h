@@ -74,6 +74,12 @@ enum fc_error_e {
     fce_fclose_nullptr,
     fce_fclose_failed,
 
+    fce_formatf_unknown,
+    fce_formatf_fmt_null,
+    fce_formatf_out_null,
+
+    fce_sprintf_small_buffer,
+
     fce_ssp_fail
 };
 

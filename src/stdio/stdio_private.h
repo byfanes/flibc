@@ -2,6 +2,7 @@
 #define __FLIBC_STDIO_PRIVATE_H__
 
 #include "stdio.h"
+#include "error.h"
 #include "../memory/memory_private.h"
 #include "syscall.h"
 
@@ -11,6 +12,6 @@ struct file_s {
     u8 buf[FLIBC_STACK_THRESHOLD];
 };
 
-void formatf(slice_t fmt);
+fc_error_t formatf(slice_t buf, slice_t fmt, va_list ap, u32* out_len);
 
 #endif /* __FLIBC_STDIO_PRIVATE_H__ */
