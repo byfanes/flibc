@@ -78,13 +78,13 @@ fc_error_t formatf
     bool long_num = false;
     u64 cur_u64 = 0;
     i64 cur_i64 = 0;
-    
+
     /* Check input */
     if(!fmt.base) return fce_formatf_fmt_null;
     if(!out_len) return fce_formatf_out_null;
 
     *out_len = 0;
-    
+
     for(;i < fmt.count; ++i) {
 
         /* Check for first '%' */
@@ -99,7 +99,7 @@ fc_error_t formatf
         /* Check for long numbers */
         if(fmt.base[i] == 'l') { ++i; long_num = true; }
         if(fmt.base[i] == 'l') { ++i; long_num = true; }
-        
+
         /* Check for '%%' */
         if(fmt.base[i] == '%') {
             count++;
@@ -117,7 +117,7 @@ fc_error_t formatf
             cur_u64 = (u64)va_arg(ap, int);
             if(buf.base) { buf.base[count - 1] = (u8)cur_u64; }
         }
-        
+
         /* Handle %llx / %lx / %x or %llX / %llX / %X unsigned hexadecimal integer */
 	else if(fmt.base[i] == 'x' || fmt.base[i] == 'X') {
             if(long_num) { cur_u64 = va_arg(ap, u64);}
@@ -129,7 +129,7 @@ fc_error_t formatf
 	else if(fmt.base[i] == 'd' || fmt.base[i] == 'i') {
 	    if(long_num) { cur_i64 = va_arg(ap, i64);}
 	    else { cur_i64 = va_arg(ap, i32); }
-            
+
             /* Check for negative */
 	    if(cur_i64 < 0) {
                 count++; cur_i64 = -cur_i64;

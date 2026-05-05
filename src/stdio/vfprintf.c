@@ -8,7 +8,7 @@ fc_error_t vfprintf
     u8 buf[4096];
     va_list c_ap;
     slice_t buf_sl = {0};
-    
+
     va_copy(c_ap, ap);
     res = formatf(buf_sl, fmt, c_ap, &count);
     if(res) { return res; }
@@ -20,12 +20,12 @@ fc_error_t vfprintf
     } else {
         buf_sl.base = buf;
     }
-    
+
     res = formatf(buf_sl, fmt, ap, &count);
     if(res) { return res; }
 
     fwrite(file, buf_sl);
-    
+
     if(count > sizeof(buf)) {
         return free(&buf_sl.base);
     }

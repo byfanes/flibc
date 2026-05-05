@@ -7,15 +7,15 @@ fc_error_t vsprintf
     fc_error_t res = fce_success;
     va_list c_ap;
     slice_t buf_sl = {0};
-    
+
     if(wrote_count) { *wrote_count = 0; }
-    
+
     va_copy(c_ap, ap);
     res = formatf(buf_sl, fmt, c_ap, &count);
     if(res) { return res; }
 
     if(buf.count < count) { return fce_sprintf_small_buffer; }
-    
+
     res = formatf(buf, fmt, ap, &count);
     if(res) { return res; }
 
