@@ -21,7 +21,7 @@ FREESTANDING_CFLAGS := \
 
 # HOSTED (tests only)
 HOST_CFLAGS := \
-  -Iinclude $(OPT) $(WARN_CFLAGS)
+  -Iinclude $(OPT) -fno-builtin -nostdinc
 
 SRC_DIR := src
 TEST_DIR := tests
@@ -40,6 +40,18 @@ TEST_OUT := $(TEST_SRC:$(TEST_DIR)/%.c=$(BUILD_DIR)/$(TEST_DIR)/%)
 .PHONY: all clean tests check
 
 all: $(TARGET) $(EXEC)
+
+# BUILD ALL TESTS
+tests: $(TEST_OUT)
+
+# BUILD AND RUN ALL TESTS
+check: tests
+	@echo "--- Running Tests ---"
+	@for test in $(TEST_OUT); do \
+		echo "Running $$test..."; \
+		./$$test || exit 1; \
+	done
+	@echo "--- All tests passed! ---"
 
 # LIBRARY (freestanding)
 $(TARGET): $(OBJS)
