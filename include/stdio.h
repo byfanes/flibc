@@ -6,15 +6,25 @@
 #include "stdarg.h"
 #include "memory.h"
 
-typedef struct file_s file_t;
+enum file_type_e {
+    file_read,
+    file_write,
+    file_append,
+    file_read_plus,
+    file_write_plus,
+    file_append_plus
+};
 
+typedef enum file_type_e file_type_t;
+typedef struct file_s file_t;
 typedef struct stdio_s stdio_t;
+
 struct stdio_s {
     file_t *out, *in, *err;
 };
 
 fc_error_t fclose(file_t** file);
-fc_error_t fopen(const char* name, file_t** out);
+fc_error_t fopen(const char* name, file_t** out, file_type_t type);
 fc_error_t fopen_stderr(file_t** out);
 fc_error_t fopen_stdout(file_t** out);
 fc_error_t fopen_stdin(file_t** out);

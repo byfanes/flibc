@@ -8,6 +8,7 @@ fc_error_t fread
     
     /* Validate user inputs */
     if(!file) { return fce_fread_file_nullptr; }
+    if(file->type != file_write || file->type != file_append) { return fce_fread_got_unreadable_file; }
 
     /* Call read syscall */
     ret = syscall_3(syscall_read, (arch_t)file->fd, (arch_t)buf.base, buf.count);

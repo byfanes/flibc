@@ -59,17 +59,21 @@ enum fc_error_e {
     fce_fopen_failed,
     fce_fopen_name_nullptr,
     fce_fopen_out_nullptr,
+    fce_fopen_invalid_type,
 
     fce_fflush_partial,
     fce_fflush_nullptr,
     fce_fflush_failed,
+    fce_fflush_got_read_file,
 
     fce_fwrite_nullptr,
+    fce_fwrite_got_read_file,
 
     fce_fread_file_nullptr,
     fce_fread_buf_nullptr,
     fce_fread_failed,
     fce_fread_partial,
+    fce_fread_got_unreadable_file,
 
     fce_fclose_nullptr,
     fce_fclose_failed,

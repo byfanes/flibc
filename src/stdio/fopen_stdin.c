@@ -16,6 +16,7 @@ fc_error_t fopen_stdin
     /* Set variables */
     (*out)->fd = UNIX_STDIN;
     (*out)->count = 0;
+    (*out)->type = file_read;
 
     return res;
 }

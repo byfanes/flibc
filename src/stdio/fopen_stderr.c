@@ -16,6 +16,7 @@ fc_error_t fopen_stderr
     /* Set variables */
     (*out)->fd = UNIX_STDERR;
     (*out)->count = 0;
+    (*out)->type = file_write;
 
     return res;
 }

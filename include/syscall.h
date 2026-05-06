@@ -145,12 +145,18 @@ INTERNAL arch_t syscall_6
 #define PROT_WRITE 2
 #define PROT_EXEC 3
 
-#define O_CREAT 64
+#define O_RDONLY 0
+#define O_WRONLY 1
 #define O_RDWR 2
+#define O_CREAT 64
 #define O_TRUNC 512
+#define O_APPEND 1024
 
 #define S_IRUSR 256
 #define S_IWUSR 128
-
+#define S_IRGRP 32
+#define S_IWGRP 16
+#define S_IROTH 4
+#define S_IWOTH 2
 
 #endif /* __FLIBC_SYSCALL_H__ */

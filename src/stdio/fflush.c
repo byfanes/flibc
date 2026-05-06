@@ -9,6 +9,7 @@ fc_error_t fflush
 
     /* Validate user inputs */
     if(!file) { return fce_fflush_nullptr; }
+    if(file->type != file_read) { return fce_fflush_got_read_file; }
 
     /* Store count */
     count = file->count;

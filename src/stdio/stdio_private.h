@@ -8,6 +8,7 @@
 
 struct file_s {
     arch_t fd;
+    file_type_t type;
     u32 count;
     u8 buf[FLIBC_STACK_THRESHOLD];
 };
