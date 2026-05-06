@@ -17,12 +17,21 @@
         const type *items;  \
     } CONCAT(da_,type)
 
+can_be_da(u64);
+can_be_da(u32);
+can_be_da(u16);
+can_be_da(u8);
+can_be_da(i64);
+can_be_da(i32);
+can_be_da(i16);
+can_be_da(i8);
+
 #define da(type) CONCAT(da_,type)*
 
-#define da_reserve(p_da, amount) __da_reserve(p_da, amount, sizeof(*p_da->items))
+#define da_reserve(p_da, amount) __da_reserve(p_da, amount, sizeof(*(*p_da)->items))
 fc_error_t __da_reserve(void* p_da, u32 amount, u32 n_size);
 
-#define da_reserve_if(p_da, amount) __da_reserve(p_da, amount, sizeof(*p_da->items))
+#define da_reserve_if(p_da, amount) __da_reserve(p_da, amount, sizeof(*(*p_da)->items))
 fc_error_t __da_reserve_if(void* p_da, u32 amount, u32 n_size);
 
 fc_error_t da_truncate(void* da, u32 len);

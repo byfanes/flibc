@@ -5,36 +5,31 @@ fc_error_t memmove
 (slice_t dst, slice_t src)
 {
     /* Init variables */
-    u8 *tmp = 0, *tmp2 = 0, buf[FLIBC_STACK_THRESHOLD] = {0};
-    void *x_min, *x_max, *y_min, *y_max;
-    fc_error_t res = fce_success;
+    u8 *d = 0, *s = 0;
     u32 i = 0;
 
     /* Validate user inputs */
     if(!dst.base || !src.base) { return fce_mem_memmove_nullptr; }
     if(src.count > dst.count) { return fce_mem_memmove_smaller; }
 
-    /* Set colisions */
-    x_min = dst.base;
-    x_max = dst.base + dst.count;
-    y_min = src.base;
-    y_max = src.base + src.count;
+    d = (u8*)dst.base;
+    s = (u8*)src.base;
 
-    /* Use memcpy if the memories not over-lap each other */
-    if(!(x_min <= y_max && x_max >= y_min)) { return memcpy(dst, src); }
-    
-    /* Allocate on stack (< 4KB) or heap (>= 4KB) */
-    if(src.count <= FLIBC_STACK_THRESHOLD) { tmp = buf; }
-    else { if((res = malloc(src.count,&tmp))) { return res; } }
-    tmp2 = tmp;
+    /* If they are the exact same memory address, do nothing */
+    if (d == s) { return fce_success; }
 
-    /* Allocate on stack (< 4KB) or heap (>= 4KB) */
-    for(i = 0; i < src.count; ++i) { *(tmp++)  = *(src.base++); }
-    for(i = 0; i < src.count; ++i) { *(dst.base++) = *(tmp2++); }
-
-    /* Free the memory if its allocated */
-    if(src.count > FLIBC_STACK_THRESHOLD) { return free(&tmp); }
+    if (d < s) {
+        /* Destination is before Source. Copy forwards (left-to-right) */
+        for (i = 0; i < src.count; ++i) {
+            d[i] = s[i];
+        }
+    } else {
+        /* Destination is after Source. Copy backwards (right-to-left).
+         * We do src.count down to 1 to avoid underflowing the unsigned u32 `i` past 0. */
+        for (i = src.count; i > 0; --i) {
+            d[i - 1] = s[i - 1];
+        }
+    }
 
     return fce_success;
 }
-
