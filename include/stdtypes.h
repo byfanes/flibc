@@ -64,16 +64,6 @@ typedef  int64_t i64;
     #define __bool_true_false_are_defined 1
 #endif
 
-#define  uint8_t ()
-#define   int8_t ()
-#define uint16_t ()
-#define  int16_t ()
-#define uint32_t ()
-#define  int32_t ()
-#define uint64_t ()
-#define  int64_t ()
-
-
 #define NULL 0
 #define nullptr ((void*)0)
 
