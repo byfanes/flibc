@@ -127,6 +127,7 @@ INTERNAL arch_t syscall_6
 #define syscall_write 1
 #define syscall_open 2
 #define syscall_close 3
+#define syscall_lseek 8
 
 #define syscall_mmap 9
 #define syscall_munmap 11
@@ -135,6 +136,10 @@ INTERNAL arch_t syscall_6
 #define UNIX_STDIN 0
 #define UNIX_STDOUT 1
 #define UNIX_STDERR 2
+
+#define SEEK_SET 0
+#define SEEK_CUR 1
+#define SEEK_END 2
 
 #define MMAP_FAILED (void*)-1
 #define MAP_PRIVATE 0x02

@@ -84,6 +84,10 @@ enum fc_error_e {
 
     fce_sprintf_small_buffer,
 
+    fce_fseek_failed,
+    fce_fseek_nullptr,
+    fce_fseek_invalid_type,
+
     fce_ssp_fail
 };
 
