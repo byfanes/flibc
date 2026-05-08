@@ -88,6 +88,28 @@ enum fc_error_e {
     fce_fseek_nullptr,
     fce_fseek_invalid_type,
 
+    fce_str_from_cstr_out_null,
+    fce_str_from_cstr_cstr_null,
+
+    fce_str_to_cstr_out_null,
+
+    fce_strdup_out_null,
+    fce_strdup_base_null,
+
+    fce_strcat_base_null,
+    fce_strcat_extend_null,
+
+    fce_strcat_sl_not_utf8,
+    fce_strcat_sl_base_null,
+
+    fce_is_utf8_sl_out_null,
+
+    fce_streq_out_null,
+
+    fce_str_utf8len_out_null,
+
+    fce_sl_utf8len_invalid_utf8,
+
     fce_ssp_fail
 };
 

@@ -21,7 +21,7 @@ FREESTANDING_CFLAGS := \
 
 # HOSTED (tests only)
 HOST_CFLAGS := \
-  -Iinclude $(OPT) -fno-builtin -nostdinc
+  -Iinclude $(OPT) $(FREESTANDING_CFLAGS)
 
 SRC_DIR := src
 TEST_DIR := tests
