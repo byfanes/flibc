@@ -11,7 +11,7 @@ fc_error_t fwrite
     /* Validate user inputs */
     if(!file) { return fce_fwrite_nullptr; }
     if(!sl.base || !sl.count) { return fce_success; }
-    if(file->type != file_read) { return fce_fwrite_got_read_file; }
+    if(file->type == file_read) { return fce_fwrite_got_read_file; }
 
     /* If it does not fit to buffer fflush then write it */
     if (file->count >= FLIBC_STACK_THRESHOLD)
