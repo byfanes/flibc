@@ -1,7 +1,7 @@
 #include "da_private.h"
 
 fc_error_t da_truncate
-(void* da, u32 len)
+(const void* da, u32 len)
 {
     /* Init variables */
     def_da_t* def = da;
