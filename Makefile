@@ -1,8 +1,8 @@
-CC := clang
+CC := gcc
 AR := ar
 ARFLAGS := rcs
 
-OPT := -O3 -g0
+OPT := -O0 -g3
 
 WARN_CFLAGS := \
   -Wall -Wextra -Wpedantic \
@@ -16,7 +16,7 @@ WARN_CFLAGS := \
 
 # FREESTANDING (lib + main)
 FREESTANDING_CFLAGS := \
-  -ffreestanding -fno-builtin -nostdinc \
+  -ffreestanding -fno-builtin -nostdinc -fPIC \
   -Iinclude $(OPT) $(WARN_CFLAGS)
 
 # HOSTED (tests only)
@@ -27,11 +27,19 @@ SRC_DIR := src
 TEST_DIR := tests
 BUILD_DIR := build
 
-TARGET := libflibc.a
+TARGET_STATIC := libflibc.a
+TARGET_SHARED := libflibc.so
 EXEC := main
 
+# 1. Isolate start.c from the rest of the library sources
+# (Change this path if start.c is inside a subfolder, e.g., src/runtime/start.c)
+START_SRC := $(SRC_DIR)/start.c
+START_OBJ := $(BUILD_DIR)/start.o
+
+# 2. Filter out start.c so it DOES NOT go into the .a or .so libraries
 SRCS := $(shell find $(SRC_DIR) -name '*.c')
-OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+LIB_SRCS := $(filter-out $(START_SRC), $(SRCS))
+LIB_OBJS := $(LIB_SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 TEST_SRC := $(shell find $(TEST_DIR) -name '*.c')
 TEST_OBJS := $(TEST_SRC:$(TEST_DIR)/%.c=$(BUILD_DIR)/$(TEST_DIR)/%.o)
@@ -39,12 +47,10 @@ TEST_OUT := $(TEST_SRC:$(TEST_DIR)/%.c=$(BUILD_DIR)/$(TEST_DIR)/%)
 
 .PHONY: all clean tests check
 
-all: $(TARGET) $(EXEC)
+all: $(TARGET_STATIC) $(TARGET_SHARED) $(EXEC)
 
-# BUILD ALL TESTS
 tests: $(TEST_OUT)
 
-# BUILD AND RUN ALL TESTS
 check: tests
 	@echo "--- Running Tests ---"
 	@for test in $(TEST_OUT); do \
@@ -53,24 +59,37 @@ check: tests
 	done
 	@echo "--- All tests passed! ---"
 
-# LIBRARY (freestanding)
-$(TARGET): $(OBJS)
+# STATIC LIBRARY
+$(TARGET_STATIC): $(LIB_OBJS)
 	@echo "Archiving $@"
 	@$(AR) $(ARFLAGS) $@ $^
 
+# SHARED LIBRARY
+$(TARGET_SHARED): $(LIB_OBJS)
+	@echo "Linking shared library $@"
+	@$(CC) -shared -nostdlib -o $@ $^
+
+# Rule for building the library objects
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	@echo "Compiling lib $<"
 	@$(CC) $(FREESTANDING_CFLAGS) -c $< -o $@
 
-# MAIN 
-$(EXEC): main.c $(TARGET)
+# 3. Rule for explicitly building your runtime object
+$(START_OBJ): $(START_SRC)
+	@mkdir -p $(dir $@)
+	@echo "Compiling runtime start object $<"
+	@$(CC) $(FREESTANDING_CFLAGS) -c $< -o $@
+
+# MAIN
+# 4. We explicitly link $(START_OBJ) here so _start is injected into the executable
+$(EXEC): main.c $(START_OBJ) $(TARGET_SHARED)
 	@echo "Linking freestanding executable $@"
 	@$(CC) \
 	    $(FREESTANDING_CFLAGS) \
 	    -nostdlib -nostartfiles \
 	    -Wl,-e,_start \
-	    main.c -L. -lflibc -o $@
+	    $(START_OBJ) main.c -L. -lflibc -Wl,-rpath=. -o $@
 
 # TESTS (HOSTED)
 $(BUILD_DIR)/$(TEST_DIR)/%.o: $(TEST_DIR)/%.c
@@ -78,9 +97,9 @@ $(BUILD_DIR)/$(TEST_DIR)/%.o: $(TEST_DIR)/%.c
 	@echo "Compiling test $<"
 	@$(CC) $(HOST_CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/$(TEST_DIR)/%: $(BUILD_DIR)/$(TEST_DIR)/%.o $(TARGET)
+$(BUILD_DIR)/$(TEST_DIR)/%: $(BUILD_DIR)/$(TEST_DIR)/%.o $(TARGET_SHARED)
 	@echo "Linking test $@"
-	@$(CC) $(HOST_CFLAGS) $< -L. -lflibc -o $@
+	@$(CC) $(HOST_CFLAGS) $< -L. -lflibc -Wl,-rpath=. -o $@
 
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET) $(EXEC)
+	rm -rf $(BUILD_DIR) $(TARGET_STATIC) $(TARGET_SHARED) $(EXEC)
