@@ -6,19 +6,19 @@ int main(void) {
     /* Variable declarations first (C89) */
     u8 buf1[10] = {0};
     u8 buf2[10] = {0};
-    u32 i;
+    u32 i = 0;
     bool cmp_res = false;
 
     /* Brace initialization for const fields */
-    slice_t sl_buf1  = { nullptr, 10 };
-    slice_t sl_buf2  = { nullptr, 10 };
-    slice_t sl_half1 = { nullptr, 5 };
-    slice_t sl_half2 = { nullptr, 5 }; /* Overlaps with half1 */
+    slice_t sl_buf1  = { 0 };
+    slice_t sl_buf2  = { 0 };
+    slice_t sl_half1 = { 0 };
+    slice_t sl_half2 = { 0 };
 
-    sl_buf1.base = (void*)buf1;
-    sl_buf2.base = (void*)buf2;
-    sl_half1.base =(void*)buf1;
-    sl_half2.base =(void*)(buf1 + 2);
+    set_slice(&sl_buf1, buf1, 10);
+    set_slice(&sl_buf2, buf2, 10);
+    set_slice(&sl_half1, buf1, 5);
+    set_slice(&sl_half2, (buf1 + 2), 5);
 
     TEST_START("memset");
     ASSERT_OK(memset(sl_buf1, 42));

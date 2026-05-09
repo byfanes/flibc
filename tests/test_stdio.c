@@ -6,9 +6,9 @@ int main(stdio_t stdio) {
     u8 buffer[128] = {0};
     u32 wrote = 0;
     fc_error_t res = fce_success;
+    slice_t buf_sl = {0};
 
-    slice_t buf_sl = { 0, 128 };
-    buf_sl.base = (void*)buffer;
+    set_slice(&buf_sl, buffer, 128);
 
     TEST_START("sprintf");
     res = sprintf(buf_sl, &wrote, cstr_to_def("Testing %d"), 42);
