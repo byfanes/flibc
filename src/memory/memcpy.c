@@ -1,7 +1,7 @@
 #include "memory.h"
 #include "error.h"
 
-fc_error_t memcpy
+fc_error_t __memcpy
 (slice_t dst, slice_t src)
 {
     /* Init variables */

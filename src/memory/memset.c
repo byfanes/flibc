@@ -1,7 +1,7 @@
 #include "memory.h"
 #include "error.h"
 
-fc_error_t memset
+fc_error_t __memset
 (slice_t ptr, u8 c)
 {
     /* Init variable */
