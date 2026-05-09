@@ -14,6 +14,6 @@ fc_error_t __da_reserve
     /* Fetch and set new size */
     def->capacity += amount;
 
-    /* Allocate new chunk of memory x*/
-    return realloc(def->capacity * el_size, def->items);
+    /* Allocate new chunk of memory */
+    return realloc(def->capacity * el_size, &def->items);
 }
