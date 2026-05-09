@@ -111,6 +111,8 @@ enum fc_error_e {
     fce_streq_out_null,
 
     fce_str_utf8len_out_null,
+    fce_str_reserve_null_ptr,
+    fce_str_reserve_if_null_ptr,
 
     fce_sl_utf8len_invalid_utf8,
 

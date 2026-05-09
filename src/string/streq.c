@@ -6,13 +6,13 @@ fc_error_t streq
     u32 i = 0;
     
     if(!out) { return fce_streq_out_null; }
-    if(!lhs && !rhs) { goto success; }
-    if(lhs && !rhs) { goto fail; }
-    if(!lhs && rhs) { goto fail; }
-    if(lhs->count != rhs->count) { goto fail; }
+    if(!lhs.items && !rhs.items) { goto success; }
+    if(lhs.items && !rhs.items) { goto fail; }
+    if(!lhs.items && rhs.items) { goto fail; }
+    if(lhs.count != rhs.count) { goto fail; }
 
-    for(;i < lhs->count; ++i) {
-        if(lhs->items[i] != rhs->items[i]) { goto fail; }
+    for(;i < lhs.count; ++i) {
+        if(lhs.items[i] != rhs.items[i]) { goto fail; }
     }
 success:
     *out = true;
