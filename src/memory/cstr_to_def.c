@@ -3,12 +3,13 @@
 slice_t cstr_to_def
 (const char* cstr)
 {
+    /* Init variables */
     slice_t sl = {0};
     u32 i = 0;
 
-    sl.base = (void*)cstr;
+    /* Calculate the length of cstr(null terminated) and set slice */
     if(cstr) { while(cstr[i++]){}; i--; }
-    __set_slice_count(sl, i);
+    set_slice(&sl, cstr, i);
 
     return sl;
 }

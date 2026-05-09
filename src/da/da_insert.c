@@ -21,14 +21,10 @@ fc_error_t __da_insert
     def->count++;
     if(res) { return res; }
 
-    /* Set bases for the moving */
-    src.base = &def->items[idx * n_size];
-    dst.base = &def->items[(idx + 1) *n_size];
-
-    /* Set counts for the moving */
+    /* Set slices for the moving */
     count = (def->count - idx - 1) * n_size;
-    __set_slice_count(src, count);
-    __set_slice_count(dst, count);
+    set_slice(&src, &def->items[idx * n_size], count);
+    set_slice(&dst, &def->items[(idx + 1) *n_size], count);
 
     /* Shift the memory */
     res = memcpy(dst, src);

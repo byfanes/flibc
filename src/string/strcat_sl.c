@@ -22,8 +22,7 @@ fc_error_t strcat_sl
     if(res) { return res; }
     
     /* Set slices for memcpy */
-    dst.base = (void*)&base->items[base->count];
-    __set_slice_count(dst, sl.count);
+    set_slice(&dst, &base->items[base->count], sl.count);
 
     /* Copy the data */
     res = memcpy(dst, sl);

@@ -13,14 +13,10 @@ fc_error_t __da_remove
     if(!n_size) { return fce_da_remove_zero_nsize; }
     if(idx >= def->count) { return fce_da_remove_out_of_bounds; }
 
-    /* Set bases for the moving */
-    src.base = &def->items[(idx + 1) * n_size];
-    dst.base = &def->items[idx * n_size];
+    /* Set slices for the moving */
+    set_slice(&src, &def->items[(idx + 1) * n_size], count);
+    set_slice(&dst, &def->items[idx * n_size], count);
     count = (def->count - idx - 1) * n_size;
-
-    /* Set counts for the moving */
-    __set_slice_count(src, count);
-    __set_slice_count(dst, count);
 
     def->count--;
 

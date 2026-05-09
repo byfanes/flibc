@@ -37,8 +37,7 @@ fc_error_t fwrite
     }
 
     /* Set dst */
-    dst.base = &file->buf[file->count];
-    __set_slice_count(dst, FLIBC_STACK_THRESHOLD - file->count);
+    set_slice(&dst, &file->buf[file->count], FLIBC_STACK_THRESHOLD - file->count);
 
     /* Copy the new data to buffer */
     res = memcpy(dst, sl);

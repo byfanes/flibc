@@ -12,12 +12,13 @@ fc_error_t throw_to_heap
     if(!in) { return fce_mem_throw_to_heap_in_nullptr; }
     if(!el_size) { return fce_mem_throw_to_heap_zero_size; }
 
+    /* Allocate new chunk of memory */
     res = malloc(el_size, out);
     if(res) { return res; }
-    src.base = in;
-    dst.base = *(void**)out;
-    __set_slice_count(src, el_size);
-    __set_slice_count(dst, el_size);
 
-    return memmove(dst, src);
+    /* Set slices for memcpy */
+    set_slice(&src, in, el_size);
+    set_slice(&dst, *(void**)out, el_size);
+
+    return memcpy(dst, src);
 }

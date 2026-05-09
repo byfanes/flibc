@@ -20,10 +20,8 @@ fc_error_t str_from_cstr
     if(res) { return res; }
 
     /* Set slices for copying */
-    src.base = (void*)cstr;
-    __set_slice_count(src, len);
-    dst.base = (void*)(*out)->items;
-    __set_slice_count(dst, len);
+    set_slice(&src, cstr, len);
+    set_slice(&dst, (*out)->items, len);
 
     *(u32*)(uintptr_t)&(*out)->count = len - 1;
     

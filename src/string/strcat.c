@@ -18,10 +18,8 @@ fc_error_t strcat
     if(res) { return res; }
 
     /* Set slices for copying */
-    src.base = (void*)extend->items;
-    __set_slice_count(src, extend->count);
-    dst.base = (void*)&base->items[base->count];
-    __set_slice_count(dst, extend->count);
+    set_slice(&src, extend->items, extend->count);
+    set_slice(&dst, &base->items[base->count], extend->count);
 
     /* Copy the data */
     res = memcpy(dst, src);

@@ -4,6 +4,10 @@
 enum fc_error_e {
     fce_success = 0,
 
+    fce_set_slice_cant_assing_zero,
+    fce_set_slice_cant_assing_null,
+    fce_set_slice_null_ptr,
+
     fce_mem_malloc_zero,
     fce_mem_malloc_nullptr,
     fce_mem_malloc_mmap_failed,

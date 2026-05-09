@@ -15,8 +15,8 @@ fc_error_t memswap
     /* Iter 'i' times on the slices' bases and swap them */
     for(; i < lhs.count; ++i) {
         c = *lhs.base;
-        *(lhs.base++) = *rhs.base;
-        *(rhs.base++) = c;
+        lhs.base[i] = *rhs.base;
+        rhs.base[i] = c;
     }
     
     return fce_success;

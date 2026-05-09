@@ -12,6 +12,6 @@ fc_error_t memcpy
     if(src.count > dst.count) { return fce_mem_memcpy_smaller; }
     
     /* Iter 'src.count' times on the slices' bases and copy to dst from src */
-    for(i = 0; i < src.count; ++i) { *(dst.base++) = *(src.base++); }
+    for(i = 0; i < src.count; ++i) { dst.base[i] = src.base[i]; }
     return fce_success;
 }

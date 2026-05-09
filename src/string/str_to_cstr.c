@@ -19,10 +19,8 @@ fc_error_t str_to_cstr
     if(res) { return res; }
     
     /* Set slices for copying */
-    src.base = (void*)base->items;
-    __set_slice_count(src, base->count);
-    dst.base = (void*)(*out);
-    __set_slice_count(dst, base->count);
+    set_slice(&src, base->items, base->count);
+    set_slice(&dst, (*out), base->count);
 
     /* Copy the data and set last byte to null */
     res = memcpy(dst, src);
