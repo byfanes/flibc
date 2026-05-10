@@ -6,7 +6,6 @@ int main(void) {
     str_t s1 = {0};
     str_t s2 = {0};
     char* c_str = NULL;
-    bool is_eq = false;
     return 0;
 
     TEST_START("str_from_cstr");
@@ -38,9 +37,8 @@ int main(void) {
     ASSERT_EQ(c_str[10], '\0'); /* Must be null terminated! */
     TEST_PASS();
 
-    TEST_START("streq (when implemented)");
-    ASSERT_OK(streq(s1, s2, &is_eq));
-    ASSERT(is_eq == false);
+    TEST_START("streq");
+    ASSERT(streq(s1, s2));
     TEST_PASS();
 
     return 0;

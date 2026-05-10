@@ -1,19 +1,17 @@
 #include "string_private.h"
 
-fc_error_t is_utf8_sl
-(slice_t sl, bool* out)
+bool is_utf8_sl
+(slice_t sl)
 {
     /* Init variables */
     u32 count = 0;
     
     /* Validate user input */
-    if(!out) { return fce_is_utf8_sl_out_null; }
-    if(!sl.base || !sl.count) { *out = true; return fce_success; }
+    if(!sl.base || !sl.count) { return true; }
 
     /* Call sl_utf8len it checks for valid strings */
-    *out = true;
-    if(sl_utf8len(sl, &count)) { *out = false; }
+    if(sl_utf8len(sl, &count)) { return false; }
 
     /* Return */
-    return fce_success;
+    return true;
 }

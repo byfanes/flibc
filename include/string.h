@@ -5,7 +5,7 @@
 
 /* String - Implementation
  * Its almost same as dynamic arrays implementation but this one checks data's format being utf8 or not
- * yet again IT IS NOT SAFE TO COPY copy the pointer instead and use that if its needed.
+ * yet again IT IS NOT SAFE FOR COPYING instead use pointers to dedicated struct
  * for function which mutates the variable they take as pointer other oners dont
  */
 
@@ -28,10 +28,8 @@ fc_error_t sl_utf8len(slice_t sl, u32* out);
 fc_error_t str_reserve(str_t* str, u32 amount);
 fc_error_t str_reserve_if(str_t* str, u32 amount);
 
-/* We can make them take less arguments via using fc_error_t as the boolean
- * but its job is checking errors so it will extend its job casuing complexity in the future.
- */
-fc_error_t streq(str_t lhs, str_t rhs, bool* out);
-fc_error_t is_utf8_sl(slice_t sl, bool* out);
+/* Those functions just matches the data so they can not result with an error */
+bool streq(str_t lhs, str_t rhs);
+bool is_utf8_sl(slice_t sl);
 
 #endif /* __FLIBC_STRING_H__ */
