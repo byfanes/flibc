@@ -148,7 +148,7 @@ INTERNAL arch_t syscall_6
 #define PROT_NONE 0
 #define PROT_READ 1
 #define PROT_WRITE 2
-#define PROT_EXEC 3
+#define PROT_EXEC 4
 
 #define O_RDONLY 0
 #define O_WRONLY 1

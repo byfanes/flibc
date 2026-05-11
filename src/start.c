@@ -23,7 +23,7 @@ void runtime_start(long *stack)
     long i = 0, argc = stack[0];
     char **argv = (char **)(stack + 1);
     slice_t args[MAX_ARGS_COUNT] = {0}, *args_ptr = 0, ext = {0};
-    slice(slice_t) _args = {0};
+    slice(slice_t) user_args = {0};
     stdio_t stdio = {0};
 
     /* Check argc and get first of them which is path to executable */
@@ -45,21 +45,21 @@ void runtime_start(long *stack)
     if(fopen_stderr(&stdio.err)) { exit(255); }
 
     /* Set slice for _args to parse now */
-    set_slice(&_args, args_ptr, (u32)argc);
+    set_slice(&user_args, args_ptr, (u32)argc);
 
     /* Set all of the arguments one by one */
     for(; i < argc; ++i) {
-        set_slice(&args[i], argv[i], strlen(argv[i]));
+        set_slice(&user_args[i], argv[i], strlen(argv[i]));
     }
 
     /* Call the main function and execute the user program */
-    ret = main(stdio, ext, _args);
+    ret = main(stdio, ext, user_args);
 
     /* Free if its needed */
     if(argc > MAX_ARGS_COUNT) {
         if(free(&args_ptr)) { exit(255); }
     }
-    
+
     /* Close the standard files */
     fclose(&stdio.in);
     fclose(&stdio.out);
@@ -73,7 +73,10 @@ __attribute__((naked, noreturn))
 void _start(void)
 {
     __asm__ volatile(
+        "xor %rbp, %rbp\n"
         "mov %rsp, %rdi\n"
+        "and $-16, %rsp\n"
         "call runtime_start\n"
+        "hlt\n"
     );
 }
