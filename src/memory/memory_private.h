@@ -3,11 +3,11 @@
 
 #include "memory.h"
 
+typedef struct heap_header_s heap_header_t;
+
 struct heap_header_s {
     u32 alloced;
     u32 raw_alloced;
 };
-
-typedef struct heap_header_s heap_header_t;
 
 #endif /* __FLIBC_MEMORY_PRIVATE_H__ */

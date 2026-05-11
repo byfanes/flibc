@@ -11,23 +11,12 @@
  * which costs less bytes to pass as an argument
  */
 
-#define can_be_da(type)     \
-    typedef struct {        \
-        const u32 count;    \
-        const u32 capacity; \
-        type *items;        \
-    } CONCAT(da_,type)
-
-can_be_da(u64);
-can_be_da(u32);
-can_be_da(u16);
-can_be_da(u8);
-can_be_da(i64);
-can_be_da(i32);
-can_be_da(i16);
-can_be_da(i8);
-
-#define da(type) CONCAT(da_,type)
+#define da(type)      \
+    const struct {    \
+        u32 count;    \
+        u32 capacity; \
+        type *items;  \
+    }
 
 #define da_reserve(da, amount) __da_reserve((da), (amount), sizeof((da)->items[0]))
 fc_error_t __da_reserve(const void* da, u32 amount, u32 el_size);
