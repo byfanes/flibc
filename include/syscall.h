@@ -1,6 +1,10 @@
 #ifndef __FLIBC_SYSCALL_H__
 #define __FLIBC_SYSCALL_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "features.h"
 #include "stdtypes.h"
 
@@ -9,10 +13,10 @@
 #error "Only Unix Is Supported Right Now !"
 #endif
 
-INTERNAL arch_t syscall_0
-(arch_t num)
+INTERNAL ssize_t syscall_0
+(ssize_t num)
 {
-    register arch_t _rax __asm__("rax") = num;
+    register ssize_t _rax __asm__("rax") = num;
     __asm__ volatile (
         "syscall"
         : "+r" (_rax)
@@ -22,11 +26,11 @@ INTERNAL arch_t syscall_0
     return _rax;
 }
 
-INTERNAL arch_t syscall_1
-(arch_t num, arch_t arg1)
+INTERNAL ssize_t syscall_1
+(ssize_t num, ssize_t arg1)
 {
-    register arch_t _rax __asm__("rax") = num;
-    register arch_t _rdi __asm__("rdi") = arg1;
+    register ssize_t _rax __asm__("rax") = num;
+    register ssize_t _rdi __asm__("rdi") = arg1;
     __asm__ volatile (
         "syscall"
         : "+r" (_rax)
@@ -36,12 +40,12 @@ INTERNAL arch_t syscall_1
     return _rax;
 }
 
-INTERNAL arch_t syscall_2
-(arch_t num, arch_t arg1, arch_t arg2)
+INTERNAL ssize_t syscall_2
+(ssize_t num, ssize_t arg1, ssize_t arg2)
 {
-    register arch_t _rax __asm__("rax") = num;
-    register arch_t _rdi __asm__("rdi") = arg1;
-    register arch_t _rsi __asm__("rsi") = arg2;
+    register ssize_t _rax __asm__("rax") = num;
+    register ssize_t _rdi __asm__("rdi") = arg1;
+    register ssize_t _rsi __asm__("rsi") = arg2;
     __asm__ volatile (
         "syscall"
         : "+r" (_rax)
@@ -51,13 +55,13 @@ INTERNAL arch_t syscall_2
     return _rax;
 }
 
-INTERNAL arch_t syscall_3
-(arch_t num, arch_t arg1, arch_t arg2, arch_t arg3)
+INTERNAL ssize_t syscall_3
+(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3)
 {
-    register arch_t _rax __asm__("rax") = num;
-    register arch_t _rdi __asm__("rdi") = arg1;
-    register arch_t _rsi __asm__("rsi") = arg2;
-    register arch_t _rdx __asm__("rdx") = arg3;
+    register ssize_t _rax __asm__("rax") = num;
+    register ssize_t _rdi __asm__("rdi") = arg1;
+    register ssize_t _rsi __asm__("rsi") = arg2;
+    register ssize_t _rdx __asm__("rdx") = arg3;
     __asm__ volatile (
         "syscall"
         : "+r" (_rax)
@@ -67,14 +71,14 @@ INTERNAL arch_t syscall_3
     return _rax;
 }
 
-INTERNAL arch_t syscall_4
-(arch_t num, arch_t arg1, arch_t arg2, arch_t arg3, arch_t arg4)
+INTERNAL ssize_t syscall_4
+(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4)
 {
-    register arch_t _rax __asm__("rax") = num;
-    register arch_t _rdi __asm__("rdi") = arg1;
-    register arch_t _rsi __asm__("rsi") = arg2;
-    register arch_t _rdx __asm__("rdx") = arg3;
-    register arch_t _r10 __asm__("r10") = arg4;
+    register ssize_t _rax __asm__("rax") = num;
+    register ssize_t _rdi __asm__("rdi") = arg1;
+    register ssize_t _rsi __asm__("rsi") = arg2;
+    register ssize_t _rdx __asm__("rdx") = arg3;
+    register ssize_t _r10 __asm__("r10") = arg4;
     __asm__ volatile (
         "syscall"
         : "+r" (_rax)
@@ -84,16 +88,16 @@ INTERNAL arch_t syscall_4
     return _rax;
 }
 
-INTERNAL arch_t syscall_5
-(arch_t num, arch_t arg1, arch_t arg2,
- arch_t arg3, arch_t arg4, arch_t arg5)
+INTERNAL ssize_t syscall_5
+(ssize_t num, ssize_t arg1, ssize_t arg2,
+ ssize_t arg3, ssize_t arg4, ssize_t arg5)
 {
-    register arch_t _rax __asm__("rax") = num;
-    register arch_t _rdi __asm__("rdi") = arg1;
-    register arch_t _rsi __asm__("rsi") = arg2;
-    register arch_t _rdx __asm__("rdx") = arg3;
-    register arch_t _r10 __asm__("r10") = arg4;
-    register arch_t _r8  __asm__("r8")  = arg5;
+    register ssize_t _rax __asm__("rax") = num;
+    register ssize_t _rdi __asm__("rdi") = arg1;
+    register ssize_t _rsi __asm__("rsi") = arg2;
+    register ssize_t _rdx __asm__("rdx") = arg3;
+    register ssize_t _r10 __asm__("r10") = arg4;
+    register ssize_t _r8  __asm__("r8")  = arg5;
     __asm__ volatile (
         "syscall"
         : "+r" (_rax)
@@ -103,17 +107,17 @@ INTERNAL arch_t syscall_5
     return _rax;
 }
 
-INTERNAL arch_t syscall_6
-(arch_t num, arch_t arg1, arch_t arg2, arch_t arg3,
- arch_t arg4, arch_t arg5, arch_t arg6)
+INTERNAL ssize_t syscall_6
+(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3,
+ ssize_t arg4, ssize_t arg5, ssize_t arg6)
 {
-    register arch_t _rax __asm__("rax") = num;
-    register arch_t _rdi __asm__("rdi") = arg1;
-    register arch_t _rsi __asm__("rsi") = arg2;
-    register arch_t _rdx __asm__("rdx") = arg3;
-    register arch_t _r10 __asm__("r10") = arg4;
-    register arch_t _r8  __asm__("r8")  = arg5;
-    register arch_t _r9  __asm__("r9")  = arg6;
+    register ssize_t _rax __asm__("rax") = num;
+    register ssize_t _rdi __asm__("rdi") = arg1;
+    register ssize_t _rsi __asm__("rsi") = arg2;
+    register ssize_t _rdx __asm__("rdx") = arg3;
+    register ssize_t _r10 __asm__("r10") = arg4;
+    register ssize_t _r8  __asm__("r8")  = arg5;
+    register ssize_t _r9  __asm__("r9")  = arg6;
     __asm__ volatile (
         "syscall"
         : "+r" (_rax)
@@ -163,5 +167,9 @@ INTERNAL arch_t syscall_6
 #define S_IWGRP 16
 #define S_IROTH 4
 #define S_IWOTH 2
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __FLIBC_SYSCALL_H__ */

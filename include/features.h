@@ -1,13 +1,10 @@
 #ifndef __FLIBC_FEATURES_H__
 #define __FLIBC_FEATURES_H__
 
-
 #if defined(__GNUC__)
 #define _Noreturn __attribute__((__noreturn__))
-#define __dont_optimize__ volatile
 #else /* defined(__GNUC__) */
 #define _Noreturn [[noreturn]]
-#define __dont_optimize__
 #endif
 
 #ifndef __STDC_VERSION__

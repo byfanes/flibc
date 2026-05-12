@@ -2,8 +2,8 @@
 #include "stdtypes.h"
 #include "stdlib.h"
 
-/* 
- * The "canary" value. 
+/*
+ * The "canary" value.
  * In a real OS, you would randomize this value at program startup.
  * For now, we just use a hardcoded random-looking number.
  */
@@ -15,10 +15,10 @@ uintptr_t __stack_chk_guard = 0x595e9fbd94fda766; /* 64-bit */
 
 void __stack_chk_fail(void);
 
-/* 
+/*
  * The function GCC calls when a buffer overflow occurs.
  */
-void __stack_chk_fail(void) 
+void __stack_chk_fail(void)
 {
     exit(fce_ssp_fail);
 }

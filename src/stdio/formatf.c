@@ -18,7 +18,7 @@ INTERNAL void hex_format
     };
 
     /* Write it in reverse order to buffer if buffer exits */
-    for(;buf && i < times; ++i) { buf[i] = ptr[times - i - 1]; }
+    for(;buf && i < times; ++i) { buf[i + *count] = ptr[times - i - 1]; }
 
     *count += times;
 }
@@ -40,7 +40,7 @@ INTERNAL void decimal_format
     };
 
     /* Write it in reverse order to buffer if buffer exits */
-    for(;buf && i < times; ++i) { buf[i] = ptr[times - i - 1]; }
+    for(;buf && i < times; ++i) { buf[i + *count] = ptr[times - i - 1]; }
 
     *count += times;
 }
@@ -70,8 +70,8 @@ INTERNAL void octal_format
 }
 
 
-fc_error_t formatf
-(slice_t buf, slice_t fmt, va_list ap, u32* out_len)
+fc_error_t __formatf
+(slice(u8) buf, slice(u8) fmt, va_list ap, usize_t* out_len)
 {
     /* Init variables */
     u32 count = 0, i = 0;
@@ -80,8 +80,7 @@ fc_error_t formatf
     i64 cur_i64 = 0;
 
     /* Check input */
-    if(!fmt.base) return fce_formatf_fmt_null;
-    if(!out_len) return fce_formatf_out_null;
+    if(!fmt.base || !out_len) { return fce_null_pointer; }
 
     *out_len = 0;
 
@@ -104,7 +103,7 @@ fc_error_t formatf
         if(fmt.base[i] == '%') {
             count++;
             /* Check for wrong instruction '%ll% / '%l%' */
-            if(long_num) { return fce_formatf_unknown; }
+            if(long_num) { return fce_formatf_unknown_format; }
             if(buf.base) { buf.base[count - 1] = '%'; }
         }
 
@@ -112,7 +111,7 @@ fc_error_t formatf
         else if(fmt.base[i] == 'c') {
             count++;
             /* Check for wrong instruction '%llc / '%lc' */
-            if(long_num) { return fce_formatf_unknown; }
+            if(long_num) { return fce_formatf_unknown_format; }
             /* Char promotes to int while passing it */
             cur_u64 = (u64)va_arg(ap, int);
             if(buf.base) { buf.base[count - 1] = (u8)cur_u64; }
@@ -154,7 +153,7 @@ fc_error_t formatf
 
         /* Handle %p it will write as hexadecimal */
 	else if(fmt.base[i] == 'p') {
-	    cur_u64 = va_arg(ap, void*);
+	    cur_u64 = (u64)va_arg(ap, void*);
             buf.base[count++] = '0';
             buf.base[count++] = 'x';
             hex_format(buf.base, &count, cur_u64);
@@ -163,7 +162,7 @@ fc_error_t formatf
         else {
             #include "stdlib.h"
             exit(fmt.base[i]);
-            return fce_formatf_unknown;
+            return fce_formatf_unknown_format;
         }
     }
 

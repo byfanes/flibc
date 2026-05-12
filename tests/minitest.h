@@ -3,9 +3,6 @@
 
 #include "stdlib.h"
 
-#define TEST_START(s)
-#define TEST_PASS()
-
 #define ASSERT(cond)  \
 do {             \
     if(!(cond)) { \

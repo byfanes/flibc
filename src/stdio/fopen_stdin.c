@@ -1,17 +1,16 @@
 #include "stdio_private.h"
 
 fc_error_t fopen_stdin
-(file_t** out)
+(allocator_t* alloc, file_t** out)
 {
     /* Init variables */
     fc_error_t res = fce_success;
 
     /* Validate user inputs */
-    if(!out) { return fce_fopen_out_nullptr; }
+    if(!alloc || !out) { return fce_null_pointer; }
 
     /* Allocate new memory for the struct */
-    res = malloc(sizeof(file_t), out);
-    if(res) { return res; }
+    if((res = malloc(alloc, sizeof(file_t), out))) { return res; }
 
     /* Set variables */
     (*out)->fd = UNIX_STDIN;

@@ -5,8 +5,8 @@
 #include "../memory/memory_private.h"
 
 typedef struct {
-    u32 count;
-    u32 capacity;
+    usize_t count;
+    usize_t capacity;
     u8* items;
 } def_da_t;
 

@@ -95,11 +95,12 @@ $(EXEC): main.c $(START_OBJ) $(TARGET_SHARED)
 $(BUILD_DIR)/$(TEST_DIR)/%.o: $(TEST_DIR)/%.c
 	@mkdir -p $(dir $@)
 	@echo "Compiling test $<"
-	@$(CC) $(HOST_CFLAGS) -c $< -o $@
+	@$(CC) $(HOST_CFLAGS) $(WARN_CFLAGS) $(FREESTANDING_CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/$(TEST_DIR)/%: $(BUILD_DIR)/$(TEST_DIR)/%.o $(TARGET_SHARED)
+$(BUILD_DIR)/$(TEST_DIR)/%: $(BUILD_DIR)/$(TEST_DIR)/%.o $(TARGET_SHARED) $(START_OBJ)
 	@echo "Linking test $@"
-	@$(CC) $(HOST_CFLAGS) $< -L. -lflibc -Wl,-rpath=. -o $@
+	@$(CC) $(FREESTANDING_CFLAGS) -nostdlib -nostartfiles -Wl,-e,_start \
+		$(HOST_CFLAGS) $(WARN_CFLAGS) $(START_OBJ) $< -L. -lflibc -Wl,-rpath=. -o $@
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET_STATIC) $(TARGET_SHARED) $(EXEC)

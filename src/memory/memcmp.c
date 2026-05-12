@@ -1,25 +1,27 @@
-#include "memory.h"
+#include "memory_private.h"
 #include "error.h"
 
-fc_error_t memcmp
-(slice_t lhs, slice_t rhs, bool* res)
+fc_error_t __memcmp
+(void* lhs, void* rhs, usize_t el_size, bool* res)
 {
     /* Init variables */
-    u32 i = 0;
+    slice(u8) *lsl = lhs, *rsl = rhs;
+    usize_t i = 0;
 
     /* Validate user inputs */
-    if(!lhs.base || !rhs.base || !res) { return fce_mem_memcmp_nullptr; }
-    if(lhs.count != rhs.count) { return false; }
+    if(!lsl || !rsl || !res || !lsl->base || !rsl->base) { return fce_null_pointer; }
+    if(lsl->count != rsl->count) { *res = false; return fce_success; }
+    if(!el_size) { return fce_elsize_zero; }
 
     /* Iterate over bases and compare them */
-    for (; i < lhs.count; ++i) {
-        if(lhs.base[i] != rhs.base[i]) {
+    for (; i < lsl->count * el_size; ++i) {
+        if(lsl->base[i] != rsl->base[i]) {
             /* Does not match */
             *res = false;
             return fce_success;
         }
     }
-        
+
     /* Does match */
     *res = true;
     return fce_success;

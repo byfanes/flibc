@@ -1,6 +1,10 @@
 #ifndef __FLIBC_STDTYPES_H__
 #define __FLIBC_STDTYPES_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* 8-bit */
 typedef signed char        int8_t;
 typedef unsigned char      uint8_t;
@@ -37,13 +41,15 @@ typedef unsigned long long uint64_t;
 
 /* pointer-sized */
 #if __SIZEOF_POINTER__ == 8
-typedef int64_t  intptr_t;
+typedef  int64_t intptr_t;
 typedef uint64_t uintptr_t;
-typedef int64_t  arch_t;
+typedef uint64_t usize_t;
+typedef  int64_t ssize_t;
 #elif __SIZEOF_POINTER__ == 4
-typedef int32_t  intptr_t;
+typedef  int32_t intptr_t;
 typedef uint32_t uintptr_t;
-typedef int32_t  arch_t;
+typedef uint32_t usize_t;
+typedef  int32_t ssize_t;
 #else
 #error "Unsupported pointer size"
 #endif
@@ -73,5 +79,9 @@ typedef  int64_t i64;
 #define CONCAT(a, b) CONCAT_IMPL(a, b)
 
 #define FLIBC_STACK_THRESHOLD 4096
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __FLIBC_STDTYPES_H__ */

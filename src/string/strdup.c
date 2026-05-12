@@ -1,24 +1,20 @@
 #include "string_private.h"
 
 fc_error_t strdup
-(str_t base, str_t* out)
+(allocator_t* alloc, str_t* base, str_t* out)
 {
     /* Init variables */
     fc_error_t res = fce_success;
-    slice_t src = {0};
-    struct str_s* s = 0;
-    
+    slice(u8) src = {0};
+
     /* Validate user input */
-    if(!out) { return fce_strdup_out_null; }
+    if(!alloc || !base || !out) { return fce_null_pointer; }
 
     /* Reserve a memory */
-    res = str_reserve(out, base.count);
-    if(res) { return res; }
+    if((res = str_init(alloc, out, base->count))) { return res; }
 
     /* Set slices for copying */
-    set_slice(&src, base.items, base.count);
-    s = (void*)out;
-    s->count = 0;
+    set_slice(&src, base->items, base->count);
 
-    return str_copy_content(out, src);
+    return __str_copy_content(out, src);
 }

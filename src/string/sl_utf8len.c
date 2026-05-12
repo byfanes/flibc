@@ -1,15 +1,15 @@
 #include "string_private.h"
 
 fc_error_t sl_utf8len
-(slice_t sl, u32* out)
+(slice(u8) sl, usize_t* out)
 {
     /* Init variables */
-    u32 i = 0, count = 0;
+    usize_t i = 0, count = 0;
     u8 c = 0;
-    
+
     /* Validate user input */
-    if(!out) { return fce_is_utf8_sl_out_null; }
-    if(!sl.base || !sl.count) { *out = true; return fce_success; }
+    if(!out) { return fce_null_pointer; }
+    if(!sl.base || !sl.count) { *out = 0; return fce_success; }
 
     /* Last byte of sequence are incremented with the loop
      * other ones should be handled in the flow
@@ -75,5 +75,5 @@ fc_error_t sl_utf8len
 
 invalid:
     *out = 0;
-    return fce_sl_utf8len_invalid_utf8;
+    return fce_invalid_utf8;
 }

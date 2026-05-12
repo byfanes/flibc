@@ -1,23 +1,23 @@
-#include "memory.h"
+#include "memory_private.h"
 #include "error.h"
 
-fc_error_t memswap
-(slice_t lhs, slice_t rhs)
+fc_error_t __memswap
+(void* lhs, void* rhs, usize_t el_size)
 {
     /* Init variables */
-    u8 c = 0;
-    u32 i = 0;
-    
+    slice(u8) *lsl = lhs, *rsl = rhs;
+    u8 c = 0, i = 0;
+
     /* Validate user inputs */
-    if(!lhs.base || !rhs.base) { return fce_mem_memswap_nullptr; }
-    if(lhs.count != rhs.count) { return fce_mem_memswap_diffsize; }
+    if(!lsl || !rsl || !lsl->base || !rsl->base) { return fce_null_pointer; }
+    if(lsl->count != rsl->count) { return fce_memswap_diffsize; }
 
     /* Iter 'i' times on the slices' bases and swap them */
-    for(; i < lhs.count; ++i) {
-        c = *lhs.base;
-        lhs.base[i] = *rhs.base;
-        rhs.base[i] = c;
+    for(; i < lsl->count * el_size; ++i) {
+        c = lsl->base[i];
+        lsl->base[i] = rsl->base[i];
+        rsl->base[i] = c;
     }
-    
+
     return fce_success;
 }

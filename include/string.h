@@ -1,7 +1,13 @@
 #ifndef __FLIBC_STRING_H__
 #define __FLIBC_STRING_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "error.h"
 #include "memory.h"
+#include "da.h"
 
 /* String - Implementation
  * Its almost same as dynamic arrays implementation but this one checks data's format being utf8 or not
@@ -9,27 +15,29 @@
  * for function which mutates the variable they take as pointer other oners dont
  */
 
-typedef const struct str_s str_t;
+typedef da(u8) str_t;
 
-struct str_s {
-    u8* items;
-    u32 count;
-    u32 capacity;
-};
+fc_error_t str_init(allocator_t* alloc, str_t* out, usize_t amount);
+fc_error_t str_deinit(str_t* out);
+fc_error_t str_to_cstr(allocator_t* alloc, str_t* base, char** out);
+fc_error_t str_from_cstr(allocator_t* alloc, str_t* out, const char* cstr);
+fc_error_t strdup(allocator_t* alloc, str_t* base, str_t* out);
 
-fc_error_t str_from_cstr(str_t* out, const char* cstr);
-fc_error_t str_to_cstr(str_t base, char** out);
-fc_error_t strdup(str_t base, str_t* out);
-fc_error_t strcpy(str_t* base, str_t cpy);
-fc_error_t strcat(str_t* base, str_t extend);
-fc_error_t strcat_sl(str_t* base, slice_t sl);
-fc_error_t str_utf8len(str_t base, u32* out);
-fc_error_t sl_utf8len(slice_t sl, u32* out);
-fc_error_t str_reserve(str_t* str, u32 amount);
-fc_error_t str_reserve_if(str_t* str, u32 amount);
+fc_error_t strcpy(str_t* base, str_t* cpy);
+fc_error_t strcat(str_t* base, str_t* extend);
+fc_error_t strcat_sl(str_t* base, slice(u8) sl);
+fc_error_t str_utf8len(str_t* base, usize_t* out);
+fc_error_t sl_utf8len(slice(u8) sl, usize_t* out);
+
+fc_error_t str_grow(str_t* str, usize_t amount);
+fc_error_t str_grow_if(str_t* str, usize_t amount);
 
 /* Those functions just matches the data so they can not result with an error */
-bool streq(str_t lhs, str_t rhs);
-bool is_utf8_sl(slice_t sl);
+bool streq(str_t* lhs, str_t* rhs);
+bool is_utf8_sl(slice(u8) sl);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __FLIBC_STRING_H__ */

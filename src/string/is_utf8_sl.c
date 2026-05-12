@@ -1,11 +1,11 @@
 #include "string_private.h"
 
 bool is_utf8_sl
-(slice_t sl)
+(slice(u8) sl)
 {
     /* Init variables */
-    u32 count = 0;
-    
+    usize_t count = 0;
+
     /* Validate user input */
     if(!sl.base || !sl.count) { return true; }
 

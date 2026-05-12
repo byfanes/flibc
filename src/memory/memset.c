@@ -1,17 +1,19 @@
-#include "memory.h"
+#include "memory_private.h"
 #include "error.h"
 
 fc_error_t __memset
-(slice_t ptr, u8 c)
+(void* dst, usize_t el_size, u8 c)
 {
     /* Init variable */
+    slice(u8) *dsl = dst;
     u32 i = 0;
-    
-    /* Validate user inputs */
-    if(!ptr.base) { return fce_mem_memset_nullptr;}
+
+    /* Validate user inputs - elsize can be given 0 */
+    if(!dsl || !dsl->base) { return fce_null_pointer;}
+    if(!el_size) { return fce_elsize_zero;}
 
     /* Iter 'i' times on the slice's base and set to 'c' */
-    for(; i < ptr.count; ++i) { ptr.base[i] = c; }
+    for(; i < dsl->count * el_size; ++i) { dsl->base[i] = c; }
 
     return fce_success;
 }

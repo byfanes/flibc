@@ -1,6 +1,5 @@
 #include "stdlib.h"
 #include "syscall.h"
-#include "features.h"
 
 _Noreturn void abort
 (void)

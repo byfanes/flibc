@@ -1,15 +1,14 @@
 #include "stdio_private.h"
 
 fc_error_t fopen
-(const char* name, file_t** out, file_type_t type)
+(allocator_t* alloc, const char* name, file_t** out, file_type_t type)
 {
     /* Init variables */
     fc_error_t res = fce_success;
-    arch_t fd = 0, flags = 0;
+    ssize_t fd = 0, flags = 0;
 
     /* Validate user inputs */
-    if(!name) { return fce_fopen_name_nullptr; }
-    if(!out) { return fce_fopen_out_nullptr; }
+    if(!alloc || !name || !out) { return fce_null_pointer; }
 
     /* Set flags */
     switch(type) {
@@ -19,19 +18,18 @@ fc_error_t fopen
         case file_read_plus: { flags = O_RDWR; } break;
         case file_write_plus: { flags = O_RDWR | O_CREAT | O_TRUNC; } break;
         case file_append_plus: { flags = O_RDWR | O_CREAT | O_APPEND; } break;
-        default: { return fce_fopen_invalid_type; }
+        default: { return fce_invalid_argument; }
     }
 
     /* Call read syscall */
-    fd = syscall_3(syscall_open, (arch_t)name, flags,
+    fd = syscall_3(syscall_open, (ssize_t)name, flags,
     S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 
     /* Check return of the syscall */
-    if(fd < 0) { return fce_fopen_failed; }
+    if(fd < 0) { return fce_io_error; }
 
     /* Allocate new memory for the struct */
-    res = malloc(sizeof(file_t), out);
-    if(res) { return res; }
+    if((res = malloc(alloc, sizeof(file_t), out))) { return res; }
 
     /* Set variables */
     (*out)->fd = fd;

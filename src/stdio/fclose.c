@@ -5,11 +5,11 @@ fc_error_t fclose
 {
     /* Init variables */
     fc_error_t res = fce_success;
-    arch_t ret = 0;
+    ssize_t ret = 0;
 
     /* Validate user inputs */
-    if(!file) { return fce_fclose_nullptr; }
-    if(!*file) { return fce_fclose_nullptr; }
+    if(!file) { return fce_null_pointer; }
+    if(!*file) { return fce_success; }
 
     /* Call flush to write the remaing buffer */
     res = fflush(*file);
@@ -18,10 +18,12 @@ fc_error_t fclose
     /* Call close syscall */
     ret = syscall_1(syscall_close, (*file)->fd);
 
+    /* Check return of the syscall */
+    if(ret != 0) { return fce_io_error; }
+
+    /* Free the memory back zeroed by the free */
     res = free(file);
     if(res) { return res; }
-    
-    /* Check return of the syscall */
-    if(ret == 0) { return res; } 
-    return fce_fclose_failed;
+
+    return fce_success;
 }
