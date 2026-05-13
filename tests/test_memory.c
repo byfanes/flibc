@@ -1,10 +1,9 @@
 #include "minitest.h"
+#include "crt.h"
 #include "memory.h"
-#include "error.h"
-#include "stdio.h"
 
 int main
-(allocator_t* alloc, stdio_t stdio, slice_u8 exe, slice(slice_u8) args)
+(std_t std)
 {
     /* Variable declarations first (C89) */
     u8 buf1[10] = {0};
@@ -18,10 +17,7 @@ int main
     slice(u8) sl_half1 = { 0 };
     slice(u8) sl_half2 = { 0 };
 
-    (void)alloc;
-    (void)stdio;
-    (void)exe;
-    (void)args;
+    (void)std;
 
     set_slice(&sl_buf1, buf1, 10);
     set_slice(&sl_buf2, buf2, 10);

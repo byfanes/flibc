@@ -29,9 +29,6 @@ can_be_slice(i64);
 can_be_slice(ssize_t);
 can_be_slice(usize_t);
 
-/* TODO move it to crt.h later */
-can_be_slice(slice_u8);
-
 fc_error_t allocator_init(allocator_t** set);
 fc_error_t allocator_deinit(allocator_t** set);
 
