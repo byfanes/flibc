@@ -52,8 +52,6 @@ struct slice_dummy_s {
  * in fuctions like malloc/calloc etc we can use custom allocators too.
  */
 fc_error_t allocator_get_from_ptr(void* ptr, allocator_t** set);
-fc_error_t allocator_init(allocator_t** set);
-fc_error_t allocator_deinit(allocator_t** set);
 fc_error_t allocator_alloc_pointer(allocator_t* alloc, usize_t n, void* set);
 fc_error_t allocator_free_pointer(allocator_t* alloc, void* set);
 

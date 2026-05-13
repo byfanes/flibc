@@ -32,6 +32,9 @@ can_be_slice(usize_t);
 /* TODO move it to crt.h later */
 can_be_slice(slice_u8);
 
+fc_error_t allocator_init(allocator_t** set);
+fc_error_t allocator_deinit(allocator_t** set);
+
 slice(u8) cstr_to_u8sl(const char* cstr);
 fc_error_t set_slice(const void* sl, const void* base, usize_t count);
 
