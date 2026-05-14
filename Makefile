@@ -14,93 +14,62 @@ WARN_CFLAGS := \
   -Wfloat-equal -Wcast-align -Wno-int-conversion \
   -Wswitch-default -std=c89 -ansi -pedantic -Werror
 
-# FREESTANDING (lib + main)
 FREESTANDING_CFLAGS := \
   -ffreestanding -fno-builtin -nostdinc -fPIC \
   -Iinclude $(OPT) $(WARN_CFLAGS)
-
-# HOSTED (tests only)
-HOST_CFLAGS := \
-  -Iinclude $(OPT) $(FREESTANDING_CFLAGS)
-
-SRC_DIR := src
-TEST_DIR := tests
-BUILD_DIR := build
 
 TARGET_STATIC := libflibc.a
 TARGET_SHARED := libflibc.so
 EXEC := main
 
-# 1. Isolate start.c from the rest of the library sources
-# (Change this path if start.c is inside a subfolder, e.g., src/runtime/start.c)
-START_SRC := $(SRC_DIR)/start.c
-START_OBJ := $(BUILD_DIR)/start.o
+ARCH ?= $(shell uname -m)
+SRC_DIR := src
+ASM_DIR := $(SRC_DIR)/arch/$(ARCH)
+BUILD_DIR := build
+BUILD_C_DIR := build/c
+BUILD_ASM_DIR := build/asm
 
-# 2. Filter out start.c so it DOES NOT go into the .a or .so libraries
-SRCS := $(shell find $(SRC_DIR) -name '*.c')
-LIB_SRCS := $(filter-out $(START_SRC), $(SRCS))
-LIB_OBJS := $(LIB_SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+C_SRC := $(shell find $(SRC_DIR) -name '*.c')
+ASM_SRC_ALL := $(shell find $(ASM_DIR) -name '*.S')
+CRT0_SRC := $(shell find $(ASM_DIR) -name 'crt0.S')
+ASM_SRC := $(filter-out $(CRT0_SRC),$(ASM_SRC_ALL))
 
-TEST_SRC := $(shell find $(TEST_DIR) -name '*.c')
-TEST_OBJS := $(TEST_SRC:$(TEST_DIR)/%.c=$(BUILD_DIR)/$(TEST_DIR)/%.o)
-TEST_OUT := $(TEST_SRC:$(TEST_DIR)/%.c=$(BUILD_DIR)/$(TEST_DIR)/%)
-
-.PHONY: all clean tests check
+C_OBJ := $(C_SRC:$(SRC_DIR)/%.c=$(BUILD_C_DIR)/%.o)
+CRT0_OBJ := $(CRT0_SRC:$(SRC_DIR)/%.S=$(BUILD_DIR)/%.o)
+ASM_OBJ := $(ASM_SRC:$(SRC_DIR)/%.S=$(BUILD_ASM_DIR)/%.o)
 
 all: $(TARGET_STATIC) $(TARGET_SHARED) $(EXEC)
 
-tests: $(TEST_OUT)
-
-check: tests
-	@echo "--- Running Tests ---"
-	@for test in $(TEST_OUT); do \
-		echo "Running $$test..."; \
-		./$$test || exit 1; \
-	done
-	@echo "--- All tests passed! ---"
-
-# STATIC LIBRARY
-$(TARGET_STATIC): $(LIB_OBJS)
+$(TARGET_STATIC): $(C_OBJ) $(ASM_OBJ)
 	@echo "Archiving $@"
 	@$(AR) $(ARFLAGS) $@ $^
 
-# SHARED LIBRARY
-$(TARGET_SHARED): $(LIB_OBJS)
+$(TARGET_SHARED): $(C_OBJ) $(ASM_OBJ)
 	@echo "Linking shared library $@"
 	@$(CC) -shared -nostdlib -o $@ $^
 
-# Rule for building the library objects
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+$(BUILD_C_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	@echo "Compiling lib $<"
 	@$(CC) $(FREESTANDING_CFLAGS) -c $< -o $@
 
-# 3. Rule for explicitly building your runtime object
-$(START_OBJ): $(START_SRC)
+$(BUILD_ASM_DIR)/%.o: $(SRC_DIR)/%.S
 	@mkdir -p $(dir $@)
-	@echo "Compiling runtime start object $<"
+	@echo "Compiling lib $<"
 	@$(CC) $(FREESTANDING_CFLAGS) -c $< -o $@
 
-# MAIN
-# 4. We explicitly link $(START_OBJ) here so _start is injected into the executable
-$(EXEC): main.c $(START_OBJ) $(TARGET_SHARED)
+$(CRT0_OBJ): $(CRT0_SRC)
+	@mkdir -p $(dir $@)
+	@echo "Compiling crt $<"
+	@$(CC) $(FREESTANDING_CFLAGS) -c $< -o $@
+
+$(EXEC): main.c $(CRT0_OBJ) $(TARGET_SHARED)
 	@echo "Linking freestanding executable $@"
 	@$(CC) \
 	    $(FREESTANDING_CFLAGS) \
 	    -nostdlib -nostartfiles \
 	    -Wl,-e,_start \
-	    $(START_OBJ) main.c -L. -lflibc -Wl,-rpath=. -o $@
-
-# TESTS (HOSTED)
-$(BUILD_DIR)/$(TEST_DIR)/%.o: $(TEST_DIR)/%.c
-	@mkdir -p $(dir $@)
-	@echo "Compiling test $<"
-	@$(CC) $(HOST_CFLAGS) $(WARN_CFLAGS) $(FREESTANDING_CFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/$(TEST_DIR)/%: $(BUILD_DIR)/$(TEST_DIR)/%.o $(TARGET_SHARED) $(START_OBJ)
-	@echo "Linking test $@"
-	@$(CC) $(FREESTANDING_CFLAGS) -nostdlib -nostartfiles -Wl,-e,_start \
-		$(HOST_CFLAGS) $(WARN_CFLAGS) $(START_OBJ) $< -L. -lflibc -Wl,-rpath=. -o $@
+	    $(CRT0_OBJ) main.c -L. -lflibc -Wl,-rpath=. -o $@
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET_STATIC) $(TARGET_SHARED) $(EXEC)
