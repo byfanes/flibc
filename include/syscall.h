@@ -1,6 +1,10 @@
 #ifndef __FLIBC_SYSCALL_H__
 #define __FLIBC_SYSCALL_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "features.h"
 #include "stdtypes.h"
 
@@ -8,6 +12,10 @@
     #include "../src/arch/x86_64/syscall_arch.h"
 #else
     #error "Architecture not supported by flibc yet!"
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* __FLIBC_SYSCALL_H__ */

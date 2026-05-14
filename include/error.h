@@ -26,6 +26,7 @@ enum fc_error_e {
 
     /* System Errors */
     fce_memory_error,
+    fce_time_error,
     fce_io_error,
     fce_io_partial,
     fce_io_invalid_op,

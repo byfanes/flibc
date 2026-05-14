@@ -1,6 +1,10 @@
 #ifndef __FLIBC_CRT_H__
 #define __FLIBC_CRT_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "stdlib.h"
 #include "stdio.h"
 #include "memory.h"
@@ -16,5 +20,9 @@ struct std_s {
 };
 
 extern int main(std_t);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __FLIBC_CRT_H__ */

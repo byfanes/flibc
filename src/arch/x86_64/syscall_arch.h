@@ -66,10 +66,11 @@ INTERNAL ssize_t syscall_6
 #define syscall_open 2
 #define syscall_close 3
 #define syscall_lseek 8
-
 #define syscall_mmap 9
 #define syscall_munmap 11
+#define syscall_nanosleep 35
 #define syscall_exit 60
+#define syscall_gettime 228
 
 #define UNIX_STDIN 0
 #define UNIX_STDOUT 1
@@ -101,6 +102,8 @@ INTERNAL ssize_t syscall_6
 #define S_IWGRP 16
 #define S_IROTH 4
 #define S_IWOTH 2
+
+#define CLOCK_MONOTONIC 1
 
 #else /* __linux__ */
 #error "Unsupported OS"
