@@ -1,10 +1,10 @@
 #include "da_private.h"
 
 fc_error_t da_deinit
-(void* set)
+(void* da)
 {
     /* Init variables */
-    def_da_t *def = set;
+    def_da_t *def = da;
 
     /* Check input */
     if(!def) { return fce_null_pointer; }

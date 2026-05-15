@@ -35,9 +35,12 @@ can_be_da(i64);
 can_be_da(ssize_t);
 can_be_da(usize_t);
 
-fc_error_t da_deinit(void* set);
-fc_error_t __da_init(allocator_t* alloc, void* set, usize_t amount, usize_t el_size);
-#define da_init(allocator, set, amount) __da_init((allocator), (set), (amount), sizeof(((set))->items[0]))
+fc_error_t __da_add_shadow_null_byte(void* da, usize_t el_size);
+#define da_add_shadow_null_byte(da) __da_add_shadow_null_byte((da), sizeof((da)->items[0]));
+
+fc_error_t da_deinit(void* da);
+fc_error_t __da_init(allocator_t* alloc, void* da, usize_t amount, usize_t el_size);
+#define da_init(allocator, da, amount) __da_init((allocator), (da), (amount), sizeof(((da))->items[0]))
 
 fc_error_t __da_grow(void* da, usize_t amount, usize_t el_size);
 #define da_grow(da, amount) __da_grow((da), (amount), sizeof((da)->items[0]))

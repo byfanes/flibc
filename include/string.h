@@ -32,6 +32,8 @@ fc_error_t sl_utf8len(slice(u8) sl, usize_t* out);
 fc_error_t str_grow(str_t* str, usize_t amount);
 fc_error_t str_grow_if(str_t* str, usize_t amount);
 
+fc_error_t str_add_shadow_null(str_t* str);
+
 /* Those functions just matches the data so they can not result with an error */
 bool streq(str_t* lhs, str_t* rhs);
 bool is_utf8_sl(slice(u8) sl);
