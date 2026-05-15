@@ -61,16 +61,28 @@ INTERNAL ssize_t syscall_6
 (ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4, ssize_t arg5, ssize_t arg6)
 { return syscall_6_linux(num, arg1, arg2, arg3, arg4, arg5, arg6); }
 
+#define MAX_PATH 4096
+
 #define syscall_read 0
 #define syscall_write 1
 #define syscall_open 2
 #define syscall_close 3
+#define syscall_stat 4
 #define syscall_lseek 8
 #define syscall_mmap 9
 #define syscall_munmap 11
 #define syscall_nanosleep 35
 #define syscall_exit 60
+#define syscall_getcwd 79
+#define syscall_chdir 80
+#define syscall_rename 82
+#define syscall_mkdir 83
+#define syscall_rmdir 84
+#define syscall_unlink 87
 #define syscall_gettime 228
+
+#define S_IFREG 0100000
+#define S_IFDIR 0040000
 
 #define UNIX_STDIN 0
 #define UNIX_STDOUT 1
