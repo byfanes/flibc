@@ -28,7 +28,7 @@ error_t allocator_deinit
         bit = (alloc->free_bits[i / 8] >>  i % 8) & 1;
         if(!bit) { continue; }
         /* Leaked memory */
-        header = (heap_header_t*)((u8*)alloc + sizeof(allocator_t) + i * CHUNK_SIZE);
+        header = (heap_header_t*)(uintptr_t)((u8*)(alloc - 1) + i * CHUNK_SIZE);
         formatf(buf_sl,
             cstr_to_u8sl("Memory Leak: %u bytes in %s:%d is not freed\n"),
             &len, header->req_alloced, header->file_name, header->line);

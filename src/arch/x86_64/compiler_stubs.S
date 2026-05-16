@@ -1,7 +1,7 @@
 .intel_syntax noprefix
-.globl memset
-.globl memcpy
-.section text
+.text
+.global memset
+.global memcpy
 
 memset:
     mov rax, rdi
