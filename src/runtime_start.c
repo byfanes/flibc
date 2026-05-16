@@ -72,9 +72,12 @@ void runtime_start
     }
 
     /* Close the standard files */
-    fclose(&std.io.in);
-    fclose(&std.io.out);
-    fclose(&std.io.err);
+    if(fclose(&std.io.in))
+    { early_panic(cstr_to_u8sl("CTR Panic: Could not close standard input file!\n")); }
+    if(fclose(&std.io.out))
+    { early_panic(cstr_to_u8sl("CTR Panic: Could not close standard output file!\n")); }
+    if(fclose(&std.io.err))
+    { early_panic(cstr_to_u8sl("CTR Panic: Could not close standard error file!\n")); }
 
     /* Free default allocator */
     if(allocator_deinit(&std.alloc))
