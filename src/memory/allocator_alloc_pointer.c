@@ -38,7 +38,6 @@ fc_error_t allocator_alloc_pointer
     header->raw_alloced = (u32)needed;
     header->chunk_idx = (u16)idx;
     header->chunk_count = (u16)chunk_count;
-    header->alloc = alloc;
     header->first_null = 0;
 
     /* Last null byte */

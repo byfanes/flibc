@@ -24,7 +24,8 @@ fc_error_t allocator_get_from_ptr
     if(header->raw_alloced & (CHUNK_SIZE - 1))
     { return fce_invalid_pointer; }
 
-    *set = header->alloc;
+    /* Header should be allign to chunks' begining */
+    *set = (allocator_t*)(((u8*)header - header->chunk_idx * CHUNK_SIZE) - sizeof(allocator_t));
 
     return fce_success;
 }

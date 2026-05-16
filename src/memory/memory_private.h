@@ -23,7 +23,6 @@ typedef struct heap_header_s heap_header_t;
  * bytes to start and end which ends up with sizeof(heap_header_t) + sizeof(u16)(last one)
  */
 struct heap_header_s {
-    allocator_t* alloc;
     u32 req_alloced;
     u32 raw_alloced;
     u16 chunk_idx;
@@ -36,6 +35,10 @@ struct heap_header_s {
  * but jumping 1 allocator ahead to access it then do all of the stuff
  */
 struct allocator_s {
+    /* Allocators' heap chunk size should be 1024*1024 = 1 MiB
+     * So we should have 16384 chunks so we can store it in 16384 bit
+     * That converts to 2048 bytes
+     */
     u8 free_bits[CHUNK_MAX / 8];
 };
 
