@@ -7,15 +7,11 @@ fc_error_t vfprintf
     usize_t count = 0;
     fc_error_t res = fce_success;
     u8 buf[FLIBC_STACK_THRESHOLD];
-    va_list c_ap;
     slice(u8) buf_sl = {0};
     void* ptr = 0;
 
-    /* Copy va because it is unusable after it has been consumed */
-    va_copy(c_ap, ap);
-
     /* First get size of buffer */
-    if((res = __formatf(buf_sl, fmt, c_ap, &count))) { return res; }
+    if((res = __formatf(buf_sl, fmt, &count, ap))) { return res; }
 
     /* Allocate stack or heap */
     if(count > FLIBC_STACK_THRESHOLD) {
@@ -29,7 +25,7 @@ fc_error_t vfprintf
     set_slice(&buf_sl, ptr, count);
 
     /* Format using fmt and output to buffer */
-    if((res = __formatf(buf_sl, fmt, ap, &count))) { return res; }
+    if((res = __formatf(buf_sl, fmt, &count, ap))) { return res; }
 
     /* Write buffer to file pointer */
     if((res = fwrite(file, buf_sl))) { return res; }

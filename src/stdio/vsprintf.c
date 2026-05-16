@@ -6,21 +6,19 @@ fc_error_t vsprintf
     /* Init variables */
     usize_t count = 0;
     fc_error_t res = fce_success;
-    va_list c_ap;
     slice(u8) zero_sl = {0};
 
     /* Set it if its given */
     if(wrote_count) { *wrote_count = 0; }
 
     /* Get size first */
-    va_copy(c_ap, ap);
-    if((res = __formatf(zero_sl, fmt, c_ap, &count))) { return res; }
+    if((res = __formatf(zero_sl, fmt, &count, ap))) { return res; }
 
     /* Check avaliable count */
     if(buf.count < count) { return fce_small_buffer; }
 
     /* Format sting */
-    if((res = __formatf(buf, fmt, ap, &count))) { return res; }
+    if((res = __formatf(buf, fmt, &count, ap))) { return res; }
 
     /* Write count if its avaliable and return */
     if(wrote_count) { *wrote_count = count; }

@@ -69,9 +69,23 @@ INTERNAL void octal_format
     *count += times;
 }
 
+fc_error_t formatf
+(slice(u8) buf, slice(u8) fmt, usize_t* out_len, ...)
+{
+    /* Init variables */
+    va_list ap;
+    fc_error_t res = fce_success;
+
+    /* Start and end va and format string */
+    va_start(ap, out_len);
+    res = __formatf(buf, fmt, out_len, ap);
+    va_end(ap);
+
+    return res;
+}
 
 fc_error_t __formatf
-(slice(u8) buf, slice(u8) fmt, va_list ap, usize_t* out_len)
+(slice(u8) buf, slice(u8) fmt, usize_t* out_len, va_list va)
 {
     /* Init variables */
     u32 count = 0, i = 0, len = 0;
@@ -80,6 +94,10 @@ fc_error_t __formatf
     i64 cur_i64 = 0;
     char* cur_cstr = 0;
     slice(u8) cur_vec = {0}, buf_sl = {0}, *cur_vec_ptr = 0;
+    va_list ap;
+
+    /* Copy va list to make users' va_list still usable */
+    va_copy(ap, va);
 
     /* Check input */
     if(!fmt.base || !out_len) { return fce_null_pointer; }
