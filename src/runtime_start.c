@@ -23,7 +23,7 @@ void runtime_start
 (usize_t argc, char** argv)
 {
     /* Init variables */
-    fc_error_t ret = 0;
+    error_t ret = 0;
     usize_t i = 0;
     slice(u8) args[MAX_ARGS_COUNT] = {0}, *args_ptr = 0;
     std_t std = {0};

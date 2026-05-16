@@ -1,13 +1,13 @@
 #include "stdio_private.h"
 
-fc_error_t fopen_stdout
+error_t fopen_stdout
 (allocator_t* alloc, file_t** out)
 {
     /* Init variables */
-    fc_error_t res = fce_success;
+    error_t res = success;
 
     /* Validate user inputs */
-    if(!alloc || !out) { return fce_null_pointer; }
+    if(!alloc || !out) { return null_pointer; }
 
     /* Allocate new memory for the struct */
     if((res = malloc(alloc, sizeof(file_t), out))) { return res; }

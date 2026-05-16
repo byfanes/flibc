@@ -1,7 +1,7 @@
 #include "memory_private.h"
 #include "error.h"
 
-fc_error_t __memswap
+error_t __memswap
 (void* lhs, void* rhs, usize_t el_size)
 {
     /* Init variables */
@@ -9,8 +9,8 @@ fc_error_t __memswap
     u8 c = 0, i = 0;
 
     /* Validate user inputs */
-    if(!lsl || !rsl || !lsl->base || !rsl->base) { return fce_null_pointer; }
-    if(lsl->count != rsl->count) { return fce_memswap_diffsize; }
+    if(!lsl || !rsl || !lsl->base || !rsl->base) { return null_pointer; }
+    if(lsl->count != rsl->count) { return memswap_diffsize; }
 
     /* Iter 'i' times on the slices' bases and swap them */
     for(; i < lsl->count * el_size; ++i) {
@@ -19,5 +19,5 @@ fc_error_t __memswap
         rsl->base[i] = c;
     }
 
-    return fce_success;
+    return success;
 }

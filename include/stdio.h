@@ -35,31 +35,31 @@ struct stdio_s {
     file_t *out, *in, *err;
 };
 
-fc_error_t fclose(file_t** file);
-fc_error_t fopen(allocator_t* alloc, const char* name, file_t** out, file_type_t type);
-fc_error_t fopen_stderr(allocator_t* alloc, file_t** out);
-fc_error_t fopen_stdout(allocator_t* alloc, file_t** out);
-fc_error_t fopen_stdin(allocator_t* alloc, file_t** out);
+error_t fclose(file_t** file);
+error_t fopen(allocator_t* alloc, const char* name, file_t** out, file_type_t type);
+error_t fopen_stderr(allocator_t* alloc, file_t** out);
+error_t fopen_stdout(allocator_t* alloc, file_t** out);
+error_t fopen_stdin(allocator_t* alloc, file_t** out);
 
-fc_error_t fflush(file_t* _Nullable file);
-fc_error_t fwrite(file_t* file, slice(u8) sl);
-fc_error_t fread(file_t* file, slice(u8) buf, u32* _Nullable read_count);
+error_t fflush(file_t* _Nullable file);
+error_t fwrite(file_t* file, slice(u8) sl);
+error_t fread(file_t* file, slice(u8) buf, u32* _Nullable read_count);
 
-fc_error_t fsetpos(file_t* file, usize_t pos);
-fc_error_t fgetpos(file_t* file, usize_t* _Nullable pos);
+error_t fsetpos(file_t* file, usize_t pos);
+error_t fgetpos(file_t* file, usize_t* _Nullable pos);
 
-fc_error_t ftell(file_t* file, usize_t* out);
-fc_error_t fseek(file_t* file, usize_t off, seek_type_t type, usize_t* _Nullable out);
-fc_error_t rewind(file_t* file);
+error_t ftell(file_t* file, usize_t* out);
+error_t fseek(file_t* file, usize_t off, seek_type_t type, usize_t* _Nullable out);
+error_t rewind(file_t* file);
 
-fc_error_t fputs(file_t* file, slice(u8) sl);
-fc_error_t fputc(file_t* file, uint8_t c);
+error_t fputs(file_t* file, slice(u8) sl);
+error_t fputc(file_t* file, uint8_t c);
 
-fc_error_t sprintf(slice(u8) buf, usize_t* _Nullable wrote_count, slice(u8) fmt, ...);
-fc_error_t fprintf(file_t* file, slice(u8) fmt, ...);
+error_t sprintf(slice(u8) buf, usize_t* _Nullable wrote_count, slice(u8) fmt, ...);
+error_t fprintf(file_t* file, slice(u8) fmt, ...);
 
-fc_error_t vsprintf(slice(u8) buf, usize_t* _Nullable wrote_count, slice(u8) fmt, va_list ap);
-fc_error_t vfprintf(file_t* file, slice(u8) fmt, va_list ap);
+error_t vsprintf(slice(u8) buf, usize_t* _Nullable wrote_count, slice(u8) fmt, va_list ap);
+error_t vfprintf(file_t* file, slice(u8) fmt, va_list ap);
 
 #ifdef __cplusplus
 }

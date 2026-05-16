@@ -1,6 +1,6 @@
 #include "string_private.h"
 
-fc_error_t str_grow
+error_t str_grow
 (str_t* str, usize_t amount)
 {
     /* This is a wrapper function */

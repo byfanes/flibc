@@ -1,6 +1,6 @@
 #include "time_private.h"
 
-fc_error_t time_sleep
+error_t time_sleep
 (u64 ms)
 {
     /* Init variables */
@@ -13,7 +13,7 @@ fc_error_t time_sleep
 
     /* Call and check syscall */
     ret = syscall_2(syscall_nanosleep, &time, nullptr);
-    if(ret != 0) { return fce_time_error; }
+    if(ret != 0) { return time_error; }
 
-    return fce_success;
+    return success;
 }

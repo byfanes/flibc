@@ -1,6 +1,6 @@
 #include "da_private.h"
 
-fc_error_t __da_add_shadow_null_byte
+error_t __da_add_shadow_null_byte
 (void* da, usize_t el_size)
 {
     /* Init variables */
@@ -8,7 +8,7 @@ fc_error_t __da_add_shadow_null_byte
     u8* ptr = 0;
 
     /* Check input */
-    if(!def || !def->items) { return fce_null_pointer; }
+    if(!def || !def->items) { return null_pointer; }
 
     /* If count is less than capacity set ptr to end of the last item
      * and move one unit to set zero
@@ -20,5 +20,5 @@ fc_error_t __da_add_shadow_null_byte
         *ptr = 0;
     }
 
-    return fce_success;
+    return success;
 }

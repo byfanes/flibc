@@ -2,7 +2,7 @@
 #include "crt.h"
 #include "memory.h"
 
-fc_error_t main
+error_t main
 (std_t std)
 {
     /* Variable declarations first (C89) */

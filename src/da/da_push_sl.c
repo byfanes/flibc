@@ -1,17 +1,17 @@
 #include "da_private.h"
 
-fc_error_t __da_push_sl
+error_t __da_push_sl
 (void* da, void* sl, usize_t el_size)
 {
     /* Init variables */
-    fc_error_t res = fce_success;
+    error_t res = success;
     def_da_t *def = da;
     slice(u8) *ssl = sl, dsl = {0}, nsl = {0};
 
     /* Validate user inputs - el_size can not be 0 via sizeof but user implicitly call with it */
-    if(!def || !ssl || !ssl->base) { return fce_null_pointer; }
+    if(!def || !ssl || !ssl->base) { return null_pointer; }
     /* __da_grow_if can do an early return without checking el_size so check it */
-    if(!el_size) { return fce_elsize_zero; }
+    if(!el_size) { return elsize_zero; }
 
     /* Check if it fits allocate otherwise  */
     if((res = __da_grow_if(da, ssl->count, el_size))) { return res; }

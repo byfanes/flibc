@@ -1,11 +1,11 @@
 #include "stdio_private.h"
 
-fc_error_t vfprintf
+error_t vfprintf
 (file_t* file, slice(u8) fmt, va_list ap)
 {
     /* Init variables */
     usize_t count = 0;
-    fc_error_t res = fce_success;
+    error_t res = success;
     u8 buf[FLIBC_STACK_THRESHOLD];
     slice(u8) buf_sl = {0};
     void* ptr = 0;
@@ -33,5 +33,5 @@ fc_error_t vfprintf
     /* Free if its need */
     if(count > FLIBC_STACK_THRESHOLD) { return free(&ptr); }
 
-    return fce_success;
+    return success;
 }

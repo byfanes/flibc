@@ -6,6 +6,6 @@
 #include "../da/da_private.h"
 
 /* This is an internal function so it does not any validation for arguments or its avaliable length */
-fc_error_t __str_copy_content(str_t* str, slice(u8) sl);
+error_t __str_copy_content(str_t* str, slice(u8) sl);
 
 #endif /* __FLIBC_STRING_PRIVATE_H__ */

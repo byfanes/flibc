@@ -1,6 +1,6 @@
 #include "stdio_private.h"
 
-fc_error_t ftell
+error_t ftell
 (file_t* file, usize_t* out)
 {
     /* Redirect to fseek it is safe to use nullptr as out

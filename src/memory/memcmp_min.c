@@ -1,7 +1,7 @@
 #include "memory_private.h"
 #include "error.h"
 
-fc_error_t __memcmp_min
+error_t __memcmp_min
 (void* lhs, void* rhs, usize_t el_size, bool* res)
 {
     /* Init variables */
@@ -9,8 +9,8 @@ fc_error_t __memcmp_min
     usize_t count = 0, i = 0;
 
     /* Validate user inputs */
-    if(!lsl || !rsl || !res || !lsl->base || !rsl->base) { return fce_null_pointer; }
-    if(!el_size) { return fce_elsize_zero; }
+    if(!lsl || !rsl || !res || !lsl->base || !rsl->base) { return null_pointer; }
+    if(!el_size) { return elsize_zero; }
 
     /* Set min size */
     count = (lsl->count > rsl->count) ? rsl->count : lsl->count;
@@ -20,11 +20,11 @@ fc_error_t __memcmp_min
         if(lsl->base[i] != rsl->base[i]) {
             /* Does not match */
             *res = false;
-            return fce_success;
+            return success;
         }
     }
 
     /* Does match */
     *res = true;
-    return fce_success;
+    return success;
 }

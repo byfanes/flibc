@@ -2,7 +2,7 @@
 #include "crt.h"
 #include "string.h"
 
-fc_error_t main
+error_t main
 (std_t std)
 {
     str_t s1 = {0};

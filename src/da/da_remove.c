@@ -1,6 +1,6 @@
 #include "da_private.h"
 
-fc_error_t __da_remove
+error_t __da_remove
 (void* da, usize_t idx, usize_t el_size)
 {
     /* Init variables */
@@ -9,9 +9,9 @@ fc_error_t __da_remove
     slice(u8) src = {0}, dst = {0};
 
     /* Validate user inputs - el_size can not be 0 via sizeof but user implicitly call with it */
-    if(!def || !def->items) { return fce_null_pointer; }
-    if(!el_size) { return fce_elsize_zero; }
-    if(idx >= def->count) { return fce_out_of_bounds; }
+    if(!def || !def->items) { return null_pointer; }
+    if(!el_size) { return elsize_zero; }
+    if(idx >= def->count) { return out_of_bounds; }
 
     /* Set slices for the moving. Arguments are valid in here so no need to check */
     set_slice(&src, &def->items[(idx + 1) * el_size], count);

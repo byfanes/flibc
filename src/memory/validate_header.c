@@ -13,10 +13,10 @@ bool __validate_header
      * equal to raw because its calculated like that
      */
     if(ALIGN_64(header->req_alloced + sizeof(heap_header_t) + sizeof(u16)) != header->raw_alloced)
-    { return fce_invalid_pointer; }
+    { return invalid_pointer; }
 
     if(header->first_null != 0)
-    { return fce_invalid_pointer; }
+    { return invalid_pointer; }
     
     return true;
 }

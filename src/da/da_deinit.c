@@ -1,13 +1,13 @@
 #include "da_private.h"
 
-fc_error_t da_deinit
+error_t da_deinit
 (void* da)
 {
     /* Init variables */
     def_da_t *def = da;
 
     /* Check input */
-    if(!def) { return fce_null_pointer; }
+    if(!def) { return null_pointer; }
 
     /* Revert stats */
     def->count = 0;

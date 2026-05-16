@@ -1,15 +1,15 @@
 #include "string_private.h"
 
-fc_error_t strcat
+error_t strcat
 (str_t* base, str_t* extend)
 {
     /* Init variables */
-    fc_error_t res = fce_success;
+    error_t res = success;
     slice(u8) src = {0};
 
     /* Validate user input */
-    if(!base || !base->items) { return fce_null_pointer; }
-    if(!extend || !extend->items || !extend->count) { return fce_success; }
+    if(!base || !base->items) { return null_pointer; }
+    if(!extend || !extend->items || !extend->count) { return success; }
 
     /* Grow string memory if needed */
     if((res = str_grow_if(base, extend->count))) { return res; }

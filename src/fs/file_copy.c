@@ -2,7 +2,7 @@
 #include "stdio.h"
 #include "memory.h"
 
-fc_error_t file_copy
+error_t file_copy
 (allocator_t* alloc, path_t* from, path_t* to)
 {
     /* Init variables */
@@ -10,11 +10,11 @@ fc_error_t file_copy
     file_t* file = 0;
     slice(u8) buf = {0};
     void* ptr = 0;
-    fc_error_t res = fce_success;
+    error_t res = success;
     
     /* Check inputs */
     if(!alloc || !from || !from->items || !from->count || !to || !to->items || !to->count)
-    { return fce_null_pointer; }
+    { return null_pointer; }
 
     /* Get size of the file */
     if((res = path_size(from, &size))) { return res; }
@@ -34,5 +34,5 @@ fc_error_t file_copy
     if((res = fclose(&file))) { return res; }
     if((res = free(&ptr))) { return res; }
     
-    return fce_success;
+    return success;
 }

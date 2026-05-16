@@ -1,6 +1,6 @@
 #include "da_private.h"
 
-fc_error_t __da_pop_last
+error_t __da_pop_last
 (void* da, void* out, usize_t el_size)
 {
     /* Init variables */
@@ -9,7 +9,7 @@ fc_error_t __da_pop_last
     /* Validate user inputs - el_size can not be 0 via sizeof
      * but user implicitly call with it checked in __da_pop function
      */
-    if(def->count == 0) { return fce_out_of_bounds; }
+    if(def->count == 0) { return out_of_bounds; }
 
     return __da_pop(da, out, def->count - 1, el_size);
 }

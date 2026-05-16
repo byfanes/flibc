@@ -1,19 +1,19 @@
 #include "fs_private.h"
 
-fc_error_t path_is_dir
+error_t path_is_dir
 (path_t* p, bool* out)
 {
     /* Init variables */
-    fc_error_t res = fce_success;
+    error_t res = success;
     fs_stat_t stats = {0};
 
     /* Check inputs set it to false for failure case */
-    if(!out) { return fce_null_pointer; }
+    if(!out) { return null_pointer; }
     *out = false;
 
     /* Check if not fail set it */
     if((res = path_stat(p, &stats))) { return res; }
     *out = (stats.st_mode == S_IFDIR);
     
-    return fce_success;
+    return success;
 }

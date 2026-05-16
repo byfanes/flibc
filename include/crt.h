@@ -20,7 +20,7 @@ struct std_s {
     slice(slice_u8) args;
 };
 
-extern fc_error_t main(std_t);
+extern error_t main(std_t);
 
 #ifdef __cplusplus
 }

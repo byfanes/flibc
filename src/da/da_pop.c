@@ -1,6 +1,6 @@
 #include "da_private.h"
 
-fc_error_t __da_pop
+error_t __da_pop
 (void* da, void* out, usize_t idx, usize_t el_size)
 {
     /* Init variables */
@@ -9,9 +9,9 @@ fc_error_t __da_pop
     u8 *p_out = out;
 
     /* Validate user inputs - el_size can not be 0 via sizeof but user implicitly call with it */
-    if(!def || !p_out || !def->items) { return fce_null_pointer; }
-    if(!el_size) { return fce_elsize_zero; }
-    if(idx >= def->count) { return fce_out_of_bounds; }
+    if(!def || !p_out || !def->items) { return null_pointer; }
+    if(!el_size) { return elsize_zero; }
+    if(idx >= def->count) { return out_of_bounds; }
 
     /* Copy last itme to out */
     for(;i < el_size; ++i) {

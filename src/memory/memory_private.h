@@ -59,10 +59,10 @@ struct slice_dummy_s {
 /* We can make some function pointers in allocator_t via that
  * in fuctions like malloc/calloc etc we can use custom allocators too.
  */
-fc_error_t allocator_get_from_ptr(void* ptr, allocator_t** set);
-fc_error_t allocator_alloc_pointer
+error_t allocator_get_from_ptr(void* ptr, allocator_t** set);
+error_t allocator_alloc_pointer
 (allocator_t* alloc, usize_t n, void* set, const char* file_name, usize_t line);
-fc_error_t allocator_free_pointer(allocator_t* alloc, void* set);
+error_t allocator_free_pointer(allocator_t* alloc, void* set);
 
 void __set_chunks_free(u8* bitmap_bytes, u32 start_bit, u32 n);
 void __set_chunks_used(u8* bitmap_bytes, u32 start_bit, u32 n);

@@ -1,14 +1,14 @@
 #include "fs_private.h"
 
-fc_error_t dir_mkdir
+error_t dir_mkdir
 (path_t* path)
 {
     /* Validate input */
-    if(!path || !path->items || !path->count) { return fce_null_pointer; }
+    if(!path || !path->items || !path->count) { return null_pointer; }
     
     /* Add null byte and call remove syscall */
     str_add_shadow_null(path);
-    if(syscall_2(syscall_mkdir, path->items, 0755) != 0) { return fce_fs_error; }
+    if(syscall_2(syscall_mkdir, path->items, 0755) != 0) { return fs_error; }
 
-    return fce_success;
+    return success;
 }

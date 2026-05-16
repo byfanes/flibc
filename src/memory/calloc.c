@@ -2,11 +2,11 @@
 #include "error.h"
 #include "syscall.h"
 
-fc_error_t __calloc
+error_t __calloc
 (allocator_t* alloc, usize_t size, void* set, TRACE_ARGS)
 {
     /* Init variables */
-    fc_error_t res = fce_success;
+    error_t res = success;
     slice(u8) sl = {0};
 
     /* Allocate memory - User input validation done here */

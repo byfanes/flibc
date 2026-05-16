@@ -1,7 +1,7 @@
 #include "memory_private.h"
 #include "error.h"
 
-fc_error_t __memmove
+error_t __memmove
 (void* dst, void* src, usize_t el_size)
 {
     /* Init variables */
@@ -10,16 +10,16 @@ fc_error_t __memmove
     usize_t i = 0;
 
     /* Validate user inputs */
-    if(!dsl || !ssl || !dsl->base || !ssl->base) { return fce_null_pointer; }
-    if(ssl->count > dsl->count) { return fce_small_buffer; }
-    if(!el_size) { return fce_elsize_zero; }
+    if(!dsl || !ssl || !dsl->base || !ssl->base) { return null_pointer; }
+    if(ssl->count > dsl->count) { return small_buffer; }
+    if(!el_size) { return elsize_zero; }
 
     /* Alias for the pointers */
     d = dsl->base;
     s = ssl->base;
 
     /* If they are the exact same memory address, do nothing */
-    if (d == s) { return fce_success; }
+    if (d == s) { return success; }
 
     if (d < s) {
         /* Destination is before Source. Copy forwards (left-to-right) */
@@ -36,5 +36,5 @@ fc_error_t __memmove
         }
     }
 
-    return fce_success;
+    return success;
 }

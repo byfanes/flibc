@@ -13,8 +13,8 @@ struct time_s {
     u64 nsec;
 };
 
-fc_error_t time_now(time_t* out);
-fc_error_t time_sleep(u64 ms);
+error_t time_now(time_t* out);
+error_t time_sleep(u64 ms);
 u64 time_diff_ms(time_t a, time_t b);
 u64 time_diff_sec(time_t a, time_t b);
 

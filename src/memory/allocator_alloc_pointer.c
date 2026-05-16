@@ -1,6 +1,6 @@
 #include "memory_private.h"
 
-fc_error_t allocator_alloc_pointer
+error_t allocator_alloc_pointer
 (allocator_t* alloc, usize_t n, void* set, const char* file_name, usize_t line)
 {
     /* Init variables */
@@ -10,7 +10,7 @@ fc_error_t allocator_alloc_pointer
     heap_header_t* header = 0;
 
     /* Check input */
-    if(!alloc || !set) { return fce_null_pointer; }
+    if(!alloc || !set) { return null_pointer; }
 
     /* u16 is for end null bytes and align it */
     needed = (n + sizeof(heap_header_t) + sizeof(u16));
@@ -49,5 +49,5 @@ fc_error_t allocator_alloc_pointer
     /* Set user's pointer one for first null byte */
     *(void**)set = (ptr + sizeof(heap_header_t));
 
-    return fce_success;
+    return success;
 }

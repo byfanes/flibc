@@ -19,7 +19,7 @@ do {             \
 
 #define ASSERT_OK(a) \
 do {             \
-    if(a != fce_success) { \
+    if(a != success) { \
         exit(1); \
     }            \
 } while(0);

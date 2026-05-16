@@ -1,6 +1,6 @@
 #include "stdio_private.h"
 
-fc_error_t fputs
+error_t fputs
 (file_t* file, slice(u8) sl)
 {
     /* In the library there is no difference between fputs and fwrite */

@@ -1,12 +1,12 @@
 #include "fs_private.h"
 
-fc_error_t path_rename
+error_t path_rename
 (path_t* from, path_t* to)
 {
     /* Init variables */
     ssize_t ret = 0;
     if(!from || !to || !from->items || !from->count || !to->items || !to->count)
-    { return fce_null_pointer; }
+    { return null_pointer; }
 
     /* Make sure its null-terminated pointer and call rename syscall */
     /* We already handled shadow null's error in the if statement */
@@ -15,7 +15,7 @@ fc_error_t path_rename
     ret = syscall_2(syscall_rename, from->items, to->items);
 
     /* Check return of the syscall */
-    if(ret != 0) { return fce_fs_error; }
+    if(ret != 0) { return fs_error; }
     
-    return fce_success;
+    return success;
 }

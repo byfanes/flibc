@@ -6,8 +6,8 @@
 #include "stdarg.h"
 #include "features.h"
 
-fc_error_t __formatf(slice(u8) buf, slice(u8) fmt, usize_t* out_len, va_list ap);
-fc_error_t formatf(slice(u8) buf, slice(u8) fmt, usize_t* out_len, ...);
+error_t __formatf(slice(u8) buf, slice(u8) fmt, usize_t* out_len, va_list ap);
+error_t formatf(slice(u8) buf, slice(u8) fmt, usize_t* out_len, ...);
 u32 strlen(const char* s);
 
 #endif /* __FLIBC_HELPERS_H__ */

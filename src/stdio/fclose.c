@@ -1,15 +1,15 @@
 #include "stdio_private.h"
 
-fc_error_t fclose
+error_t fclose
 (file_t** file)
 {
     /* Init variables */
-    fc_error_t res = fce_success;
+    error_t res = success;
     ssize_t ret = 0;
 
     /* Validate user inputs */
-    if(!file) { return fce_null_pointer; }
-    if(!*file) { return fce_success; }
+    if(!file) { return null_pointer; }
+    if(!*file) { return success; }
 
     /* Call flush to write the remaing buffer */
     if((*file)->type != file_read) {
@@ -23,12 +23,12 @@ fc_error_t fclose
         ret = syscall_1(syscall_close, (*file)->fd);
 
         /* Check return of the syscall */
-        if(ret != 0) { return fce_io_error; }
+        if(ret != 0) { return io_error; }
     }
 
     /* Free the memory back zeroed by the free */
     res = free(file);
     if(res) { return res; }
 
-    return fce_success;
+    return success;
 }

@@ -2,7 +2,7 @@
 #include "crt.h"
 #include "da.h"
 
-fc_error_t main
+error_t main
 (std_t std)
 {
     u32 val = 42;

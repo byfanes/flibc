@@ -1,14 +1,14 @@
 #include "string_private.h"
 
-fc_error_t str_to_cstr
+error_t str_to_cstr
 (allocator_t* alloc, str_t* base, char** out)
 {
     /* Init variables */
-    fc_error_t res = fce_success;
+    error_t res = success;
     slice(u8) dst = {0}, src = {0};
 
     /* Validate user input */
-    if(!alloc || !out || !base) { return fce_null_pointer; }
+    if(!alloc || !out || !base) { return null_pointer; }
 
     /* If string is null return a null cstr */
     if(!base->items || !base->count) {
@@ -26,5 +26,5 @@ fc_error_t str_to_cstr
     (*out)[base->count] = 0;
 
     if(res) { free(out); return res; }
-    return fce_success;
+    return success;
 }

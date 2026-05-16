@@ -31,37 +31,37 @@ struct fs_stat_s {
     u32 st_ctime;
 };
 
-fc_error_t path_exists(path_t* p, bool* out);
-fc_error_t path_rename(path_t* from, path_t* to);
-fc_error_t path_cwd_set(path_t* p);
-fc_error_t path_cwd_get(allocator_t* alloc, path_t* p);
+error_t path_exists(path_t* p, bool* out);
+error_t path_rename(path_t* from, path_t* to);
+error_t path_cwd_set(path_t* p);
+error_t path_cwd_get(allocator_t* alloc, path_t* p);
 
-fc_error_t path_size(path_t* p, usize_t* out);
-fc_error_t path_mtime(path_t* p, time_t* out);
-fc_error_t path_stat(path_t* p, fs_stat_t* out);
+error_t path_size(path_t* p, usize_t* out);
+error_t path_mtime(path_t* p, time_t* out);
+error_t path_stat(path_t* p, fs_stat_t* out);
 
-fc_error_t path_is_absolute(path_t* p, bool* out);
-fc_error_t path_is_relative(path_t* p, bool* out);
-fc_error_t path_is_dir(path_t* p, bool* out);
-fc_error_t path_is_file(path_t* p, bool* out);
+error_t path_is_absolute(path_t* p, bool* out);
+error_t path_is_relative(path_t* p, bool* out);
+error_t path_is_dir(path_t* p, bool* out);
+error_t path_is_file(path_t* p, bool* out);
 
-fc_error_t dir_remove(path_t* path);
-fc_error_t dir_exists(path_t* path, bool* out);
-fc_error_t dir_mkdir(path_t* path);
-fc_error_t dir_mkdir_ifnot_exists(path_t* path);
+error_t dir_remove(path_t* path);
+error_t dir_exists(path_t* path, bool* out);
+error_t dir_mkdir(path_t* path);
+error_t dir_mkdir_ifnot_exists(path_t* path);
 
-fc_error_t file_remove(path_t* path);
-fc_error_t file_exists(path_t* path, bool* out);
+error_t file_remove(path_t* path);
+error_t file_exists(path_t* path, bool* out);
 
-fc_error_t file_copy(allocator_t* alloc, path_t* from, path_t* to);
-fc_error_t file_read_all(allocator_t* alloc, path_t* path, da(u8)* out);
+error_t file_copy(allocator_t* alloc, path_t* from, path_t* to);
+error_t file_read_all(allocator_t* alloc, path_t* path, da(u8)* out);
 
 /* TBD
- * fc_error_t file_read_lines(allocator_t* alloc, path_t* path, da(str_t)* out);
- * fc_error_t path_dirname(path_t* p, path_t* out);
- * fc_error_t path_basename(path_t* p, path_t* out);
- * fc_error_t dir_list_dir(path_t* path, void (*callback)(const char*, bool, void*), void* arg);
- * fc_error_t dir_remove_recursive(path_t* path);
+ * error_t file_read_lines(allocator_t* alloc, path_t* path, da(str_t)* out);
+ * error_t path_dirname(path_t* p, path_t* out);
+ * error_t path_basename(path_t* p, path_t* out);
+ * error_t dir_list_dir(path_t* path, void (*callback)(const char*, bool, void*), void* arg);
+ * error_t dir_remove_recursive(path_t* path);
  */
  
 #ifdef __cplusplus

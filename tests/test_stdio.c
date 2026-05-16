@@ -1,12 +1,12 @@
 #include "minitest.h"
 #include "crt.h"
 
-fc_error_t main
+error_t main
 (std_t std)
 {
     u8 buffer[128] = {0};
     usize_t wrote = 0;
-    fc_error_t res = fce_success;
+    error_t res = success;
     slice(u8) buf_sl = {0};
 
     set_slice(&buf_sl, buffer, 128);

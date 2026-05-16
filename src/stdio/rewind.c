@@ -1,6 +1,6 @@
 #include "stdio_private.h"
 
-fc_error_t rewind
+error_t rewind
 (file_t* file)
 {
     /* Redirect to fseek */

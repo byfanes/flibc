@@ -1,18 +1,18 @@
 #include "fs_private.h"
 #include "stdio.h"
 
-fc_error_t file_read_all
+error_t file_read_all
 (allocator_t* alloc, path_t* path, da(u8)* out)
 {
     /* Init variables */
     usize_t size = 0;
     slice(u8) buf = {0};
-    fc_error_t res = fce_success;
+    error_t res = success;
     file_t* file = 0;
     
     /* Check inputs */
     if(!alloc || !path || !path->items || !path->count || !out)
-    { return fce_null_pointer; }
+    { return null_pointer; }
 
     /* Get size of the file */
     if((res = path_size(path, &size))) { return res; }
@@ -25,5 +25,5 @@ fc_error_t file_read_all
     if((res = fread(file, buf, nullptr)))
     if((res = fclose(&file))) { return res; }
 
-    return fce_success;
+    return success;
 }

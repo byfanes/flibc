@@ -5,38 +5,38 @@
 extern "C" {
 #endif
 
-enum fc_error_e {
+enum error_e {
     /* Default value which is success and set to zero */
-    fce_success = 0,
+    success = 0,
 
     /* Generic Error Values */
-    fce_null_pointer,
-    fce_invalid_pointer,
-    fce_invalid_argument,
-    fce_out_of_bounds,
-    fce_small_buffer,
-    fce_invalid_utf8,
-    fce_elsize_zero,
+    null_pointer,
+    invalid_pointer,
+    invalid_argument,
+    out_of_bounds,
+    small_buffer,
+    invalid_utf8,
+    elsize_zero,
 
     /* Specific Errors */
-    fce_invalid_realloc,
-    fce_memswap_diffsize,
-    fce_invalid_slice_assignment,
-    fce_formatf_unknown_format,
+    invalid_realloc,
+    memswap_diffsize,
+    invalid_slice_assignment,
+    formatf_unknown_format,
 
     /* System Errors */
-    fce_memory_error,
-    fce_time_error,
-    fce_fs_error,
-    fce_io_error,
-    fce_io_partial,
-    fce_io_invalid_op,
+    memory_error,
+    time_error,
+    fs_error,
+    io_error,
+    io_partial,
+    io_invalid_op,
 
     /* Fatal Errors */
-    fce_ssp_fail
+    ssp_fail
 };
 
-typedef enum fc_error_e fc_error_t;
+typedef enum error_e error_t;
 
 #ifdef __cplusplus
 }

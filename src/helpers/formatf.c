@@ -69,12 +69,12 @@ INTERNAL void octal_format
     *count += times;
 }
 
-fc_error_t formatf
+error_t formatf
 (slice(u8) buf, slice(u8) fmt, usize_t* out_len, ...)
 {
     /* Init variables */
     va_list ap;
-    fc_error_t res = fce_success;
+    error_t res = success;
 
     /* Start and end va and format string */
     va_start(ap, out_len);
@@ -84,7 +84,7 @@ fc_error_t formatf
     return res;
 }
 
-fc_error_t __formatf
+error_t __formatf
 (slice(u8) buf, slice(u8) fmt, usize_t* out_len, va_list va)
 {
     /* Init variables */
@@ -100,7 +100,7 @@ fc_error_t __formatf
     va_copy(ap, va);
 
     /* Check input */
-    if(!fmt.base || !out_len) { return fce_null_pointer; }
+    if(!fmt.base || !out_len) { return null_pointer; }
 
     *out_len = 0;
 
@@ -123,7 +123,7 @@ fc_error_t __formatf
         if(fmt.base[i] == '%') {
             count++;
             /* Check for wrong instruction '%ll% / '%l%' */
-            if(long_num) { return fce_formatf_unknown_format; }
+            if(long_num) { return formatf_unknown_format; }
             if(buf.base) { buf.base[count - 1] = '%'; }
         }
 
@@ -131,7 +131,7 @@ fc_error_t __formatf
         else if(fmt.base[i] == 'c') {
             count++;
             /* Check for wrong instruction '%llc / '%lc' */
-            if(long_num) { return fce_formatf_unknown_format; }
+            if(long_num) { return formatf_unknown_format; }
             /* Char promotes to int while passing it */
             cur_u64 = (u64)va_arg(ap, int);
             if(buf.base) { buf.base[count - 1] = (u8)cur_u64; }
@@ -202,10 +202,10 @@ fc_error_t __formatf
         }
 
         else {
-            return fce_formatf_unknown_format;
+            return formatf_unknown_format;
         }
     }
 
     *out_len = count;
-    return fce_success;
+    return success;
 }

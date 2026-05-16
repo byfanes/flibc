@@ -1,17 +1,17 @@
 #include "memory_private.h"
 #include "error.h"
 
-fc_error_t __realloc
+error_t __realloc
 (allocator_t* alloc, usize_t n, void* set, TRACE_ARGS)
 {
     /* Init variables */
-    fc_error_t res = fce_success;
+    error_t res = success;
     heap_header_t *he = 0;
     u8 *ba = 0, *n_ba = 0;
     usize_t min = 0, i = 0, prev = 0;
 
     /* Validate user inputs */
-    if(!set) { return fce_null_pointer; }
+    if(!set) { return null_pointer; }
 
     /* Get the pointer back */
     ba = *(void**)set;
@@ -20,7 +20,7 @@ fc_error_t __realloc
     if(ba && !n) { return free(set); }
 
     /* Validate user inputs */
-    if(!n && !ba) { return fce_invalid_realloc; }
+    if(!n && !ba) { return invalid_realloc; }
 
     if(!ba) {
         /* set -> ptr(NULL) */

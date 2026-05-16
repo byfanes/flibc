@@ -1,6 +1,6 @@
 #include "memory_private.h"
 
-fc_error_t allocator_deinit
+error_t allocator_deinit
 (allocator_t** set)
 {
     /* Init variables */
@@ -17,9 +17,9 @@ fc_error_t allocator_deinit
     usize_t len = 0;
 
     /* Check user input */
-    if(!set) { return fce_null_pointer; }
+    if(!set) { return null_pointer; }
     alloc = *set;
-    if(!alloc) { return fce_null_pointer; }
+    if(!alloc) { return null_pointer; }
 
     set_slice(&buf_sl, buf, sizeof(buf));
 
@@ -40,8 +40,8 @@ fc_error_t allocator_deinit
     res = syscall_2(syscall_munmap, (ssize_t)alloc, RAW_ALLOCATION_SIZE);
 
     /* Check free syscall */
-    if(res != 0) { return fce_memory_error; }
+    if(res != 0) { return memory_error; }
 
     *set = 0;
-    return fce_success;
+    return success;
 }
