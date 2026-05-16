@@ -185,7 +185,7 @@ fc_error_t __formatf
             len = strlen(cur_cstr);
             set_slice(&cur_vec, cur_cstr, len);
             if(buf.base) {
-                set_slice(&buf_sl, &buf.base[buf.count], len);
+                set_slice(&buf_sl, &buf.base[count], len);
                 memcpy(&buf_sl, &cur_vec);
             }
             count += len;
@@ -195,7 +195,7 @@ fc_error_t __formatf
         else if(fmt.base[i] == 'v') {
             cur_vec_ptr = va_arg(ap, slice(u8)*);
             if(buf.base) {
-                set_slice(&buf_sl, &buf.base[buf.count], len);
+                set_slice(&buf_sl, &buf.base[count], len);
                 memcpy(&buf_sl, cur_vec_ptr);
             }
             count += (u32)cur_vec_ptr->count;
