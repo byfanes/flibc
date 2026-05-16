@@ -3,6 +3,9 @@
 
 #include "memory.h"
 #include "syscall.h"
+#include "../helpers/helpers.h"
+
+#define ALIGN_64(n) ((n + 63) & (u64)(~63))
 
 /* Every chunk is 64 bytes */
 #define CHUNK_SIZE 64
@@ -23,10 +26,12 @@ typedef struct heap_header_s heap_header_t;
  * bytes to start and end which ends up with sizeof(heap_header_t) + sizeof(u16)(last one)
  */
 struct heap_header_s {
+    const char* file_name;
     u32 req_alloced;
     u32 raw_alloced;
+    u32 line;
     u16 chunk_idx;
-    u16 chunk_count;
+    /* This should be last one */
     u16 first_null;
 };
 
@@ -55,11 +60,13 @@ struct slice_dummy_s {
  * in fuctions like malloc/calloc etc we can use custom allocators too.
  */
 fc_error_t allocator_get_from_ptr(void* ptr, allocator_t** set);
-fc_error_t allocator_alloc_pointer(allocator_t* alloc, usize_t n, void* set);
+fc_error_t allocator_alloc_pointer
+(allocator_t* alloc, usize_t n, void* set, const char* file_name, usize_t line);
 fc_error_t allocator_free_pointer(allocator_t* alloc, void* set);
 
 void __set_chunks_free(u8* bitmap_bytes, u32 start_bit, u32 n);
 void __set_chunks_used(u8* bitmap_bytes, u32 start_bit, u32 n);
 u32 __find_free_chunks(u8* bitmap_bytes, u32 total_bits, u32 n);
+bool __validate_header(heap_header_t* header);
 
 #endif /* __FLIBC_MEMORY_PRIVATE_H__ */

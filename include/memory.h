@@ -10,6 +10,10 @@ extern "C" {
 
 typedef struct allocator_s allocator_t;
 
+#define TRACE_ARGS const char* file_name, usize_t line
+#define USE_TRACE_ARGS file_name, line
+#define LOC_ARGS __FILE__, __LINE__
+
 #define slice(type) CONCAT(slice_, type)
 
 #define can_be_slice(type)   \
@@ -35,10 +39,16 @@ fc_error_t allocator_deinit(allocator_t** set);
 slice(u8) cstr_to_u8sl(const char* cstr);
 fc_error_t set_slice(const void* sl, const void* base, usize_t count);
 
-fc_error_t malloc(allocator_t* alloc, usize_t n, void* set);
-fc_error_t calloc(allocator_t* alloc, usize_t n, void* set);
+fc_error_t __malloc(allocator_t* alloc, usize_t n, void* set, TRACE_ARGS);
+#define malloc(alloc, n, set) __malloc(alloc, n, set, LOC_ARGS)
+
+fc_error_t __calloc(allocator_t* alloc, usize_t n, void* set, TRACE_ARGS);
+#define calloc(alloc, n, set) __calloc(alloc, n, set, LOC_ARGS)
+
 /* TODO: realloc can optimized */
-fc_error_t realloc(allocator_t* alloc, usize_t n, void* set);
+fc_error_t __realloc(allocator_t* alloc, usize_t n, void* set, TRACE_ARGS);
+#define realloc(alloc, n, set) __realloc(alloc, n, set, LOC_ARGS)
+
 fc_error_t free(void* set);
 
 /* This is both for using typed slices and preventing mechanisim to avoid compiliers'

@@ -1,8 +1,8 @@
 #include "memory_private.h"
 #include "error.h"
 
-fc_error_t realloc
-(allocator_t* alloc, usize_t n, void* set)
+fc_error_t __realloc
+(allocator_t* alloc, usize_t n, void* set, TRACE_ARGS)
 {
     /* Init variables */
     fc_error_t res = fce_success;
@@ -24,7 +24,7 @@ fc_error_t realloc
 
     if(!ba) {
         /* set -> ptr(NULL) */
-        if((res = malloc(alloc, n, set))) { return res; }
+        if((res = __malloc(alloc, n, set, USE_TRACE_ARGS))) { return res; }
         return res;
     }
     /* set -> ptr(addr) -> data */
@@ -32,7 +32,7 @@ fc_error_t realloc
     prev = he->req_alloced;
 
     /* Allocate new memory and set it*/
-    if((res = malloc(alloc, n, set))) { return res; }
+    if((res = __malloc(alloc, n, set, USE_TRACE_ARGS))) { return res; }
 
     /* Get the new pointer back */
     n_ba = *(void**)set;

@@ -32,5 +32,9 @@ fc_error_t main
 
     ASSERT(streq(&s1, &s2) == false);
 
+    ASSERT_OK(str_deinit(&s1));
+    ASSERT_OK(str_deinit(&s2));
+    ASSERT_OK(free(&c_str));
+
     return 0;
 }
