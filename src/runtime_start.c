@@ -3,17 +3,10 @@
 #include "stdlib.h"
 #include "syscall.h"
 #include "stdtypes.h"
+#include "helpers/helpers.h"
 
 /* Linux start */
 void _start(void);
-
-INTERNAL u32 strlen
-(const char* s)
-{
-    u32 i = 0;
-    while(s[i++]) {}
-    return i - 1;
-}
 
 #define MAX_ARGS_COUNT 256
 
@@ -30,7 +23,7 @@ void runtime_start
 (usize_t argc, char** argv)
 {
     /* Init variables */
-    int ret = 0;
+    fc_error_t ret = 0;
     usize_t i = 0;
     slice(u8) args[MAX_ARGS_COUNT] = {0}, *args_ptr = 0;
     std_t std = {0};

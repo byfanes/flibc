@@ -74,10 +74,12 @@ fc_error_t __formatf
 (slice(u8) buf, slice(u8) fmt, va_list ap, usize_t* out_len)
 {
     /* Init variables */
-    u32 count = 0, i = 0;
+    u32 count = 0, i = 0, len = 0;
     bool long_num = false;
     u64 cur_u64 = 0;
     i64 cur_i64 = 0;
+    char* cur_cstr = 0;
+    slice(u8) cur_vec = {0}, buf_sl = {0}, *cur_vec_ptr = 0;
 
     /* Check input */
     if(!fmt.base || !out_len) { return fce_null_pointer; }
@@ -159,9 +161,29 @@ fc_error_t __formatf
             hex_format(buf.base, &count, cur_u64);
 	}
 
+        /* Handle %s it will write a cstr */
+        else if(fmt.base[i] == 's') {
+            cur_cstr = va_arg(ap, char*);
+            len = strlen(cur_cstr);
+            set_slice(&cur_vec, cur_cstr, len);
+            if(buf.base) {
+                set_slice(&buf_sl, &buf.base[buf.count], len);
+                memcpy(&buf_sl, &cur_vec);
+            }
+            count += len;
+        }
+
+        /* Handle %v it will use *slice(u8) and it is not a structure its a pointer */
+        else if(fmt.base[i] == 'v') {
+            cur_vec_ptr = va_arg(ap, slice(u8)*);
+            if(buf.base) {
+                set_slice(&buf_sl, &buf.base[buf.count], len);
+                memcpy(&buf_sl, cur_vec_ptr);
+            }
+            count += (u32)cur_vec_ptr->count;
+        }
+
         else {
-            #include "stdlib.h"
-            exit(fmt.base[i]);
             return fce_formatf_unknown_format;
         }
     }

@@ -1,7 +1,7 @@
 #include "minitest.h"
 #include "crt.h"
 
-int main
+fc_error_t main
 (std_t std)
 {
     u8 buffer[128] = {0};

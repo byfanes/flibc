@@ -8,6 +8,7 @@ extern "C" {
 #include "stdlib.h"
 #include "stdio.h"
 #include "memory.h"
+#include "stdtypes.h"
 
 can_be_slice(slice_u8);
 
@@ -19,7 +20,7 @@ struct std_s {
     slice(slice_u8) args;
 };
 
-extern int main(std_t);
+extern fc_error_t main(std_t);
 
 #ifdef __cplusplus
 }
