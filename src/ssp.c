@@ -15,7 +15,7 @@ uintptr_t __stack_chk_guard = 0x595e9fbd94fda766; /* 64-bit */
 
 void __stack_chk_fail(void);
 
-/*
+/* Todo Make it use random 16 bytes which is given by linux
  * The function GCC calls when a buffer overflow occurs.
  */
 void __stack_chk_fail(void)

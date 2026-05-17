@@ -28,12 +28,13 @@ error_t allocator_deinit
         bit = (alloc->free_bits[i / 8] >>  i % 8) & 1;
         if(!bit) { continue; }
         /* Leaked memory */
-        header = (heap_header_t*)(uintptr_t)((u8*)(alloc - 1) + i * CHUNK_SIZE);
+        header = (heap_header_t*)(uintptr_t)((u8*)(alloc + 1) + i * CHUNK_SIZE);
         formatf(buf_sl,
-            cstr_to_u8sl("Memory Leak: %u bytes in %s:%d is not freed\n"),
+            cstr_to_u8sl("Memory Leak: %u bytes from %s:%d is not freed\n"),
             &len, header->req_alloced, header->file_name, header->line);
 
         syscall_3(syscall_write, UNIX_STDERR, buf_sl.base, (ssize_t)len);
+        i += header->raw_alloced / CHUNK_SIZE - 1;
     }
 
     /* Give back the memory to os */
