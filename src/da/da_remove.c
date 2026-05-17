@@ -22,5 +22,5 @@ error_t __da_remove
     def->count--;
 
     /* Shift the memory and return the result */
-    return memcpy(&dst, &src);
+    return memmove(&dst, &src);
 }

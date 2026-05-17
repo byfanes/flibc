@@ -25,7 +25,7 @@ error_t __da_insert
     set_slice(&dst, &def->items[(idx + 1) *el_size], count);
 
     /* Shift the memory */
-    if((res = memcpy(&dst, &src))) { return res; }
+    if((res = memmove(&dst, &src))) { return res; }
 
     /* Add the new blob */
     for(;i < el_size; ++i) {

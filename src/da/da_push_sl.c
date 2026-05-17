@@ -21,5 +21,5 @@ error_t __da_push_sl
     set_slice(&dsl, &def->items[def->count - ssl->count], ssl->count * el_size);
     set_slice(&nsl, ssl->base, ssl->count * el_size);
 
-    return memcpy(&dsl, &nsl);
+    return memmove(&dsl, &nsl);
 }
