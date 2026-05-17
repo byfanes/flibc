@@ -11,7 +11,7 @@ error_t strcat_sl
     if(!sl.base || !sl.count) { return success; }
 
     /* Check for utf8 */
-    if(is_utf8_sl(sl)) { return invalid_utf8; }
+    if(!is_utf8_sl(sl)) { return invalid_utf8; }
 
     /* Allocate new memory if needed  */
     if((res = str_grow_if(base, sl.count))) { return res; }
