@@ -65,7 +65,7 @@ error_t sl_utf8len
         if((c >> 3) == 30) {
             /* Check and fetch the new byte */
             if(i + 3 >= sl.count) { goto invalid; }
-            codepoint = ((u32)(c & 0x0F) << 18);
+            codepoint = ((u32)(c & 0x07) << 18);
             c = sl.base[++i];
 
             /* New byte should be 10aa bbbb (second) 2 = 0b10 */
