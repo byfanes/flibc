@@ -20,7 +20,6 @@ FREESTANDING_CFLAGS := \
 
 TARGET_STATIC := libflibc.a
 TARGET_SHARED := libflibc.so
-EXEC := main
 
 ARCH ?= $(shell uname -m)
 SRC_DIR := src
@@ -43,9 +42,17 @@ TEST_OBJS := $(TEST_SRC:$(TEST_DIR)/%.c=$(BUILD_DIR)/$(TEST_DIR)/%.o)
 
 TEST_OUT := $(TEST_SRC:$(TEST_DIR)/%.c=$(BUILD_DIR)/$(TEST_DIR)/%)
 
-.PHONY: all clean tests check
+.PHONY: all clean tests check main
 
-all: $(TARGET_STATIC) $(TARGET_SHARED) $(EXEC)
+all: $(TARGET_STATIC) $(TARGET_SHARED)
+
+main: main.c $(CRT0_OBJ) $(TARGET_SHARED)
+	@echo "Linking freestanding executable $@"
+	@$(CC) \
+	    $(FREESTANDING_CFLAGS) \
+	    -nostdlib -nostartfiles \
+	    -Wl,-e,_start \
+	    $(CRT0_OBJ) main.c -L. -lflibc -Wl,-rpath=. -o $@
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET_STATIC) $(TARGET_SHARED) $(EXEC)
@@ -83,14 +90,6 @@ $(CRT0_OBJ): $(CRT0_SRC)
 	@mkdir -p $(dir $@)
 	@echo "Compiling crt $<"
 	@$(CC) $(FREESTANDING_CFLAGS) -c $< -o $@
-
-$(EXEC): main.c $(CRT0_OBJ) $(TARGET_SHARED)
-	@echo "Linking freestanding executable $@"
-	@$(CC) \
-	    $(FREESTANDING_CFLAGS) \
-	    -nostdlib -nostartfiles \
-	    -Wl,-e,_start \
-	    $(CRT0_OBJ) main.c -L. -lflibc -Wl,-rpath=. -o $@
 
 $(BUILD_DIR)/$(TEST_DIR)/%.o: $(TEST_DIR)/%.c
 	@mkdir -p $(dir $@)
