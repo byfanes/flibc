@@ -5,7 +5,7 @@ error_t __da_add_shadow_null_byte
 {
     /* Init variables */
     def_da_t* def = da;
-    u8* ptr = 0;
+    usize_t* ptr = 0;
 
     /* Check input */
     if(!def || !def->items) { return null_pointer; }
@@ -16,7 +16,7 @@ error_t __da_add_shadow_null_byte
      * which is set by the allocator
      */
     if(def->count != def->capacity) {
-        ptr = (def->items + def->count * el_size) + 1;
+        ptr = (usize_t*)(uintptr_t)(def->items + def->count * el_size);
         *ptr = 0;
     }
 

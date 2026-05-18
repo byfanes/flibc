@@ -44,7 +44,7 @@ error_t allocator_alloc_pointer
     header->first_null = 0;
 
     /* Last null byte */
-    *(u16*)(uintptr_t)(ptr + sizeof(heap_header_t) + n) = 0;
+    *(usize_t*)(uintptr_t)(ptr + sizeof(heap_header_t) + n) = 0;
 
     /* Set user's pointer one for first null byte */
     *(void**)set = (ptr + sizeof(heap_header_t));

@@ -23,7 +23,7 @@ typedef struct heap_header_s heap_header_t;
 /* To access 'allocator_t*' we can use chunk_idx for that because
  * every header is snap to grid and begins in new chunks' begining
  * this allows us to use less memory because we will add two null
- * bytes to start and end which ends up with sizeof(heap_header_t) + sizeof(u16)(last one)
+ * bytes to start and end which ends up with sizeof(heap_header_t) + sizeof(usize_t)(last one)
  */
 struct heap_header_s {
     const char* file_name;
@@ -32,7 +32,7 @@ struct heap_header_s {
     u32 line;
     u16 chunk_idx;
     /* This should be last one */
-    u16 first_null;
+    usize_t first_null;
 };
 
 /* For the pointer to free use allocators' pointer not any other one and
