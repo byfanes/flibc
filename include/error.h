@@ -26,6 +26,8 @@ enum error_e {
 
     /* System Errors */
     memory_error,
+    process_error,
+    proc_child_failed,
     time_error,
     fs_error,
     io_error,

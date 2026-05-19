@@ -37,7 +37,10 @@ extern ssize_t syscall_6_linux
 #define syscall_mmap 9
 #define syscall_munmap 11
 #define syscall_nanosleep 35
+#define syscall_fork 57
+#define syscall_execve 59
 #define syscall_exit 60
+#define syscall_wait4 61
 #define syscall_getcwd 79
 #define syscall_chdir 80
 #define syscall_rename 82
