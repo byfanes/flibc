@@ -35,8 +35,8 @@ can_be_da(i64);
 can_be_da(ssize_t);
 can_be_da(usize_t);
 
-error_t __da_add_shadow_null_byte(void* da, usize_t el_size);
-#define da_add_shadow_null_byte(da) __da_add_shadow_null_byte((da), sizeof((da)->items[0]));
+error_t __da_add_shadow_null_segment(void* da, usize_t el_size);
+#define da_add_shadow_null_segment(da) __da_add_shadow_null_segment((da), sizeof((da)->items[0]));
 
 error_t da_deinit(void* da);
 error_t __da_init(allocator_t* alloc, void* da, usize_t amount, usize_t el_size);

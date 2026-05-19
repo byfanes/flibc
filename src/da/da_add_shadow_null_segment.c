@@ -1,6 +1,6 @@
 #include "da_private.h"
 
-error_t __da_add_shadow_null_byte
+error_t __da_add_shadow_null_segment
 (void* da, usize_t el_size)
 {
     /* Init variables */
