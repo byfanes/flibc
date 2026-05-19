@@ -27,6 +27,7 @@ error_t strdup(allocator_t* alloc, str_t* base, str_t* out);
 error_t strcpy(str_t* base, str_t* cpy);
 error_t strcat(str_t* base, str_t* extend);
 error_t strcat_sl(str_t* base, slice(u8) sl);
+error_t strcat_cstr(str_t* base, const char* cstr);
 error_t str_utf8len(str_t* base, usize_t* out);
 error_t sl_utf8len(slice(u8) sl, usize_t* out);
 
@@ -39,6 +40,7 @@ error_t str_clear(str_t* str);
 
 /* Those functions just matches the data so they can not result with an error */
 bool streq(str_t* lhs, str_t* rhs);
+bool streq_cstr(str_t* lhs, const char* cstr);
 bool is_utf8_sl(slice(u8) sl);
 
 #ifdef __cplusplus
