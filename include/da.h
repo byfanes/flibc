@@ -50,11 +50,16 @@ error_t __da_grow_if(void* da, usize_t amount, usize_t el_size);
 
 error_t da_truncate(void* da, usize_t len);
 
+error_t da_clear(void* da);
+
 error_t __da_unordered_remove(void* da, usize_t idx, usize_t el_size);
 #define da_unordered_remove(da, idx)  __da_unordered_remove((da), (idx), sizeof((da)->items[0])))
 
 error_t __da_swap(void* da, usize_t lhs, usize_t rhs, usize_t el_size);
 #define da_swap(da, lhs, rhs) __da_swap((da), (lhs), (rhs), sizeof((da)->items[0]))
+
+error_t __da_push(void* da, void* item, usize_t el_size);
+#define da_push(da, item) __da_push((da), (item), sizeof((da)->items[0]) + 0 * sizeof((da)->items == (item)))
 
 error_t __da_push_sl(void* da, void* sl, usize_t el_size);
 #define da_push_sl(da, sl) \

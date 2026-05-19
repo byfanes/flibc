@@ -18,7 +18,7 @@ error_t __da_push_sl
     def->count += ssl->count;
 
     /* Set slices for the moving. Arguments are valid in here so no need to check */
-    set_slice(&dsl, &def->items[def->count - ssl->count], ssl->count * el_size);
+    set_slice(&dsl, &def->items[el_size * (def->count - ssl->count)], ssl->count * el_size);
     set_slice(&nsl, ssl->base, ssl->count * el_size);
 
     return memmove(&dsl, &nsl);
