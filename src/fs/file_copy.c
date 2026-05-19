@@ -24,7 +24,7 @@ error_t file_copy
     if((res = fopen(alloc, (char*)from->items, &file, file_read))) { return res; }
     if((res = malloc(alloc, size, &ptr))) { return res; }
     set_slice(&buf, ptr, size);
-    if((res = fread(file, buf, nullptr)))
+    if((res = fread(file, buf, nullptr))) { return res; }
     if((res = fclose(&file))) { return res; }
 
     /* Add shadow byte to make cstr, read buffer, close new file and free memory*/

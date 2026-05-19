@@ -8,22 +8,11 @@ extern "C" {
 #include "features.h"
 #include "stdtypes.h"
 
-INTERNAL ssize_t syscall_1
-(ssize_t num, ssize_t arg1);
-INTERNAL ssize_t syscall_2
-(ssize_t num, ssize_t arg1, ssize_t arg2);
-INTERNAL ssize_t syscall_3
-(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3);
-INTERNAL ssize_t syscall_4
-(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4);
-INTERNAL ssize_t syscall_5
-(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4, ssize_t arg5);
-INTERNAL ssize_t syscall_6
-(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4, ssize_t arg5, ssize_t arg6);
-
 #ifdef __linux__
 
 /* Linux syscalls functions written in assembly this is for linking */
+extern ssize_t syscall_0_linux
+(ssize_t num);
 extern ssize_t syscall_1_linux
 (ssize_t num, ssize_t arg1);
 extern ssize_t syscall_2_linux
@@ -36,30 +25,6 @@ extern ssize_t syscall_5_linux
 (ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4, ssize_t arg5);
 extern ssize_t syscall_6_linux
 (ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4, ssize_t arg5, ssize_t arg6);
-
-INTERNAL ssize_t syscall_1
-(ssize_t num, ssize_t arg1)
-{ return syscall_1_linux(num, arg1); }
-
-INTERNAL ssize_t syscall_2
-(ssize_t num, ssize_t arg1, ssize_t arg2)
-{ return syscall_2_linux(num, arg1, arg2); }
-
-INTERNAL ssize_t syscall_3
-(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3)
-{ return syscall_3_linux(num, arg1, arg2, arg3); }
-
-INTERNAL ssize_t syscall_4
-(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4)
-{ return syscall_4_linux(num, arg1, arg2, arg3, arg4); }
-
-INTERNAL ssize_t syscall_5
-(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4, ssize_t arg5)
-{ return syscall_5_linux(num, arg1, arg2, arg3, arg4, arg5); }
-
-INTERNAL ssize_t syscall_6
-(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4, ssize_t arg5, ssize_t arg6)
-{ return syscall_6_linux(num, arg1, arg2, arg3, arg4, arg5, arg6); }
 
 #define MAX_PATH 4096
 

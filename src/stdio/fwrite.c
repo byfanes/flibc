@@ -16,11 +16,10 @@ error_t fwrite
     /* If it does not fit to buffer fflush then write it */
     if (file->count >= FLIBC_STACK_THRESHOLD)
     {
-        res = fflush(file);
-        if(res) { return res; }
+        if((res = fflush(file))) { return res; }
 
         /* Call write syscall */
-        ret = syscall_3(syscall_write, (ssize_t)file->fd, (ssize_t)sl.base, (ssize_t)sl.count);
+        ret = syscall_3_linux(syscall_write, (ssize_t)file->fd, (ssize_t)sl.base, (ssize_t)sl.count);
 
         /* Check return of the syscall */
         if(ret < 0) { return io_error; }
@@ -32,8 +31,7 @@ error_t fwrite
     /* If it fits to buffer by only itself flush - append later  */
     if (sl.count + file->count >= FLIBC_STACK_THRESHOLD && file->count < FLIBC_STACK_THRESHOLD)
     {
-        res = fflush(file);
-        if(res) { return res; }
+        if((res = fflush(file))) { return res; }
     }
 
     /* Set dst */

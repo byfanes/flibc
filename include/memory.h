@@ -69,11 +69,11 @@ error_t __memmove(void* dst, void* src, usize_t el_size);
 #define memmove(dst, src) \
     __memmove((dst), (src), sizeof((dst)->base[0]) + 0 * sizeof((dst)->base == (src)->base))
 
-error_t __memcmp(void* lhs, void* rhs, usize_t el_size, bool* res);
+error_t __memcmp(void* lhs, void* rhs, usize_t el_size, bool* out);
 #define memcmp(lhs, rhs, res) \
     __memcmp((lhs), (rhs), sizeof((lhs)->base[0]) + 0 * sizeof((lhs)->base == (rhs)->base), (res))
 
-error_t __memcmp_min(void* lhs, void* rhs, usize_t el_size, bool* res);
+error_t __memcmp_min(void* lhs, void* rhs, usize_t el_size, bool* out);
 #define memcmp_min(lhs, rhs, res) \
     __memcmp_min((lhs), (rhs), sizeof((lhs)->base[0]) + 0 * sizeof((lhs)->base == (rhs)->base), (res))
 

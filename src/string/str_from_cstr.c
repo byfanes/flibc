@@ -12,12 +12,10 @@ error_t str_from_cstr
     if(!alloc || !out || !cstr) { return null_pointer; }
 
     /* Len of cstr including null byte */
-    while(cstr[len++]);
-    len--;
+    len = strlen(cstr);
 
     /* Reserve a memory */
-    res = str_init(alloc, out, len);
-    if(res) { return res; }
+    if((res = str_init(alloc, out, len))) { return res; }
 
     /* Set slices for copying */
     set_slice(&src, cstr, len);

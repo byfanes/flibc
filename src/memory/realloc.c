@@ -24,8 +24,7 @@ error_t __realloc
 
     if(!ba) {
         /* set -> ptr(NULL) */
-        if((res = __malloc(alloc, n, set, USE_TRACE_ARGS))) { return res; }
-        return res;
+        return __malloc(alloc, n, set, USE_TRACE_ARGS);
     }
     /* set -> ptr(addr) -> data */
     he = (heap_header_t*)(void*)ba - 1;

@@ -12,7 +12,7 @@ error_t fread
     if(file->type == file_write || file->type == file_append) { return io_invalid_op; }
 
     /* Call read syscall */
-    ret = syscall_3(syscall_read, file->fd, (ssize_t)buf.base, (ssize_t)buf.count);
+    ret = syscall_3_linux(syscall_read, file->fd, (ssize_t)buf.base, (ssize_t)buf.count);
 
     /* Check return of the syscall */
     if(ret < 0) { return io_error; }

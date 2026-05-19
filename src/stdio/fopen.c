@@ -22,7 +22,7 @@ error_t fopen
     }
 
     /* Call read syscall */
-    fd = syscall_3(syscall_open, (ssize_t)name, flags,
+    fd = syscall_3_linux(syscall_open, (ssize_t)name, flags,
     S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 
     /* Check return of the syscall */

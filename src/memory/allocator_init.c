@@ -11,7 +11,7 @@ error_t allocator_init
     if(!set) { return null_pointer; }
 
     /* Syscall for memory allocation */
-    alloc = (allocator_t*)(uintptr_t) syscall_6(syscall_mmap, 0, RAW_ALLOCATION_SIZE,
+    alloc = (allocator_t*)(uintptr_t) syscall_6_linux(syscall_mmap, 0, RAW_ALLOCATION_SIZE,
         (PROT_READ|PROT_WRITE), (MAP_PRIVATE|MAP_ANONYMOUS), (ssize_t)(-1), 0);
 
     /* Error check */

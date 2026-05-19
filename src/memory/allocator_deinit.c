@@ -5,7 +5,6 @@ error_t allocator_deinit
 {
     /* Init variables */
     allocator_t *alloc = 0;
-    ssize_t res = 0;
     usize_t i = 0;
     bool bit = 0;
     heap_header_t *header = 0;
@@ -24,6 +23,7 @@ error_t allocator_deinit
     set_slice(&buf_sl, buf, sizeof(buf));
 
     for(;i < CHUNK_MAX; ++i) {
+        /* Check current byte if it has any ones in it and locate it */
         if(!alloc->free_bits[i / 8]) { i += 7; continue; }
         bit = (alloc->free_bits[i / 8] >>  i % 8) & 1;
         if(!bit) { continue; }
@@ -33,15 +33,15 @@ error_t allocator_deinit
             cstr_to_u8sl("Memory Leak: %u bytes from %s:%d is not freed\n"),
             &len, header->req_alloced, header->file_name, header->line);
 
-        syscall_3(syscall_write, UNIX_STDERR, buf_sl.base, (ssize_t)len);
+        /* Write directly to standard error */
+        /* Ignore its fail state because it is not deinit's main goal */
+        syscall_3_linux(syscall_write, UNIX_STDERR, buf_sl.base, (ssize_t)len);
         i += header->raw_alloced / CHUNK_SIZE - 1;
     }
 
     /* Give back the memory to os */
-    res = syscall_2(syscall_munmap, (ssize_t)alloc, RAW_ALLOCATION_SIZE);
-
-    /* Check free syscall */
-    if(res != 0) { return memory_error; }
+    if(0 != syscall_2_linux(syscall_munmap, (ssize_t)alloc, RAW_ALLOCATION_SIZE))
+    { return memory_error; }
 
     *set = 0;
     return success;

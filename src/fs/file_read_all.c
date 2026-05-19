@@ -22,7 +22,7 @@ error_t file_read_all
     str_add_shadow_null(path);
     if((res = fopen(alloc, (char*)path->items, &file, file_read))) { return res; }
     set_slice(&buf, out->items, size);
-    if((res = fread(file, buf, nullptr)))
+    if((res = fread(file, buf, nullptr))) { return res; }
     if((res = fclose(&file))) { return res; }
 
     return success;

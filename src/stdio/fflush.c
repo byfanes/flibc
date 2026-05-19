@@ -16,7 +16,7 @@ error_t fflush
     file->count = 0;
 
     /* Call write syscall */
-    ret = syscall_3(syscall_write, (ssize_t)file->fd, (ssize_t)file->buf, (ssize_t)count);
+    ret = syscall_3_linux(syscall_write, (ssize_t)file->fd, (ssize_t)file->buf, (ssize_t)count);
 
     /* Check return of the syscall */
     if(ret < 0) { return io_error; }

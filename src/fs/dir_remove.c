@@ -8,7 +8,8 @@ error_t dir_remove
 
     /* Add null byte and call remove syscall */
     str_add_shadow_null(path);
-    if(syscall_1(syscall_rmdir, path->items) != 0) { return fs_error; }
+    if(0 != syscall_1_linux(syscall_rmdir, path->items))
+    { return fs_error; }
 
     return success;
 }

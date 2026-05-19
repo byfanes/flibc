@@ -3,18 +3,15 @@
 error_t path_cwd_set
 (path_t* p)
 {
-    /* Init variables */
-    ssize_t ret = 0;
-    
     /* Check inputs */
     if(!p || !p->items || !p->count) { return null_pointer; }
 
-    /* Call syscall */
+    /* Make path null terminated  */
     str_add_shadow_null(p);
-    ret = syscall_1(syscall_chdir, p->items);
 
-    /* Check return of the syscall */
-    if(ret != 0) { return fs_error; }
-    
+    /* Call syscall and check return of the syscall */
+    if(0 != syscall_1_linux(syscall_chdir, p->items))
+    { return fs_error; }
+
     return success;
 }

@@ -20,7 +20,7 @@ error_t fseek
     }
 
     /* Call lseek syscall */
-    ret = syscall_3(syscall_lseek, (ssize_t)file->fd, (ssize_t)off, whence);
+    ret = syscall_3_linux(syscall_lseek, (ssize_t)file->fd, (ssize_t)off, whence);
 
     /* Check return of the syscall */
     if(ret == -1) { return io_error; }

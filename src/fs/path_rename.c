@@ -3,8 +3,7 @@
 error_t path_rename
 (path_t* from, path_t* to)
 {
-    /* Init variables */
-    ssize_t ret = 0;
+    /* Check input */
     if(!from || !to || !from->items || !from->count || !to->items || !to->count)
     { return null_pointer; }
 
@@ -12,10 +11,10 @@ error_t path_rename
     /* We already handled shadow null's error in the if statement */
     str_add_shadow_null(from);
     str_add_shadow_null(to);
-    ret = syscall_2(syscall_rename, from->items, to->items);
 
-    /* Check return of the syscall */
-    if(ret != 0) { return fs_error; }
+    /* Call and check return of the syscall */
+    if(0 != syscall_2_linux(syscall_rename, from->items, to->items))
+    { return fs_error; }
     
     return success;
 }

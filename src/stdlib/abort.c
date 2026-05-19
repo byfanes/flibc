@@ -4,6 +4,6 @@
 _Noreturn void abort
 (void)
 {
-    syscall_1(syscall_exit,1);
+    syscall_1_linux(syscall_exit,1);
     __unreachable();
 }

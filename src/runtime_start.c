@@ -14,7 +14,8 @@ void _start(void);
 static void early_panic
 (slice_u8 msg)
 {
-    syscall_3(syscall_write, UNIX_STDERR, msg.base, (ssize_t)msg.count);
+    /* Ignore its failure because we will close the program after it */
+    syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)msg.base, (ssize_t)msg.count);
     exit(255);
 }
 

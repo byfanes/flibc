@@ -4,7 +4,6 @@ error_t time_sleep
 (u64 ms)
 {
     /* Init variables */
-    ssize_t ret = 0;
     time_t time = {0};
 
     /* Set time */
@@ -12,8 +11,8 @@ error_t time_sleep
     time.nsec = ms % 1000;
 
     /* Call and check syscall */
-    ret = syscall_2(syscall_nanosleep, &time, nullptr);
-    if(ret != 0) { return time_error; }
+    if(0 != syscall_2_linux(syscall_nanosleep, &time, nullptr))
+    { return time_error; }
 
     return success;
 }

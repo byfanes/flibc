@@ -6,9 +6,10 @@ error_t dir_mkdir
     /* Validate input */
     if(!path || !path->items || !path->count) { return null_pointer; }
     
-    /* Add null byte and call remove syscall */
+    /* Add null byte and call mkdir syscall */
     str_add_shadow_null(path);
-    if(syscall_2(syscall_mkdir, path->items, 0755) != 0) { return fs_error; }
+    if(0 != syscall_2_linux(syscall_mkdir, path->items, 0755))
+    { return fs_error; }
 
     return success;
 }
