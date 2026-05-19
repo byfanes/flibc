@@ -35,6 +35,8 @@ error_t str_grow_if(str_t* str, usize_t amount);
 
 error_t str_add_shadow_null(str_t* str);
 
+error_t str_clear(str_t* str);
+
 /* Those functions just matches the data so they can not result with an error */
 bool streq(str_t* lhs, str_t* rhs);
 bool is_utf8_sl(slice(u8) sl);
