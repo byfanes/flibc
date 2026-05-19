@@ -9,51 +9,42 @@ extern "C" {
 typedef signed char        int8_t;
 typedef unsigned char      uint8_t;
 
-/* 16-bit */
-#if __SIZEOF_SHORT__ == 2
+/* 16-bit
+ * (short is guaranteed 16-bit on all 64-bit OS architectures)
+ */
 typedef short              int16_t;
 typedef unsigned short     uint16_t;
-#else
-#error "No 16-bit type found"
-#endif
 
-/* 32-bit */
-#if __SIZEOF_INT__ == 4
+/* 32-bit
+ * (int is guaranteed 32-bit on all 64-bit OS architectures)
+ */
 typedef int                int32_t;
 typedef unsigned int       uint32_t;
-#elif __SIZEOF_LONG__ == 4
-typedef long               int32_t;
-typedef unsigned long      uint32_t;
-#else
-#error "No 32-bit type found"
-#endif
 
 /* 64-bit */
-#if __SIZEOF_LONG__ == 8
-typedef long               int64_t;
-typedef unsigned long      uint64_t;
-#elif __SIZEOF_LONG_LONG__ == 8
-typedef long long          int64_t;
-typedef unsigned long long uint64_t;
+#if defined(_WIN32) || defined(_WIN64)
+    /* Windows (LLP64): long is only 32-bit. We must use extensions. */
+    #if defined(__GNUC__) || defined(__clang__)
+        __extension__ typedef long long          int64_t;
+        __extension__ typedef unsigned long long uint64_t;
+    #else
+        /* MSVC / cl.exe */
+        typedef __int64          int64_t;
+        typedef unsigned __int64 uint64_t;
+    #endif
 #else
-#error "No 64-bit type found"
+    /* Linux / macOS / Unix (LP64): long is natively 64-bit */
+    typedef long               int64_t;
+    typedef unsigned long      uint64_t;
 #endif
 
 /* pointer-sized */
-#if __SIZEOF_POINTER__ == 8
 typedef  int64_t intptr_t;
 typedef uint64_t uintptr_t;
 typedef uint64_t usize_t;
 typedef  int64_t ssize_t;
-#elif __SIZEOF_POINTER__ == 4
-typedef  int32_t intptr_t;
-typedef uint32_t uintptr_t;
-typedef uint32_t usize_t;
-typedef  int32_t ssize_t;
-#else
-#error "Unsupported pointer size"
-#endif
 
+/* short aliases */
 typedef  uint8_t  u8;
 typedef   int8_t  i8;
 typedef uint16_t u16;
@@ -63,6 +54,7 @@ typedef  int32_t i32;
 typedef uint64_t u64;
 typedef  int64_t i64;
 
+/* Booleans */
 #if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
     typedef u8 bool;
     #define true 1
