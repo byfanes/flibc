@@ -24,6 +24,9 @@ error_t str_to_cstr(allocator_t* alloc, str_t* base, char** out);
 error_t str_from_cstr(allocator_t* alloc, str_t* out, const char* cstr);
 error_t strdup(allocator_t* alloc, str_t* base, str_t* out);
 
+error_t str_formatf(str_t* base, const char* fmt, ...);
+error_t str_formatf_sl(str_t* base, slice(u8) fmt, ...);
+
 error_t strcpy(str_t* base, str_t* cpy);
 error_t strcat(str_t* base, str_t* extend);
 error_t strcat_sl(str_t* base, slice(u8) sl);
