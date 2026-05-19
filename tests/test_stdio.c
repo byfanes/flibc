@@ -11,10 +11,10 @@ error_t main
 
     set_slice(&buf_sl, buffer, 128);
 
-    res = sprintf(buf_sl, &wrote, cstr_to_u8sl("Testing %d"), 42);
-    fprintf(std.io.out,cstr_to_u8sl("This is from stdio test res:%d\n"),res);
+    res = sprintf(buf_sl, &wrote, "Testing %d", 42);
+    fprintf(std.io.out,"This is from stdio test res:%d\n",res);
     fflush(std.io.out);
-    ASSERT_OK(sprintf(buf_sl, &wrote, cstr_to_u8sl("Testing %d"), 42));
+    ASSERT_OK(sprintf(buf_sl, &wrote, "Testing %d", 42));
     ASSERT(wrote > 0);
     ASSERT_EQ(buffer[0], 'T');
 

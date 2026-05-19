@@ -55,11 +55,17 @@ error_t rewind(file_t* file);
 error_t fputs(file_t* file, slice(u8) sl);
 error_t fputc(file_t* file, uint8_t c);
 
-error_t sprintf(slice(u8) buf, usize_t* _Nullable wrote_count, slice(u8) fmt, ...);
-error_t fprintf(file_t* file, slice(u8) fmt, ...);
+error_t sprintf(slice(u8) buf, usize_t* _Nullable wrote_count, const char* fmt, ...);
+error_t sprintf_sl(slice(u8) buf, usize_t* _Nullable wrote_count, slice(u8) fmt, ...);
 
-error_t vsprintf(slice(u8) buf, usize_t* _Nullable wrote_count, slice(u8) fmt, va_list ap);
-error_t vfprintf(file_t* file, slice(u8) fmt, va_list ap);
+error_t fprintf(file_t* file, const char* fmt, ...);
+error_t fprintf_sl(file_t* file, slice(u8) fmt, ...);
+
+error_t vsprintf(slice(u8) buf, usize_t* _Nullable wrote_count, const char* fmt, va_list ap);
+error_t vsprintf_sl(slice(u8) buf, usize_t* _Nullable wrote_count, slice(u8) fmt, va_list ap);
+
+error_t vfprintf(file_t* file, const char* fmt, va_list ap);
+error_t vfprintf_sl(file_t* file, slice(u8) fmt, va_list ap);
 
 #ifdef __cplusplus
 }

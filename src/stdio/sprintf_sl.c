@@ -1,7 +1,7 @@
 #include "stdio_private.h"
 
-error_t fprintf
-(file_t* file, const char* fmt, ...)
+error_t sprintf_sl
+(slice(u8) buf, usize_t* _Nullable wrote_count, slice(u8) fmt, ...)
 {
     /* Init variables */
     va_list ap;
@@ -9,7 +9,7 @@ error_t fprintf
 
     /* Start and end va and format string */
     va_start(ap, fmt);
-    res = vfprintf_sl(file, cstr_to_u8sl(fmt), ap);
+    res = vsprintf_sl(buf, wrote_count, fmt, ap);
     va_end(ap);
 
     return res;
