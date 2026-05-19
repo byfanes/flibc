@@ -16,6 +16,7 @@ extern "C" {
  */
 
 typedef da(u8) str_t;
+can_be_da(str_t);
 
 error_t str_init(allocator_t* alloc, str_t* out, usize_t amount);
 error_t str_deinit(str_t* out);

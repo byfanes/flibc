@@ -9,6 +9,7 @@
 void _start(void);
 
 #define MAX_ARGS_COUNT 256
+#define MAX_ENV_COUNT 256
 
 static void early_panic
 (slice_u8 msg)
@@ -25,8 +26,10 @@ void runtime_start
     /* Init variables */
     error_t ret = 0;
     usize_t i = 0;
-    slice(u8) args[MAX_ARGS_COUNT] = {0}, *args_ptr = 0;
+    slice(u8) args[MAX_ARGS_COUNT] = {0}, *args_ptr = 0, envps[MAX_ENV_COUNT] = {0};
     std_t std = {0};
+    char** envp = 0;
+    u32 envc = 0;
 
     /* Check argc and get first of them which is path to executable */
     if(argc > 0) {
@@ -61,6 +64,15 @@ void runtime_start
     for(; i < argc; ++i) {
         set_slice(&std.args.base[i], argv[i], strlen(argv[i]));
     }
+
+    /* Skip null and start taking env */
+    envp = (argv + 1);
+    std.env.continues = envp;
+    while(*envp) {
+        set_slice(&envps[envc++], *envp, strlen(*envp));
+        envp++;
+    }
+    set_slice(&std.env.items, envps, envc);
 
     /* Call the main function and execute the user program */
     ret = main(std);

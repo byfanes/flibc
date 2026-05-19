@@ -12,7 +12,6 @@ extern "C" {
 
 typedef str_t path_t;
 typedef struct fs_stat_s fs_stat_t;
-can_be_da(str_t);
 
 /* TODO: This is not cross-platform like other functions
  * This struct has been stolen from linux kernel
