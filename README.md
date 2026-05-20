@@ -4,6 +4,11 @@ A custom C library to fix C's historical flaws. Written in C89 without relying c
 
 > **Note:** This library is a work in progress and currently on supports x86_64 Linux.
 
+## Repos
+
+Github(Mirror): https://github.com/byfanes/flibc
+Codeberg(Actual work done here): https://codeberg.org/fanes/flibc
+
 ## Why does it exist?
 
 > **No Hidden/Gobal State:** The standard libc forces users to rely on hidden global state (like 'errno' or 'stdin'), which can be painful and unsafe to debug/work while using multithreading.
