@@ -4,8 +4,7 @@ error_t proc_run
 (cmd_t cmd, env_t env)
 {
     /* Init variables */
-    ssize_t pid = 0, ret = 0;
-    int status = 0;
+    ssize_t pid = 0;
 
     /* Check input */
     if(!cmd.count || !cmd.items || !env.continues)
@@ -26,16 +25,5 @@ error_t proc_run
     }
 
     /* Parent part */
-    for(;;) {
-        /* Call wait for checking if the child is finished */
-        ret = syscall_4_linux(syscall_wait4, pid, &status, 0, 0);
-
-        /* Soemthing went wrong */
-        if(ret < 0) { return proc_child_failed; }
-
-        /* Success */
-        if(ret == pid) { break; }
-    }
-
-    return success;
+    return waitapid(pid);
 }

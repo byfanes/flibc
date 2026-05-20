@@ -84,6 +84,8 @@ extern ssize_t syscall_6_linux
 #define S_IFREG 0100000
 #define S_IFDIR 0040000
 
+#define EINTR 4
+
 #define CLOCK_MONOTONIC 1
 
 #else /* __linux__ */
