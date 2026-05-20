@@ -2,9 +2,7 @@
 #include "da.h"
 #include "string.h"
 
-can_be_da(str_t);
 error_t write_list(file_t* fptr, da(str_t)* list);
-
 
 error_t write_list
 (file_t* fptr, da(str_t)* list)
@@ -15,7 +13,7 @@ error_t write_list
     for(; i < list->count; ++i) {
         str_add_shadow_null(&list->items[i]);
 
-        if((res = fprintf(fptr, cstr_to_u8sl("List element[%d]: %s\n"), i, list->items[i].items)))
+        if((res = fprintf(fptr, "List element[%d]: %s\n", i, list->items[i].items)))
         { return res; }
 
         if((fflush(fptr))) { return res; }
