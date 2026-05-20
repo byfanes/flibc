@@ -9,7 +9,7 @@ bool __validate_header
     if((header->raw_alloced & (CHUNK_SIZE - 1)) != 0)
     { return false; }
 
-    /* align64(sum of req_alloc + header + u16(last_null)) shoul be
+    /* align64(sum of req_alloc + header + u16(last_null)) should be
      * equal to raw because its calculated like that
      */
     if(ALIGN_64(header->req_alloced + sizeof(heap_header_t) + sizeof(u16)) != header->raw_alloced)
