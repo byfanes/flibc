@@ -8,6 +8,8 @@ error_t allocator_alloc_pointer
     u32 idx = 0;
     u8* ptr = 0;
     heap_header_t* header = 0;
+    heap_node_t node = {0};
+    error_t res = success;
 
     /* Check input */
     if(!alloc || !set) { return null_pointer; }
@@ -17,20 +19,60 @@ error_t allocator_alloc_pointer
     needed = ALIGN_64(needed);
     chunk_count = needed / CHUNK_SIZE;
 
-    /* Check for bits */
-    idx = __find_free_chunks(alloc->free_bits, CHUNK_MAX, (u32)chunk_count);
+    /* We got a request which is greater than threshold */
+    if (needed >= (ALLOCATION_SIZE / 16)) {
+        if(alloc->node_count >= MAX_NODE_COUNT)
+        {
+            if(alloc->next) {
+                /* If there is a next allocator try to use it */
+                return alloc->alloc_pointer(alloc->next, n, set, file_name, line);
+            }
+            /* If there is not a next allocator create it and use it */
+            if((res = alloc->init(&alloc->next))) { return res; }
+            /* If there is a next allocator try to use it */
+            return alloc->alloc_pointer(alloc->next, n, set, file_name, line);
+        }
 
-    /* TODO its full and we need to allcoate more */
-    if(idx == CHUNK_IDX_FAILED) { return 1; }
+        /* Call syscall for new chunk memory */
+        ptr = (u8*)syscall_6_linux(syscall_mmap, 0, (ssize_t)needed,
+        (PROT_READ|PROT_WRITE), (MAP_PRIVATE|MAP_ANONYMOUS), (ssize_t)(-1), 0);
 
-    /* Mark them as they are part of the memory */
-    __set_chunks_used(alloc->free_bits, idx, (u32)chunk_count);
+        /* Error check */
+        if(!ptr || ptr == MMAP_FAILED) { return memory_error; }
 
-    /* Get the pointer */
-    ptr = ((u8*)alloc + sizeof(allocator_t) + CHUNK_SIZE * idx);
+        /* Set node and assign it */
+        node.start = ptr;
+        node.type = raw_chunk_allocation;
+        alloc->nodes[alloc->node_count++] = node;
+    } else {
+        /* We are making an allocation which is less than threshold
+         * which will be (probably) easier to fit in the chunks
+         */
+
+        /* Check for bits */
+        idx = __find_free_chunks(alloc->free_bits, CHUNK_MAX, (u32)chunk_count);
+
+        if(idx == CHUNK_IDX_FAILED) {
+            if(alloc->next) {
+                /* If there is a next allocator try to use it */
+                return alloc->alloc_pointer(alloc->next, n, set, file_name, line);
+            }
+            /* If there is not a next allocator create it and use it */
+            if((res = alloc->init(&alloc->next))) { return res; }
+            /* If there is a next allocator try to use it */
+            return alloc->alloc_pointer(alloc->next, n, set, file_name, line);
+        }
+
+        /* Mark them as they are part of the memory */
+        __set_chunks_used(alloc->free_bits, idx, (u32)chunk_count);
+
+        /* Get the pointer */
+        ptr = ((u8*)alloc + sizeof(allocator_t) + CHUNK_SIZE * idx);
+    }
 
     /* Set header */
     header = (heap_header_t*)(uintptr_t)ptr;
+    header->alloc = alloc;
     /* Allocated more than 4GB is prohibited */
     header->req_alloced = (u32)n;
     header->raw_alloced = (u32)needed;
@@ -42,6 +84,7 @@ error_t allocator_alloc_pointer
      */
     header->line = (u32)line;
     header->first_null = 0;
+    header->is_raw_chunk = (needed >= (ALLOCATION_SIZE / 16));
 
     /* Last null byte */
     *(usize_t*)(uintptr_t)(ptr + sizeof(heap_header_t) + n) = 0;

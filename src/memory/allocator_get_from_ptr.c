@@ -1,6 +1,9 @@
 #include "memory_private.h"
 
-
+/* Right now this function is redundant because we already store
+ * allocator point in side of the header so the only use case for
+ * this not breaking other functions and validating header
+ */
 error_t allocator_get_from_ptr
 (void* ptr, allocator_t** set)
 {
@@ -12,8 +15,7 @@ error_t allocator_get_from_ptr
 
     if(!__validate_header(header)) { return invalid_pointer; }
 
-    /* Header should be allign to chunks' begining */
-    *set = (allocator_t*)(((u8*)header - header->chunk_idx * CHUNK_SIZE) - sizeof(allocator_t));
+    *set = header->alloc;
 
     return success;
 }

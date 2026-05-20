@@ -85,7 +85,7 @@ $(TARGET_SHARED): $(C_OBJ) $(ASM_OBJ)
 $(BUILD_C_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	@echo "Compiling lib $<"
-	@$(CC) $(FREESTANDING_CFLAGS) -c $< -o $@
+	@$(CC) $(FREESTANDING_CFLAGS) -fPIC -c $< -o $@
 
 $(BUILD_ASM_DIR)/%.o: $(SRC_DIR)/%.S
 	@mkdir -p $(dir $@)

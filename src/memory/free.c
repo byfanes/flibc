@@ -17,5 +17,5 @@ error_t free
     if(allocator_get_from_ptr(*(void**)set, &alloc)) { return invalid_pointer; }
 
     /* Allocator free */
-    return allocator_free_pointer(alloc, set);
+    return alloc->free_pointer(alloc, set);
 }

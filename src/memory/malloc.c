@@ -6,5 +6,6 @@ error_t __malloc
 (allocator_t* alloc, usize_t size, void* set, TRACE_ARGS)
 {
     /* This is a wrapper function */
-    return allocator_alloc_pointer(alloc, size, set, USE_TRACE_ARGS);
+    if(!alloc || !alloc->alloc_pointer) { return null_pointer; }
+    return alloc->alloc_pointer(alloc, size, set, USE_TRACE_ARGS);
 }

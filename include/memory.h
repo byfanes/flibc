@@ -33,8 +33,20 @@ can_be_slice(i64);
 can_be_slice(ssize_t);
 can_be_slice(usize_t);
 
+/* We can support up to 32 flags right now this value depends
+ * on allocator_t->flags size which is u32 those flags assigned
+ * via bit so we need to shift them
+ */
+enum allocator_flags_e {
+    allocator_dont_check_leaks = (1 << 0)
+};
+
+typedef enum allocator_flags_e allocator_flags_t;
+
+error_t allocator_set_flags(allocator_t* alloc, u32 flags);
 error_t allocator_init(allocator_t** set);
 error_t allocator_deinit(allocator_t** set);
+error_t allocator_get_from_ptr(void* ptr, allocator_t** set);
 
 slice(u8) cstr_to_u8sl(const char* cstr);
 error_t set_slice(const void* sl, const void* base, usize_t count);

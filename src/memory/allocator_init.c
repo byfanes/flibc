@@ -23,6 +23,12 @@ error_t allocator_init
     /* Zero-ed the struct so bitfields are zero now */
     memset(&sl, 0);
 
+    /* This is an default allocator so we can use default functions */
+    alloc->alloc_pointer = allocator_alloc_pointer;
+    alloc->free_pointer = allocator_free_pointer;
+    alloc->init = allocator_init;
+    alloc->deinit = allocator_deinit;
+
     *set = alloc;
     return success;
 }
