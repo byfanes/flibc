@@ -49,9 +49,6 @@ extern ssize_t syscall_6_linux
 #define syscall_unlink 87
 #define syscall_gettime 228
 
-#define S_IFREG 0100000
-#define S_IFDIR 0040000
-
 #define UNIX_STDIN 0
 #define UNIX_STDOUT 1
 #define UNIX_STDERR 2
@@ -66,22 +63,26 @@ extern ssize_t syscall_6_linux
 
 #define PROT_NONE 0
 #define PROT_READ 1
-#define PROT_WRITE 2
-#define PROT_EXEC 4
+#define PROT_WRITE (1 << 1)
+#define PROT_EXEC (1 << 2)
 
 #define O_RDONLY 0
 #define O_WRONLY 1
-#define O_RDWR 2
-#define O_CREAT 64
-#define O_TRUNC 512
-#define O_APPEND 1024
+#define O_RDWR (1 << 1)
+#define O_CREAT (1 << 6)
+#define O_TRUNC (1 << 9)
+#define O_APPEND (1 << 10)
+#define O_CLOEXEC (1 << 19)
 
-#define S_IRUSR 256
-#define S_IWUSR 128
-#define S_IRGRP 32
-#define S_IWGRP 16
-#define S_IROTH 4
-#define S_IWOTH 2
+#define S_IRUSR (1 << 8)
+#define S_IWUSR (1 << 7)
+#define S_IRGRP (1 << 5)
+#define S_IWGRP (1 << 4)
+#define S_IROTH (1 << 2)
+#define S_IWOTH (1 << 1)
+
+#define S_IFREG 0100000
+#define S_IFDIR 0040000
 
 #define CLOCK_MONOTONIC 1
 
