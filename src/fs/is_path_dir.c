@@ -1,6 +1,6 @@
 #include "fs_private.h"
 
-error_t path_is_dir
+error_t is_path_dir
 (path_t* p, bool* out)
 {
     /* Init variables */
