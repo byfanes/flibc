@@ -174,8 +174,11 @@ error_t __formatf
         /* Handle %p it will write as hexadecimal */
 	else if(fmt.base[i] == 'p') {
 	    cur_u64 = (u64)va_arg(ap, void*);
-            buf.base[count++] = '0';
-            buf.base[count++] = 'x';
+            if(buf.base) {
+                buf.base[count] = '0';
+                buf.base[count + 1] = 'x';
+            }
+            count++;
             hex_format(buf.base, &count, cur_u64);
 	}
 
@@ -195,8 +198,8 @@ error_t __formatf
         else if(fmt.base[i] == 'v') {
             cur_vec_ptr = va_arg(ap, slice(u8)*);
             if(buf.base) {
-                set_slice(&buf_sl, &buf.base[count], len);
-                memcpy(&buf_sl, cur_vec_ptr);
+                set_slice(&buf_sl, &buf.base[count], buf.count - len);
+                if(memcpy(&buf_sl, cur_vec_ptr)) { return small_buffer; }
             }
             count += (u32)cur_vec_ptr->count;
         }
