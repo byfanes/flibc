@@ -8,7 +8,7 @@ error_t proc_spawn
     proc_t proc = {0};
 
     /* Check input */
-    if(!cmd.count || !cmd.items || !env.continues || !procs || !procs->items)
+    if(!cmd.count || !cmd.items || !env.continues.items || !procs || !procs->items)
     { return null_pointer; }
 
     /* Fork it */

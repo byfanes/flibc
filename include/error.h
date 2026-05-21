@@ -23,6 +23,7 @@ enum error_e {
     memswap_diffsize,
     invalid_slice_assignment,
     formatf_unknown_format,
+    does_not_exist,
 
     /* System Errors */
     memory_error,

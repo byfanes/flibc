@@ -33,6 +33,10 @@ can_be_slice(i64);
 can_be_slice(ssize_t);
 can_be_slice(usize_t);
 
+/* TODO: Right now a lot of functions dont free the memory (when they failed) which they allocated
+ * and this causes some leak we should migrate to goto defer system rather than if return
+ */
+
 /* We can support up to 32 flags right now this value depends
  * on allocator_t->flags size which is u32 those flags assigned
  * via bit so we need to shift them
