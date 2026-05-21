@@ -71,6 +71,7 @@ typedef  int64_t i64;
 #define CONCAT(a, b) CONCAT_IMPL(a, b)
 
 #define FLIBC_STACK_THRESHOLD 4096
+#define FLIBC_FILE_BUFFER_SIZE 4096
 
 #ifdef __cplusplus
 }

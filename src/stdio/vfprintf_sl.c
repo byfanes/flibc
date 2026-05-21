@@ -9,14 +9,23 @@ error_t vfprintf_sl
     u8 buf[FLIBC_STACK_THRESHOLD];
     slice(u8) buf_sl = {0};
     void* ptr = 0;
+    allocator_t* alloc = 0;
+
+    /* Check file pointer fmt checked in format function */
+    if(!file) { return null_pointer; }
 
     /* First get size of buffer */
     if((res = __formatf(buf_sl, fmt, &count, ap))) { return res; }
 
     /* Allocate stack or heap */
     if(count > FLIBC_STACK_THRESHOLD) {
-        /* TODO: Make it use chunks it will crash other wise*/
-        if((res = malloc(nullptr, count, &ptr))) { return res; }
+        /* A little bit trick but files are allocated via an allocator
+         * and they are opaque pointers so we know they must have an header
+         * via that we can access an allocator which is same with the file's
+         * allcator and use it to access more memory
+         */
+        if((res = allocator_get_from_ptr(file, &alloc))) { return res; }
+        if((res = malloc(alloc, count, &ptr))) { return res; }
     } else {
         ptr = buf;
     }
@@ -25,13 +34,13 @@ error_t vfprintf_sl
     set_slice(&buf_sl, ptr, count);
 
     /* Format using fmt and output to buffer */
-    if((res = __formatf(buf_sl, fmt, &count, ap))) { return res; }
+    if((res = __formatf(buf_sl, fmt, &count, ap))) { goto fail; }
 
     /* Write buffer to file pointer */
-    if((res = fwrite(file, buf_sl))) { return res; }
+    if((res = fwrite(file, buf_sl))) { goto fail; }
 
+fail:
     /* Free if its need */
-    if(count > FLIBC_STACK_THRESHOLD) { return free(&ptr); }
-
-    return success;
+    if(count > FLIBC_STACK_THRESHOLD && ptr) { free(&ptr); }
+    return res;
 }
