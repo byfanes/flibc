@@ -14,7 +14,7 @@ error_t fwrite
     if(file->type == file_read) { return io_invalid_op; }
 
     /* If it does not fit to buffer fflush then write it */
-    if (file->count >= FLIBC_STACK_THRESHOLD)
+    if (sl.count >= FLIBC_STACK_THRESHOLD)
     {
         if((res = fflush(file))) { return res; }
 
@@ -29,7 +29,7 @@ error_t fwrite
     }
 
     /* If it fits to buffer by only itself flush - append later  */
-    if (sl.count + file->count >= FLIBC_STACK_THRESHOLD && file->count < FLIBC_STACK_THRESHOLD)
+    if (sl.count + file->count >= FLIBC_STACK_THRESHOLD && sl.count < FLIBC_STACK_THRESHOLD)
     {
         if((res = fflush(file))) { return res; }
     }
