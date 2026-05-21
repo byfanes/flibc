@@ -14,8 +14,8 @@ error_t allocator_alloc_pointer
     /* Check input */
     if(!alloc || !set) { return null_pointer; }
 
-    /* u16 is for end null bytes and align it */
-    needed = (n + sizeof(heap_header_t) + sizeof(u16));
+    /* usize_t is for end null bytes and align it */
+    needed = (n + sizeof(heap_header_t) + sizeof(usize_t));
     needed = ALIGN_64(needed);
     chunk_count = needed / CHUNK_SIZE;
 
