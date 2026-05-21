@@ -8,8 +8,9 @@ error_t env_add_var_sl
     error_t res = success;
 
     /* Check input */
+    /* Note: val count can be zero for things like 'PAGER=' */
     if(!alloc || !env || !env->continues.items || !env->vars.items ||
-       !key.base || !val.base || !key.count || !val.count)
+       !key.base || !val.base || !key.count)
     { return null_pointer; }
 
     /* Init strings and cat with corresponding slices */
