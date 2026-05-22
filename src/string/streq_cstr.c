@@ -12,8 +12,8 @@ bool streq_cstr
     /* Check possible combinations for early return */
     if(!lhs && !cstr) { return true; }
     if(!lhs->items && !cstr) { return true; }
-    if(!lhs->items || cstr) { return false; }
-    if(lhs->items || !cstr) { return false; }
+    if(!lhs->items && cstr) { return false; }
+    if(lhs->items && !cstr) { return false; }
     if(lhs->count != len) { return false; }
 
     /* Check one by one */
