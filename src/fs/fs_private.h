@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 
+#include "../helpers/helpers.h"
 #include "syscall.h"
 #include "fs.h"
 

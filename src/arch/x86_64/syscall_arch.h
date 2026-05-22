@@ -48,7 +48,9 @@ extern ssize_t syscall_6_linux
 #define syscall_mkdir 83
 #define syscall_rmdir 84
 #define syscall_unlink 87
+#define syscall_getdents64 217
 #define syscall_gettime 228
+#define syscall_openat 257
 
 #define UNIX_STDIN 0
 #define UNIX_STDOUT 1
@@ -74,6 +76,7 @@ extern ssize_t syscall_6_linux
 #define O_TRUNC (1 << 9)
 #define O_APPEND (1 << 10)
 #define O_CLOEXEC (1 << 19)
+#define O_DIRECTORY (1 << 16)
 
 #define S_IRUSR (1 << 8)
 #define S_IWUSR (1 << 7)
@@ -105,7 +108,9 @@ extern ssize_t syscall_6_linux
 #define S_ISLNK(mode)  (((mode) & S_IFMT) == S_IFLNK)
 #define S_ISSOCK(mode) (((mode) & S_IFMT) == S_IFSOCK)
 
-
+#define AT_FDCWD        -100
+#define DT_REG          8
+#define DT_DIR          4
 #define F_OK 0
 
 #define EINTR 4
