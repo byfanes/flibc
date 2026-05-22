@@ -19,9 +19,9 @@ extern "C" {
 
 #define can_be_da(type)         \
     typedef struct {            \
+        type * const items;     \
         const usize_t count;    \
         const usize_t capacity; \
-        type * const items;     \
     } da_ ## type
 
 can_be_da(u8);
