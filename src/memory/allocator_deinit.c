@@ -44,7 +44,7 @@ error_t allocator_deinit
         }
 
         /* Check for the nodes in allocator */
-        for(i = 0; i < MAX_NODE_COUNT; ++i) {
+        for(i = 0; i < ALLOCATOR_NODE_COUNT; ++i) {
             switch(alloc->nodes[i].type) {
                 case heap_node_empty: continue;
 
@@ -72,7 +72,7 @@ error_t allocator_deinit
         if((res = allocator_deinit(&alloc->next))) { return res; }
     }
 
-    for(i = 0; i < MAX_NODE_COUNT; ++i) {
+    for(i = 0; i < ALLOCATOR_NODE_COUNT; ++i) {
         switch(alloc->nodes[i].type) {
             case heap_node_empty: continue;
 

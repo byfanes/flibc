@@ -24,6 +24,7 @@ enum error_e {
     invalid_slice_assignment,
     formatf_unknown_format,
     does_not_exist,
+    exceeding_memory_allocation,
 
     /* System Errors */
     memory_error,

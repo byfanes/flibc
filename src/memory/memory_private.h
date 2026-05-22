@@ -19,10 +19,29 @@
 
 #define CHUNK_MAX (ALLOCATION_SIZE / CHUNK_SIZE)
 
+/* We give it a big number so if we use it without
+ * any checking we can segfault if it happens
+ */
 #define CHUNK_IDX_FAILED 0xFFFFFFFF
 
-#define MAX_NODE_COUNT \
-    sizeof(((allocator_t*)(0))->nodes)/sizeof(((allocator_t*)(0))->nodes[0])
+/* This calculation is for how many bits we need
+ * to allocate so we can control over all the chunks
+ * Allocators' heap chunk size should be 1024*1024 = 1 MiB
+ * So we should have 16384 chunks so we can store it in 16384 bit
+ * That converts to 2048 bytes
+ */
+#define ALLOCATOR_NEEDED_BITS (CHUNK_MAX / 8)
+
+/* This calculation for needed node count we need to
+ * update this calculation every time we change allocator struct
+ * basicly we have a page(4KB) for the allocator struct we use
+ * 5 pointers inside it (next - init - deinit - alloc_pointer - free_pointer)
+ * functions and u32 (which is flags) and last one is check bits which is u8[ALLOCATOR_NEEDED_BITS]
+ * and diveding this number with a node size gives use the amount usable nodes in an allocator
+ */
+#define ALLOCATOR_NODE_COUNT \
+((PAGE_SIZE - (sizeof(void*)*5 + sizeof(u32) + sizeof(u8[ALLOCATOR_NEEDED_BITS]))) \
+    / sizeof(heap_node_t))
 
 typedef struct heap_header_s heap_header_t;
 
@@ -73,13 +92,16 @@ typedef error_t (*f_allocator_deinit)(allocator_t** set);
  * for the user base pointer to give user some memory you can use this pointer again
  * but jumping 1 allocator ahead to access it then do all of the stuff
  */
+/* Note: If the struct is change do not forget to update the calculations for
+ * 'ALLOCATOR_NODE_COUNT' and 'ALLOCATOR_NEEDED_BITS'
+ */
 struct allocator_s {
     /* Next allocator for if current allocator fills up and we need more space
-     * every allocator handled via its previous one 
+     * every allocator handled via its previous one
      */
     allocator_t* next;
-     
-    /* If user wants to implement their allocator they should add those functions and 
+
+    /* If user wants to implement their allocator they should add those functions and
      * set it in allocator
      */
     f_allocator_alloc_pointer alloc_pointer;
@@ -87,35 +109,18 @@ struct allocator_s {
     f_allocator_init init;
     f_allocator_deinit deinit;
 
-    /* For making nodes are whole numbers we need to pad it with architecture size and
-     * we add up to 4KB which is a whole page and this memory can be used for different things 
-     */
-    ssize_t padding;
-    
+    /* We can support up to 32 flags right now */
     u32 flags;
 
-    /* Note: We can truncate it down to u8 because max size is 252(12 byte case) or 166(8 byte case)
-     * which is enough to store in u8 right now we are not doing anything
-     * with that memory so we just combined it with node_count to ensure padding
+    /* We expect a OS should 4KB as page size its not mandatory but it aligns better
+     * Look up for the 'ALLOCATOR_NODE_COUNT' calculation before modifying this array
+     * since its a small sized array (167 - 253 (depending on arch)) we can iterate
+     * over them because we indicate free nodes via 'heap_node_empty' which is zero
      */
-    /* We use u32 explicitly because it maps better when we calculate the size
-     * which left to nodes array which is 2016 bytes and its easy align to
-     * 8(u32(enum) + ptr(u32)) or 12(u32(enum) + ptr(u64))
-     * max count is for this number is 166(12 byte case) or 252(8 byte case)
-     */
-    u32 node_count;
-     
-    /* We expect a OS should 4KB as page size its not mandatory but it aligns better  
-     * We use 2KB of that memory to free/use states of chunks 8 bytes to node_count
-     * and the part which is left (2016(64 bit arch) or 1992(32 bit arch) bytes) used in nodes array
-     */
-    heap_node_t nodes[PAGE_SIZE - (sizeof(u8[CHUNK_MAX / 8]) + sizeof(u64)) / sizeof(heap_node_t)];
-     
-    /* Allocators' heap chunk size should be 1024*1024 = 1 MiB
-     * So we should have 16384 chunks so we can store it in 16384 bit
-     * That converts to 2048 bytes
-     */
-    u8 free_bits[CHUNK_MAX / 8];
+    heap_node_t nodes[ALLOCATOR_NODE_COUNT];
+
+    /* Look up for 'ALLOCATOR_NEEDED_BITS' before changing this array */
+    u8 free_bits[ALLOCATOR_NEEDED_BITS];
 };
 
 /* A temporary structure for setting the const slices

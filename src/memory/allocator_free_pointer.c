@@ -28,7 +28,7 @@ error_t allocator_free_pointer
     }
 
     /* Find the node of the chunk back */
-    for(; i < MAX_NODE_COUNT; ++i) {
+    for(; i < ALLOCATOR_NODE_COUNT; ++i) {
         if(alloc->nodes[i].start == header) {
             alloc->nodes[i].type = heap_node_empty;
             alloc->nodes[i].start = nullptr;
