@@ -20,17 +20,26 @@ can_be_da(path_t);
  * This struct has been stolen from linux kernel
  */
 struct fs_stat_s {
-    u16 st_dev;
-    u16 st_ino;
-    u16 st_mode;
-    u16 st_nlink;
-    u16 st_uid;
-    u16 st_gid;
-    u16 st_rdev;
-    u32 st_size;
-    u32 st_atime;
-    u32 st_mtime;
-    u32 st_ctime;
+    usize_t st_dev;
+    usize_t st_ino;
+    usize_t st_nlink;
+    u32     st_mode;
+    u32     st_uid;
+    u32     st_gid;
+    u32     __pad0;
+    usize_t st_rdev;
+    ssize_t st_size;
+    ssize_t st_blksize;
+    ssize_t st_blocks;
+
+    usize_t st_atime;
+    usize_t st_atime_nsec;
+    usize_t st_mtime;
+    usize_t st_mtime_nsec;
+    usize_t st_ctime;
+    usize_t st_ctime_nsec;
+
+    ssize_t __unused[3];
 };
 
 error_t path_exists(path_t* p, bool* out);
@@ -58,6 +67,9 @@ error_t file_exists(path_t* path, bool* out);
 error_t file_copy(allocator_t* alloc, path_t* from, path_t* to);
 error_t file_read_all(allocator_t* alloc, path_t* path, da(u8)* out);
 
+error_t path_ext(path_t* base, path_t* out);
+error_t path_basename(path_t* base, path_t* out);
+
 /* TBD
  * error_t file_read_lines(allocator_t* alloc, path_t* path, da(str_t)* out);
  * error_t path_dirname(path_t* p, path_t* out);
@@ -67,7 +79,7 @@ error_t file_read_all(allocator_t* alloc, path_t* path, da(u8)* out);
  * error_t dir_list_dir(path_t* path, void (*callback)(const char*, bool, void*), void* arg);
  * error_t dir_remove_recursive(path_t* path);
  */
- 
+
 #ifdef __cplusplus
 }
 #endif

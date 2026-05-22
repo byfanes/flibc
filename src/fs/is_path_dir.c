@@ -13,7 +13,7 @@ error_t is_path_dir
 
     /* Check if not fail set it */
     if((res = path_stat(p, &stats))) { return res; }
-    *out = (stats.st_mode == S_IFDIR);
+    *out = S_ISDIR(stats.st_mode);
     
     return success;
 }

@@ -11,7 +11,7 @@ error_t path_size
     if(!out) { return null_pointer; }
     if((res = path_stat(p, &stats))) { return res; }
     
-    *out = stats.st_size;
+    *out = (usize_t)stats.st_size;
 
     return success;
 }

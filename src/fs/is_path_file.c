@@ -13,7 +13,7 @@ error_t is_path_file
 
     /* Check if not fail set it */
     if((res = path_stat(p, &stats))) { return res; }
-    *out = (stats.st_mode == S_IFREG);
+    *out = S_ISREG(stats.st_mode);
     
     return success;
 }

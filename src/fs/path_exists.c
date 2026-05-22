@@ -5,15 +5,15 @@ error_t path_exists
 {
     /* Init variables */
     error_t res = success;
-    fs_stat_t stats = {0};
 
     /* Check inputs set it to false for failure case */
     if(!out) { return null_pointer; }
     *out = false;
 
     /* Check if not fail set it */
-    if((res = path_stat(p, &stats))) { return res; }
-    *out = true;
+    if((res = str_add_shadow_null(p))) { return res; }
+    if((0 == syscall_2_linux(syscall_access, p->items, F_OK)))
+    { *out = true; }
     
     return success;
 }
