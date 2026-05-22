@@ -29,6 +29,8 @@ error_t allocator_alloc_pointer
             }
             /* If there is not a next allocator create it and use it */
             if((res = alloc->init(&alloc->next))) { return res; }
+            /* Set flags from previous allocator*/
+            if((res = allocator_set_flags(alloc->next, alloc->flags))) { return res; }
             /* If there is a next allocator try to use it */
             return alloc->alloc_pointer(alloc->next, n, set, file_name, line);
         }
@@ -59,6 +61,8 @@ error_t allocator_alloc_pointer
             }
             /* If there is not a next allocator create it and use it */
             if((res = alloc->init(&alloc->next))) { return res; }
+            /* Set flags from previous allocator*/
+            if((res = allocator_set_flags(alloc->next, alloc->flags))) { return res; }
             /* If there is a next allocator try to use it */
             return alloc->alloc_pointer(alloc->next, n, set, file_name, line);
         }
