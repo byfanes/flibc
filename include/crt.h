@@ -15,9 +15,11 @@ extern "C" {
 typedef struct std_s std_t;
 typedef struct env_s env_t;
 typedef struct env_var_s env_var_t;
+typedef char* cstr_t;
 
 can_be_slice(slice_u8);
 can_be_da(env_var_t);
+can_be_da(cstr_t);
 
 /* This types wont be resized but we are using strings (which are da) so
  * that increases memory print a little bit but we get auto utf8 control
@@ -32,6 +34,7 @@ struct env_var_s {
 struct env_s {
     da(env_var_t) vars;
     /* Should end with a null */
+    da(cstr_t) list;
     /* We keep this because it's convenient to use things in like execve */
     str_t continues;
 };

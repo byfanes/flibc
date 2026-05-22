@@ -74,6 +74,10 @@ void runtime_start
     if(da_init(std.alloc, &std.env.vars, envc))
     { early_panic("CRT Panic: Could not initialize environment variable dynamic array!\n"); }
 
+    /* Init environment variable list which is like envp pointer which comes after stack */
+    if(da_init(std.alloc, &std.env.list, envc))
+    { early_panic("CRT Panic: Could not initialize environment variable list!\n"); }
+
     /* Init continues chunk */
     if(da_init(std.alloc, &std.env.continues, 1024))
     { early_panic("CRT Panic: Could not initialize environment variable continues list!\n"); }
@@ -115,10 +119,13 @@ void runtime_start
         { early_panic("CTR Panic: Could not free an environment variable's value!\n"); }
     }
 
+    /* Deinit environment variables */
     if(da_deinit(&std.env.vars))
     { early_panic("CTR Panic: Could not free the environment variable dynamic array!\n"); }
     if(str_deinit(&std.env.continues))
     { early_panic("CTR Panic: Could not free the environment variable continues list!\n"); }
+    if(da_deinit(&std.env.list))
+    { early_panic("CTR Panic: Could not free the environment variable list!\n"); }
 
     /* Close the standard files */
     if(fclose(&std.io.in))
