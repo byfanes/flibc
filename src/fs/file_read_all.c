@@ -1,4 +1,5 @@
 #include "fs_private.h"
+#include "../da/da_private.h"
 #include "stdio.h"
 
 error_t file_read_all
@@ -7,9 +8,10 @@ error_t file_read_all
     /* Init variables */
     usize_t size = 0;
     slice(u8) buf = {0};
-    error_t res = success;
-    file_t* file = 0;
-    
+    error_t res = success, res2 = success;
+    file_t *file = 0;
+    def_da_t *def = (void*)out;
+
     /* Check inputs */
     if(!alloc || !path || !path->items || !path->count || !out)
     { return null_pointer; }
@@ -21,9 +23,17 @@ error_t file_read_all
     /* Add shadow byte to make cstr, set buffer, open file and read it */
     str_add_shadow_null(path);
     if((res = fopen(alloc, (char*)path->items, &file, file_read))) { return res; }
+
+    /* This could be better when we move to slice pointers */
+    /* Set slice and read file to buffer then set count */
     set_slice(&buf, out->items, size);
-    if((res = fread(file, buf, nullptr))) { return res; }
-    if((res = fclose(&file))) { return res; }
+    res = fread(file, buf, nullptr);
+    def->count = buf.count;
+
+    /* First close the file because other wise it will leak then check read */
+    if((res2 = fclose(&file))) { return res2; }
+    /* We expect it to read same as file size so in this case we check io_partial too */
+    if(res) { return res; }
 
     return success;
 }
