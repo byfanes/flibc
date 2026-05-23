@@ -18,8 +18,8 @@ FREESTANDING_CFLAGS := \
   -ffreestanding -fno-builtin -nostdinc -nostdlib \
   -Iinclude $(OPT) $(WARN_CFLAGS)
 
-TARGET_STATIC := libflibc.a
-TARGET_SHARED := libflibc.so
+TARGET_STATIC := flibc.a
+TARGET_SHARED := flibc.so
 
 ARCH ?= $(shell uname -m)
 SRC_DIR := src
@@ -56,7 +56,7 @@ main: main.c $(CRT0_OBJ) $(TARGET_SHARED)
 	    $(FREESTANDING_CFLAGS) \
 	    -nostdlib -nostartfiles \
 	    -Wl,-e,_start \
-	    $(CRT0_OBJ) main.c -L. -lflibc -Wl,-rpath=. -o $@
+	    $(CRT0_OBJ) main.c -L. -l:flibc.so -Wl,-rpath=. -o $@
 
 clean:
 	rm -rf $(BUILD_EXM_DIR) $(BUILD_DIR) $(TARGET_STATIC) $(TARGET_SHARED) $(EXEC)
@@ -105,11 +105,11 @@ $(BUILD_DIR)/$(TEST_DIR)/%.o: $(TEST_DIR)/%.c
 $(BUILD_DIR)/$(TEST_DIR)/%: $(BUILD_DIR)/$(TEST_DIR)/%.o $(TARGET_SHARED) $(CRT0_OBJ)
 	@echo "Linking test $@"
 	@$(CC) $(FREESTANDING_CFLAGS) -nostartfiles -Wl,-e,_start \
-		$(CRT0_OBJ) $< -L. -lflibc -Wl,-rpath=. -o $@
+		$(CRT0_OBJ) $< -L. -l:flibc.so -Wl,-rpath=. -o $@
 
 $(BUILD_EXM_DIR)/%: $(EXM_DIR)/%.c $(TARGET_SHARED) $(CRT0_OBJ)
 	@mkdir -p $(dir $@)
 	@cp $(TARGET_SHARED) $(BUILD_EXM_DIR)
 	@echo "Compiling examples $<"
 	@$(CC) $(FREESTANDING_CFLAGS) -nostartfiles -Wl,-e,_start \
-		$(CRT0_OBJ) $< -L. -lflibc -Wl,-rpath=. -o $@
+		$(CRT0_OBJ) $< -L. -l:flibc.so -Wl,-rpath=. -o $@
