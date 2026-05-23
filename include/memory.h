@@ -33,6 +33,11 @@ can_be_slice(i64);
 can_be_slice(ssize_t);
 can_be_slice(usize_t);
 
+/* This type is same as slice(u8) only difference
+ * is base pointer is a null-terminated C string
+ */
+typedef slice(u8) sl_cstr_t;
+
 /* TODO: Right now a lot of functions dont free the memory (when they failed) which they allocated
  * and this causes some leak we should migrate to goto defer system rather than if return
  */

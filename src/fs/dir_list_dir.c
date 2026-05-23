@@ -12,8 +12,11 @@ struct linux_dirent64_s {
     char d_name[1];
 };
 
+/* Update the callback*/
 error_t dir_list_dir
-(path_t* path, void (*callback)(const char* name, bool is_dir, void* arg), void* arg)
+(path_t* path,
+ void (*callback)(sl_cstr_t* path, sl_cstr_t name, bool is_dir, void* arg),
+ void* arg)
 {
     /* Init variables */
     ssize_t fd = 0, nread = 0, bpos = 0;
@@ -48,7 +51,7 @@ error_t dir_list_dir
         /* Iterate */
         while(bpos < nread) {
             /* Set dirent and set name */
-            d = (linux_dirent64_t*)(buf + bpos);
+            d = (linux_dirent64_t*)(uintptr_t)(buf + bpos);
             /* C89 does not support flexible arrays so we cast it
              * from char[1] to null terminated cstr
              */
@@ -59,7 +62,7 @@ error_t dir_list_dir
             { bpos += d->d_reclen; continue; }
 
             /* Call back to users function */
-            callback(name, (d->d_type == DT_DIR), arg);
+            callback((sl_cstr_t*)path, cstr_to_u8sl(name), (d->d_type == DT_DIR), arg);
 
             /* Skip to next part */
             bpos += d->d_reclen;
@@ -71,4 +74,3 @@ end:
     syscall_1_linux(syscall_close, fd);
     return res;
 }
-

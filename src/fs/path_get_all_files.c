@@ -3,13 +3,12 @@
 /* Temporary struct to use in callback */
 typedef struct callback_pack_s callback_pack_t;
 struct callback_pack_s {
-    path_t* p;
     da(path_t)* out;
     allocator_t* alloc;
 };
 
 static void path_get_all_files_cb
-(const char* name, bool is_dir, void* arg)
+(sl_cstr_t* path, sl_cstr_t name, bool is_dir, void* arg)
 {
     /* Init variables */
     callback_pack_t *pack = arg;
@@ -17,14 +16,14 @@ static void path_get_all_files_cb
     
     /* Construct new path */
     da_init(pack->alloc, &tmp, 128);
-    strcat(&tmp, pack->p);
+    strcat_sl(&tmp, *path);
     
     /* Check for '/' at the end if not append */
     if(tmp.count > 0 && tmp.items[tmp.count - 1] != '/')
     { strcat_cstr(&tmp, "/"); }
     
     /* Append the name and its finished */
-    strcat_cstr(&tmp, name);
+    strcat_sl(&tmp, name);
 
     if(is_dir) {
         /* Its a directory so continue with rescursion */
@@ -44,7 +43,6 @@ error_t path_get_all_files
     /* Init variables */
     callback_pack_t pack = {0};
     error_t res = success;
-    pack.p = p;
     pack.out = out;
 
     /* Check inputs and get allocator */
