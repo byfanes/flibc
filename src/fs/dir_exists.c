@@ -8,6 +8,7 @@ error_t dir_exists
 
     /* Check inputs path checked in path_exists function */
     if(!out) { return null_pointer; }
+    *out = false;
 
     /* Check if exists if yes then check is it a dir */
     if((res = path_exists(p, &is_exists))) { return res; }
