@@ -179,6 +179,7 @@ error_t __formatf
                 buf.base[count + 1] = 'x';
             }
             count++;
+            count++;
             hex_format(buf.base, &count, cur_u64);
 	}
 
