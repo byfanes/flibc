@@ -7,7 +7,7 @@ error_t time_now
     if(!out) { return null_pointer; }
 
     /* Call gettime and check result */
-    if(-1 == syscall_2_linux(syscall_gettime, CLOCK_MONOTONIC, out))
+    if(-1 == syscall_2_linux(syscall_gettime, CLOCK_MONOTONIC, (ssize_t)out))
     { return time_error; }
 
     return success;

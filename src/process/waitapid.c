@@ -9,7 +9,7 @@ error_t waitapid
 
     for(;;) {
         /* Call wait for checking if the child is finished */
-        ret = syscall_4_linux(syscall_wait4, pid, &status, 0, 0);
+        ret = syscall_4_linux(syscall_wait4, pid, (ssize_t)&status, 0, 0);
 
         /* Process has been interupted try again */
         if(ret == -EINTR) { continue; }

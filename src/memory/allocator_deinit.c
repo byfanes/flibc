@@ -39,7 +39,7 @@ error_t allocator_deinit
 
             /* Write directly to standard error */
             /* Ignore its fail state because it is not deinit's main goal */
-            syscall_3_linux(syscall_write, UNIX_STDERR, buf_sl.base, (ssize_t)len);
+            syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)buf_sl.base, (ssize_t)len);
             i += header->raw_alloced / CHUNK_SIZE - 1;
         }
 
@@ -60,7 +60,7 @@ error_t allocator_deinit
 
                    /* Write directly to standard error */
                    /* Ignore its fail state because it is not deinit's main goal */
-                   syscall_3_linux(syscall_write, UNIX_STDERR, buf_sl.base, (ssize_t)len);
+                   syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)buf_sl.base, (ssize_t)len);
                 } break;
             }
         }
@@ -83,7 +83,7 @@ error_t allocator_deinit
             case raw_chunk_allocation: {
                 header = (heap_header_t*)(uintptr_t)alloc->nodes[i].start;
                 /* If we cant free any memory just stop and return an error no future freeing */
-                if(0 != syscall_2_linux(syscall_munmap, header, header->raw_alloced))
+                if(0 != syscall_2_linux(syscall_munmap, (ssize_t)header, (ssize_t)header->raw_alloced))
                 { return memory_error; }
 
                 alloc->nodes[i].type = heap_node_empty;

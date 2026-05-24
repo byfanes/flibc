@@ -34,7 +34,7 @@ error_t allocator_free_pointer
             alloc->nodes[i].start = nullptr;
 
             /* If we cant free any memory just stop and return an error */
-            if(0 != syscall_2_linux(syscall_munmap, header, header->raw_alloced))
+            if(0 != syscall_2_linux(syscall_munmap, (ssize_t)header, (ssize_t)header->raw_alloced))
             { return memory_error; }
 
             /* Zero the user's pointer */

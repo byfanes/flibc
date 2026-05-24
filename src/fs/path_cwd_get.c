@@ -10,7 +10,7 @@ error_t path_cwd_get
     if((res = str_init(alloc, p, MAX_PATH))) { return res; }
 
     /* Call and check the syscall */
-    if(NULL == syscall_2_linux(syscall_getcwd, p->items, (ssize_t)p->capacity))
+    if(NULL == syscall_2_linux(syscall_getcwd, (ssize_t)p->items, (ssize_t)p->capacity))
     { return fs_error; }
     
     return success;

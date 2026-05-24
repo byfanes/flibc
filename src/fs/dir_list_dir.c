@@ -31,7 +31,7 @@ error_t dir_list_dir
 
     /* Open directory via syscall */
     fd = syscall_4_linux(syscall_openat,
-        AT_FDCWD, path->items, O_RDONLY | O_DIRECTORY, 0);
+        AT_FDCWD, (ssize_t)path->items, O_RDONLY | O_DIRECTORY, 0);
 
     /* Check return of the syscall */
     if(fd < 0) { return fs_error; }
