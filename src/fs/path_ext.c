@@ -20,7 +20,7 @@ error_t path_ext
 
         /* Found the end point */
         if(base->items[i] == '.') {
-            /* Append the extension to buffer*/
+            /* Append the extension to buffer */
             i++;
             set_slice(&sl, &base->items[i], base->count - (usize_t)i);
             return strcat_sl(out, sl);

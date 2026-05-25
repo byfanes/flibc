@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include "../helpers/helpers.h"
+#include "../da/da_private.h"
 #include "syscall.h"
 #include "fs.h"
 

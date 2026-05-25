@@ -1,5 +1,4 @@
 #include "fs_private.h"
-#include "../da/da_private.h"
 #include "stdio.h"
 
 error_t file_read_all
