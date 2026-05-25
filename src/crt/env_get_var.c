@@ -5,6 +5,8 @@ error_t env_get_var
 {
     /* Init variables */
     u32 i = 0;
+    bool out = false;
+    error_t res = success;
 
     /* Check input */
     if(!env || !env->vars.items || !key ||
@@ -13,8 +15,10 @@ error_t env_get_var
 
     /* Search for the key in the array if we found it copy it to val */
     for(; i < env->vars.count; ++i) {
-        if(streq(key, &env->vars.items[i].key)) {
-            return strcpy(val, &env->vars.items[i].val);
+        if((res = memcmp((slice_u8*)key, &env->vars.items[i].key, &out))) { return res; }
+        if(out) {
+            str_clear(val);
+            return strcat_sl(val, env->vars.items[i].val);
         }
     }
 

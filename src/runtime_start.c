@@ -78,10 +78,6 @@ void runtime_start
     if(da_init(std.alloc, &std.env.list, envc))
     { early_panic("CRT Panic: Could not initialize environment variable list!\n"); }
 
-    /* Init continues chunk */
-    if(da_init(std.alloc, &std.env.continues, 1024))
-    { early_panic("CRT Panic: Could not initialize environment variable continues list!\n"); }
-
     /* Start iterating over */
     envp = (argv + 1);
     envc = 0;
@@ -96,7 +92,7 @@ void runtime_start
         set_slice(&val_sl, &env_cstr[eq_idx], strlen(env_cstr) - eq_idx);
 
         /* Add the new variable */
-        if(env_add_var_sl(std.alloc, &std.env, key_sl, val_sl))
+        if(env_add_var(std.alloc, &std.env, &key_sl, &val_sl))
         { early_panic("CRT Panic: Could not append an environment variable to dynamic array!\n"); }
 
         /* Shift to new variable for setting */
@@ -113,17 +109,13 @@ void runtime_start
     }
 
     for(i = 0; i < std.env.vars.count; ++i) {
-        if(str_deinit(&std.env.vars.items[i].key))
-        { early_panic("CTR Panic: Could not free an environment variable's key!\n"); }
-        if(str_deinit(&std.env.vars.items[i].val))
-        { early_panic("CTR Panic: Could not free an environment variable's value!\n"); }
+        if(str_deinit(&std.env.vars.items[i].continues))
+        { early_panic("CTR Panic: Could not free an environment variable!\n"); }
     }
 
     /* Deinit environment variables */
     if(da_deinit(&std.env.vars))
     { early_panic("CTR Panic: Could not free the environment variable dynamic array!\n"); }
-    if(str_deinit(&std.env.continues))
-    { early_panic("CTR Panic: Could not free the environment variable continues list!\n"); }
     if(da_deinit(&std.env.list))
     { early_panic("CTR Panic: Could not free the environment variable list!\n"); }
 

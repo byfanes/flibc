@@ -7,7 +7,7 @@ error_t proc_run
     ssize_t pid = 0;
 
     /* Check input */
-    if(!cmd.count || !cmd.items || !env.continues.items)
+    if(!cmd.count || !cmd.items || !env.list.items)
     { return null_pointer; }
 
     /* Fork it */

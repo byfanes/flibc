@@ -10,7 +10,7 @@ error_t system_run_env
 
     /* Check input and add null byte to end */
     if((res = str_add_shadow_null(&cmd))) { return res; }
-    if(env.continues.items && env.list.items) { envp = env.list.items; }
+    if(env.list.items) { envp = env.list.items; }
 
     /* Redirect to another system function to handle now on */
     return system_run_cstr_envp((char*)cmd.items, envp);
