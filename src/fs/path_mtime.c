@@ -11,8 +11,8 @@ error_t path_mtime
     if(!out) { return null_pointer; }
     if((res = path_stat(p, &stats))) { return res; }
     
-    out->sec  = (u64)stats.st_size;
-    out->nsec = 0;
+    out->sec  = stats.st_mtime;
+    out->nsec  = stats.st_mtime_nsec;
 
     return success;
 }
