@@ -15,6 +15,7 @@ typedef struct allocator_s allocator_t;
 #define LOC_ARGS __FILE__, __LINE__
 
 #define slice(type) CONCAT(slice_, type)
+#define ccstr_to_u8(ccstr)  {(u8*)((ccstr)), sizeof(((ccstr))) - 1}
 
 #define can_be_slice(type)   \
     typedef struct {         \

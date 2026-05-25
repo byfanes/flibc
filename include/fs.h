@@ -51,6 +51,9 @@ error_t path_size(path_t* p, usize_t* out);
 error_t path_mtime(path_t* p, time_t* out);
 error_t path_stat(path_t* p, fs_stat_t* out);
 
+error_t path_join(path_t* path, slice(u8)* extend);
+error_t path_change_ext(path_t* path, slice(u8)* ext);
+
 error_t is_path_absolute(path_t* p, bool* out);
 error_t is_path_relative(path_t* p, bool* out);
 error_t is_path_dir(path_t* p, bool* out);

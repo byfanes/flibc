@@ -30,6 +30,8 @@ error_t proc_run(cmd_t cmd, env_t env);
 error_t proc_spawn(cmd_t cmd, env_t env, da(proc_t)* procs);
 error_t proc_wait(da(proc_t)* procs);
 
+error_t cmd_append(cmd_t* cmd, slice(u8)* sl);
+
 #ifdef __cplusplus
 }
 #endif
