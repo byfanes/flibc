@@ -89,8 +89,8 @@ void runtime_start
         /* Split string to corresponding pieces */
         /* TODO: We don’t support variables that are not assigned with “=” or separated by commas */
         while(env_cstr[eq_idx] && env_cstr[eq_idx] != '=') { eq_idx++; }
-        set_slice(&key_sl, env_cstr, eq_idx - 1);
-        set_slice(&val_sl, &env_cstr[eq_idx], strlen(env_cstr) - eq_idx);
+        set_slice(&key_sl, env_cstr, eq_idx);
+        set_slice(&val_sl, &env_cstr[eq_idx + 1], strlen(env_cstr) - eq_idx);
 
         /* Add the new variable */
         if(env_add_var(std.alloc, &std.env, &key_sl, &val_sl))
