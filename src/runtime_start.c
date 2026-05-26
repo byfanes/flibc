@@ -66,8 +66,8 @@ void runtime_start
         set_slice(&std.args.base[i], argv[i], strlen(argv[i]));
     }
 
-    /* Find how many environment variables passed */
-    envp = (argv + 1);
+    /* Find how many environment variables passed 1 for skiping argv's last null */
+    envp = (argv + 1 + argc);
     while(*envp) { envc++; envp++; }
 
     /* Init environment variables da with known size */
@@ -78,8 +78,8 @@ void runtime_start
     if(da_init(std.alloc, &std.env.list, envc))
     { early_panic("CRT Panic: Could not initialize environment variable list!\n"); }
 
-    /* Start iterating over */
-    envp = (argv + 1);
+    /* Start iterating over 1 for skiping argv's last null */
+    envp = (argv + 1 + argc);
     envc = 0;
     while(*envp) {
         /* Set variables for loop */
@@ -87,7 +87,8 @@ void runtime_start
         eq_idx = 0;
 
         /* Split string to corresponding pieces */
-        while(env_cstr[eq_idx++] != '=');
+        /* TODO: We don’t support variables that are not assigned with “=” or separated by commas */
+        while(env_cstr[eq_idx] && env_cstr[eq_idx] != '=') { eq_idx++; }
         set_slice(&key_sl, env_cstr, eq_idx - 1);
         set_slice(&val_sl, &env_cstr[eq_idx], strlen(env_cstr) - eq_idx);
 
