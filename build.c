@@ -1,0 +1,363 @@
+#include "crt.h"
+#include "da.h"
+#include "fs.h"
+#include "process.h"
+#include "memory.h"
+#include "time.h"
+#include "syscall.h"
+
+/* TODO: Check return of the functions */
+/* TODO: Write some comments */
+
+/* General variables which is setted in main - general_set */
+typedef struct general_s general_t;
+struct general_s {
+    bool verbose;
+    bool always_make;
+    slice(u8) ar;
+    slice(u8) cc;
+    slice(u8) c_ext;
+    slice(u8) old_ext;
+    slice(u8) obj_ext;
+    slice(u8) crt_name;
+    slice(u8) c_flags;
+    slice(u8) so_flags;
+    slice(u8) ar_flags;
+    slice(u8) freestanding_flags;
+    slice(u8) build_yourself_flags;
+};
+
+/* Packed struct which is used in callbacks to pass data around */
+/* Pointers used for smaller struct size - things which will live in the function scope */
+typedef struct packed_s packed_t;
+struct packed_s {
+    general_t* general;
+    std_t *std;
+    path_t *build_dir;
+    da(proc_t)* procs;
+    da(path_t)* obj_files;
+    path_t full;
+    path_t ext;
+};
+
+void build_file(path_t* full_path, path_t* out_path, packed_t *pack);
+/* Callback for iterating the directory list */
+void callback(sl_cstr_t* path, sl_cstr_t name, bool is_dir, void* arg);
+void make_libs(std_t* std, da(path_t)* objs, packed_t* pack);
+bool build_yourself(std_t std, packed_t* pack);
+void set_flags(std_t std, packed_t* pack);
+void set_general(packed_t* pack);
+/* Its taken from the library */
+bool cstreq(const char* l, const char* r);
+
+error_t main
+(std_t std)
+{
+    /* Init variables */
+    path_t src = {0}, build_dir = {0};
+    general_t general = {0};
+    packed_t pack = {0};
+    da(proc_t) procs = {0};
+    da(path_t) objs = {0};
+    usize_t count = 0;
+    u32 i = 0;
+
+    /* Set basics */
+    pack.general = &general;
+    set_general(&pack);
+    set_flags(std, &pack);
+    pack.std = &std;
+    pack.build_dir = &build_dir;
+    pack.procs = &procs;
+    pack.obj_files = &objs;
+
+    /* Check if its needed */
+    if(!build_yourself(std, &pack)) { return success; }
+
+    /* Allocate */
+    /* TODO: 12 is for cpu thread */
+    da_init(std.alloc, pack.procs, 12);
+    da_init(std.alloc, &objs, 128);
+    str_init(std.alloc, &pack.full, 128);
+    str_init(std.alloc, &pack.ext, 128);
+    str_from_cstr(std.alloc, &src, "./src/");
+    str_from_cstr(std.alloc, &build_dir, "./.build/");
+
+    /* Create '.build' directory if it does not exist */
+    dir_mkdir_ifnot_exists(&build_dir);
+
+    /* Append 'src' to build directory create
+     * if it does not exists and then roll-back the string
+     */
+    count = build_dir.count;
+    strcat(&build_dir, &src);
+    dir_mkdir_ifnot_exists(&build_dir);
+    set_slice(&build_dir, build_dir.items, count);
+
+    /* Start iterating over the 'src' directory */
+    dir_list_dir(&src, callback, &pack);
+
+    /* Wait for all of the compilation units to finish */
+    proc_wait(&procs);
+
+    /* Make .so and .a files */
+    make_libs(&std, &objs, &pack);
+
+    /* Wait for .so and .a files to finish */
+    proc_wait(&procs);
+
+    /* Free all of the allocated data */
+    da_deinit(&procs);
+    da_deinit(&objs);
+    str_deinit(&src);
+    str_deinit(&build_dir);
+    str_deinit(&pack.full);
+    str_deinit(&pack.ext);
+
+    fprintf(std.io.out, "Done!\n");
+    return success;
+}
+
+void build_file
+(path_t* full_path, path_t* out_path, packed_t *pack)
+{
+    /* Init variables */
+    cmd_t cmd = {0};
+    path_t tmp = {0};
+    time_t in_time = {0}, out_time = {0};
+
+    /* Get modification times of the files */
+    path_mtime(full_path, &in_time);
+    path_mtime(out_path, &out_time);
+
+    /* Push the object file to list to link later */
+    strdup(pack->std->alloc, out_path, &tmp);
+    da_push(pack->obj_files, &tmp);
+
+    /* Check if it needs to be skipped or processed */
+    if(in_time.sec <= out_time.sec && !pack->general->always_make) {
+        if(pack->general->verbose)
+        { fprintf(pack->std->io.out,"Skipping %v its up to date\n", full_path); }
+        return;
+    }
+    if(pack->general->verbose)
+    { fprintf(pack->std->io.out,"Gotta rebuild %v to %v\n", full_path, out_path); }
+
+    /* Allocate cmd and start building it */
+    str_init(pack->std->alloc, &cmd, 256);
+    strcat_sl(&cmd, pack->general->cc);
+    cmd_append(&cmd, &pack->general->freestanding_flags);
+    cmd_append(&cmd, &pack->general->c_flags);
+    /* Its safe to cast path_t* to slice_u8* */
+    /* Dynamic arrays can decay to slices */
+    cmd_append(&cmd, (slice(u8)*)out_path);
+    cmd_append(&cmd, (slice(u8)*)full_path);
+
+    /* Spawn new process within the limit which is procs capacity */
+    proc_spawn_fixed(cmd, pack->std->env, pack->procs);
+
+    /* Free the memory which is allocated */
+    str_deinit(&cmd);
+}
+
+void callback
+(sl_cstr_t* path, sl_cstr_t name, bool is_dir, void* arg)
+{
+    /* Init variables */
+    usize_t count = 0;
+    bool eq = false;
+    packed_t *pack = arg, new = *pack;
+    path_t* tmp = &pack->full;
+
+    /* Create the full path */
+    /* strset */
+    str_clear(tmp);
+    strcat_sl(tmp, *path);
+    path_join(tmp, &name);
+
+    /* If its a directory iterate it too */
+    if(is_dir) {
+        if(pack->general->verbose)
+        { fprintf(pack->std->io.out, "Building files in'%v'\n", tmp); }
+
+        /* Create a sub-directory in build directory with same name
+         * if it does not exists and then roll-back the string
+         */
+        count = pack->build_dir->count;
+        strcat(pack->build_dir, tmp);
+        dir_mkdir_ifnot_exists(pack->build_dir);
+        set_slice(pack->build_dir, pack->build_dir->items, count);
+
+        /* Allocate new full path (which is a buffer) to use */
+        str_init(pack->std->alloc, &new.full, 128);
+        dir_list_dir(tmp, callback, &new);
+        str_deinit(&new.full);
+        return;
+    }
+
+    /* TODO: If its crt file skip it */
+    memcmp(&name, &pack->general->crt_name, &eq);
+    if(eq) {
+        if(pack->general->verbose)
+        { fprintf(pack->std->io.out, "Skipping crt file...\n"); }
+        return;
+    }
+
+    /* Get extension */
+    path_ext(tmp, &pack->ext);
+
+    /* If it is a 'c' or 's' file we build it skipping the headers etc. */
+    if(streq_cstr(&pack->ext, "c") || streq_cstr(&pack->ext, "s")) {
+        /* Take a snap of the current index */
+        count = pack->build_dir->count;
+
+        /* Construct output path */
+        strcat_sl(pack->build_dir, *path);
+        path_join(pack->build_dir, &name);
+        path_change_ext(pack->build_dir, &pack->general->obj_ext);
+
+        /* Build the current file */
+        build_file(tmp, pack->build_dir, arg);
+
+        /* Roll-back to old index */
+        set_slice(pack->build_dir, pack->build_dir->items, count);
+    }
+}
+
+void make_libs
+(std_t* std, da(path_t)* objs, packed_t* pack)
+{
+    /* Init variables */
+    cmd_t so_cmd = {0}, arc_cmd = {0};
+    u32 i = 0;
+
+    /
+    str_init(std->alloc, &so_cmd, 2048);
+    cmd_append(&arc_cmd, &pack->general->ar);
+    cmd_append(&arc_cmd, &pack->general->ar_flags);
+
+    str_init(std->alloc, &arc_cmd, 2048);
+    cmd_append(&so_cmd, &pack->general->cc);
+    cmd_append(&so_cmd, &pack->general->freestanding_flags);
+    cmd_append(&so_cmd, &pack->general->so_flags);
+
+    fprintf(std->io.out, "Compiling now %d amount of objects to shared object and libray\n", objs->count);
+    for(; i < objs->count; ++i) {
+        if(pack->general->verbose)
+        { fprintf(std->io.out, "Adding %v to list\n", (objs->items + i)); }
+        cmd_append(&so_cmd, (void*)(objs->items + i));
+        cmd_append(&arc_cmd, (void*)(objs->items + i));
+        str_deinit(objs->items + i);
+    }
+
+    proc_spawn(so_cmd, std->env, pack->procs);
+    proc_spawn(arc_cmd, std->env, pack->procs);
+
+    str_deinit(&so_cmd);
+    str_deinit(&arc_cmd);
+}
+
+bool build_yourself
+(std_t std, packed_t* pack)
+{
+    path_t c_file = {0}, exe_file = {0}, old_exe = {0};
+    time_t exe_time = {0}, c_time = {0};
+    cmd_t cmd = {0};
+    u32 i = 0;
+    error_t ret = 0;
+
+    str_init(std.alloc, &c_file, std.exe.count + 2);
+    str_init(std.alloc, &exe_file, std.exe.count);
+    strcat_sl(&c_file, std.exe);
+    strcat_sl(&exe_file, std.exe);
+    path_change_ext(&c_file, &pack->general->c_ext);
+
+    path_mtime(&c_file, &c_time);
+    path_mtime(&exe_file, &exe_time);
+
+    if(c_time.sec <= exe_time.sec) {
+        fprintf(std.io.out, "Up to date script...\n");
+        str_deinit(&c_file);
+        str_deinit(&exe_file);
+        return true;
+    }
+
+    fprintf(std.io.out, "Building script...\n");
+    strdup(std.alloc, &exe_file, &old_exe);
+    path_change_ext(&old_exe, &pack->general->old_ext);
+    path_rename(&exe_file, &old_exe);
+
+    str_init(std.alloc, &cmd, 128);
+    cmd_append(&cmd, &pack->general->cc);
+    cmd_append(&cmd, &pack->general->freestanding_flags);
+    cmd_append(&cmd, (slice_u8*)&c_file);
+    cmd_append(&cmd, &pack->general->build_yourself_flags);
+    cmd_append(&cmd, (slice_u8*)&exe_file);
+
+    fprintf(std.io.out, "Gotta run %v\n", &cmd);
+    fflush(std.io.out);
+
+    proc_run(cmd, std.env);
+
+    str_clear(&cmd);
+    cmd_append(&cmd, (slice_u8*)&exe_file);
+    for(; i < std.args.count; ++i) {
+        cmd_append(&cmd, std.args.base + i);
+    }
+
+    ret = system_run_env(cmd, std.env);
+    if(ret) {
+        fprintf(std.io.out, "Could not build new build script...\n");
+        path_rename(&old_exe, &exe_file);
+    }
+
+    str_deinit(&cmd);
+    str_deinit(&c_file);
+    str_deinit(&exe_file);
+    str_deinit(&old_exe);
+
+    return false;
+}
+
+void set_flags
+(std_t std, packed_t* pack)
+{
+    u32 i = 0;
+    for(; i < std.args.count; ++i) {
+        if(cstreq("-v", (char*)std.args.base[i].base)) { pack->general->verbose = true; }
+        if(cstreq("-b", (char*)std.args.base[i].base)) { pack->general->always_make = true; }
+    }
+}
+
+void set_general
+(packed_t* pack)
+{
+    general_t* general = pack->general;
+
+    set_slice_cstr(&general->ar, "ar");
+    set_slice_cstr(&general->cc, "gcc");
+    set_slice_cstr(&general->obj_ext, "o");
+    set_slice_cstr(&general->crt_name, "fcrt0.S");
+    set_slice_cstr(&general->c_flags,
+        "-O2 -g3 -fPIC "
+        "-Wall -Wextra -Wpedantic "
+        "-Wconversion -Wsign-conversion "
+        "-Wformat -Wformat-overflow -Wformat-truncation "
+        "-Wstrict-prototypes -Wmissing-prototypes "
+        "-Wshadow -Wpointer-arith "
+        "-Wwrite-strings -Wundef "
+        "-Wfloat-equal -Wcast-align -Wno-int-conversion "
+        "-Wswitch-default -std=c89 -pedantic -Werror "
+        "-Iinclude -c -o ");
+
+    set_slice_cstr(&general->so_flags, "-shared -fPIC -o .build/flibc.so");
+    set_slice_cstr(&general->ar_flags, "rcs -o .build/flibc.a");
+
+    set_slice_cstr(&general->freestanding_flags,
+        "-ffreestanding -fno-builtin -nostdinc -nostdlib -Iinclude -nostartfiles -nodefaultlibs");
+
+    set_slice_cstr(&general->c_ext, ".c");
+    set_slice_cstr(&general->old_ext, ".old");
+    set_slice_cstr(&general->build_yourself_flags,
+        "-Wl,-e,_start .build/arch/x86_64/fcrt0.o -L. -l:flibc.so -Wl,-rpath=. -o");
+}
