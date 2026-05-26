@@ -60,6 +60,7 @@ error_t allocator_get_from_ptr(void* ptr, allocator_t** set);
 
 slice(u8) cstr_to_u8sl(const char* cstr);
 error_t set_slice(const void* sl, const void* base, usize_t count);
+error_t set_slice_cstr(const void* sl, const char* str);
 
 error_t __malloc(allocator_t* alloc, usize_t n, void* set, TRACE_ARGS);
 #define malloc(alloc, n, set) __malloc(alloc, n, set, LOC_ARGS)

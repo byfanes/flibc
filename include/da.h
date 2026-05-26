@@ -53,7 +53,7 @@ error_t da_truncate(void* da, usize_t len);
 error_t da_clear(void* da);
 
 error_t __da_unordered_remove(void* da, usize_t idx, usize_t el_size);
-#define da_unordered_remove(da, idx)  __da_unordered_remove((da), (idx), sizeof((da)->items[0])))
+#define da_unordered_remove(da, idx)  __da_unordered_remove((da), (idx), sizeof((da)->items[0]))
 
 error_t __da_swap(void* da, usize_t lhs, usize_t rhs, usize_t el_size);
 #define da_swap(da, lhs, rhs) __da_swap((da), (lhs), (rhs), sizeof((da)->items[0]))
