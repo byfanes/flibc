@@ -7,9 +7,8 @@
 #include "syscall.h"
 
 /* TODO: Check return of the functions */
-/* TODO: Write some comments */
 
-/* General variables which is setted in main - general_set */
+/* General variables which is setted in main - set_general */
 typedef struct general_s general_t;
 struct general_s {
     bool verbose;
@@ -231,16 +230,18 @@ void make_libs
     cmd_t so_cmd = {0}, arc_cmd = {0};
     u32 i = 0;
 
-    /
-    str_init(std->alloc, &so_cmd, 2048);
+    /* Set .a library command and flags */
+    str_init(std->alloc, &arc_cmd, 2048);
     cmd_append(&arc_cmd, &pack->general->ar);
     cmd_append(&arc_cmd, &pack->general->ar_flags);
 
-    str_init(std->alloc, &arc_cmd, 2048);
+    /* Set .a library command and flags */
+    str_init(std->alloc, &so_cmd, 2048);
     cmd_append(&so_cmd, &pack->general->cc);
     cmd_append(&so_cmd, &pack->general->freestanding_flags);
     cmd_append(&so_cmd, &pack->general->so_flags);
 
+    /* Iterate over the objects list and append to commands and free it */
     fprintf(std->io.out, "Compiling now %d amount of objects to shared object and libray\n", objs->count);
     for(; i < objs->count; ++i) {
         if(pack->general->verbose)
@@ -250,9 +251,11 @@ void make_libs
         str_deinit(objs->items + i);
     }
 
+    /* Spawn both of the commands */
     proc_spawn(so_cmd, std->env, pack->procs);
     proc_spawn(arc_cmd, std->env, pack->procs);
 
+    /* Free commands */
     str_deinit(&so_cmd);
     str_deinit(&arc_cmd);
 }
@@ -260,21 +263,29 @@ void make_libs
 bool build_yourself
 (std_t std, packed_t* pack)
 {
+    /* Init variables */
     path_t c_file = {0}, exe_file = {0}, old_exe = {0};
     time_t exe_time = {0}, c_time = {0};
     cmd_t cmd = {0};
     u32 i = 0;
     error_t ret = 0;
 
+    /* Allocate memory for file paths +2 is for '.o' extension
+     * not mandatory but saves as a little bit of time
+     */
     str_init(std.alloc, &c_file, std.exe.count + 2);
     str_init(std.alloc, &exe_file, std.exe.count);
+
+    /* Construct the paths */
     strcat_sl(&c_file, std.exe);
     strcat_sl(&exe_file, std.exe);
     path_change_ext(&c_file, &pack->general->c_ext);
 
+    /* Get last modification times */
     path_mtime(&c_file, &c_time);
     path_mtime(&exe_file, &exe_time);
 
+    /* Check if its up to date and free the paths */
     if(c_time.sec <= exe_time.sec) {
         fprintf(std.io.out, "Up to date script...\n");
         str_deinit(&c_file);
@@ -283,34 +294,46 @@ bool build_yourself
     }
 
     fprintf(std.io.out, "Building script...\n");
+
+    /* Construct old path which 'build.old' and rename the 'build' file */
     strdup(std.alloc, &exe_file, &old_exe);
     path_change_ext(&old_exe, &pack->general->old_ext);
     path_rename(&exe_file, &old_exe);
 
+    /* Construct the command */
     str_init(std.alloc, &cmd, 128);
     cmd_append(&cmd, &pack->general->cc);
     cmd_append(&cmd, &pack->general->freestanding_flags);
+    /* Its safe to cast path_t* to slice_u8* */
+    /* Dynamic arrays can decay to slices */
     cmd_append(&cmd, (slice_u8*)&c_file);
     cmd_append(&cmd, &pack->general->build_yourself_flags);
     cmd_append(&cmd, (slice_u8*)&exe_file);
 
-    fprintf(std.io.out, "Gotta run %v\n", &cmd);
-    fflush(std.io.out);
+    /* Print the command if program is started with verbose */
+    if(pack->general->verbose) {
+        fprintf(std.io.out, "Command which will be executed is: %v\n", &cmd);
+        fflush(std.io.out);
+    }
 
+    /* Run and wait the command */
     proc_run(cmd, std.env);
 
+    /* Clear and start construct the new command and append the args */
     str_clear(&cmd);
     cmd_append(&cmd, (slice_u8*)&exe_file);
     for(; i < std.args.count; ++i) {
         cmd_append(&cmd, std.args.base + i);
     }
 
+    /* Overwrite the current program and start the new build script  */
     ret = system_run_env(cmd, std.env);
     if(ret) {
-        fprintf(std.io.out, "Could not build new build script...\n");
+        fprintf(std.io.out, "Could not execute the new build script...\n");
         path_rename(&old_exe, &exe_file);
     }
 
+    /* Free in case it fails otherwise program wont reach here */
     str_deinit(&cmd);
     str_deinit(&c_file);
     str_deinit(&exe_file);
@@ -322,7 +345,10 @@ bool build_yourself
 void set_flags
 (std_t std, packed_t* pack)
 {
+    /* Init variables */
     u32 i = 0;
+
+    /* Iterate over the args and find given flags - arguments which are not a flag will be ignored */
     for(; i < std.args.count; ++i) {
         if(cstreq("-v", (char*)std.args.base[i].base)) { pack->general->verbose = true; }
         if(cstreq("-b", (char*)std.args.base[i].base)) { pack->general->always_make = true; }
@@ -332,12 +358,18 @@ void set_flags
 void set_general
 (packed_t* pack)
 {
+    /* Set alias for general */
     general_t* general = pack->general;
 
+    /* Set basic thins */
     set_slice_cstr(&general->ar, "ar");
     set_slice_cstr(&general->cc, "gcc");
     set_slice_cstr(&general->obj_ext, "o");
     set_slice_cstr(&general->crt_name, "fcrt0.S");
+
+    /* c_flags ends with -o because in program we append
+     * output name after the c_flags so its convenient
+     */
     set_slice_cstr(&general->c_flags,
         "-O2 -g3 -fPIC "
         "-Wall -Wextra -Wpedantic "
@@ -358,6 +390,8 @@ void set_general
 
     set_slice_cstr(&general->c_ext, ".c");
     set_slice_cstr(&general->old_ext, ".old");
+
+    /* It ends with -o reason same as c_flags */
     set_slice_cstr(&general->build_yourself_flags,
         "-Wl,-e,_start .build/arch/x86_64/fcrt0.o -L. -l:flibc.so -Wl,-rpath=. -o");
 }
