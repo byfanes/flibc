@@ -10,14 +10,15 @@ echo "[1/2] NOTE: This will took some time because it is single process..."
 
 ARCH=$(uname -m)
 C_FILES=$(find src -name '*.c')
-ASM_FILES=$(find "src/arch/$ARCH/" -name '*.S')
+ASM_FILES=$(find "src/arch/$ARCH/" -name '*.s')
 
 clang -O0 -g3 \
     -ffreestanding -fno-builtin -nostdinc -nostdlib \
     -Iinclude -nostartfiles \
     -Wl,-e,_start \
-    $CRT_FILE $C_FILES $ASM_FILES build.c \
+    $C_FILES $ASM_FILES build.c \
     -o build
 
+echo $C_FILES $ASM_FILES
 echo "[2/2] Bootstrap complete. Running build..."
 ./build

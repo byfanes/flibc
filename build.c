@@ -39,7 +39,7 @@ struct packed_s {
     path_t ext;
 };
 
-void build_file(path_t* full_path, path_t* out_path, packed_t *pack);
+void build_file(path_t* full_path, path_t* out_path, packed_t *pack, bool is_crt);
 /* Callback for iterating the directory list */
 void callback(sl_cstr_t* path, sl_cstr_t name, bool is_dir, void* arg);
 void make_libs(std_t* std, da(path_t)* objs, packed_t* pack);
@@ -118,7 +118,7 @@ error_t main
 }
 
 void build_file
-(path_t* full_path, path_t* out_path, packed_t *pack)
+(path_t* full_path, path_t* out_path, packed_t *pack, bool is_crt)
 {
     /* Init variables */
     cmd_t cmd = {0};
@@ -130,8 +130,10 @@ void build_file
     path_mtime(out_path, &out_time);
 
     /* Push the object file to list to link later */
-    strdup(pack->std->alloc, out_path, &tmp);
-    da_push(pack->obj_files, &tmp);
+    if(!is_crt) {
+        strdup(pack->std->alloc, out_path, &tmp);
+        da_push(pack->obj_files, &tmp);
+    }
 
     /* Check if it needs to be skipped or processed */
     if(in_time.sec <= out_time.sec && !pack->general->always_make) {
@@ -194,13 +196,8 @@ void callback
         return;
     }
 
-    /* TODO: If its crt file skip it */
+    /* Check if its the crt file or not */
     memcmp(&name, &pack->general->crt_name, &eq);
-    if(eq) {
-        if(pack->general->verbose)
-        { fprintf(pack->std->io.out, "Skipping crt file...\n"); }
-        return;
-    }
 
     /* Get extension */
     path_ext(tmp, &pack->ext);
@@ -216,7 +213,7 @@ void callback
         path_change_ext(pack->build_dir, &pack->general->obj_ext);
 
         /* Build the current file */
-        build_file(tmp, pack->build_dir, arg);
+        build_file(tmp, pack->build_dir, arg, eq);
 
         /* Roll-back to old index */
         set_slice(pack->build_dir, pack->build_dir->items, count);
