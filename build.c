@@ -42,7 +42,7 @@ struct packed_s {
 void build_file(path_t* full_path, path_t* out_path, packed_t *pack, bool is_crt);
 /* Callback for iterating the directory list */
 void callback(sl_cstr_t* path, sl_cstr_t name, bool is_dir, void* arg);
-void make_libs(std_t* std, da(path_t)* objs, packed_t* pack);
+void make_libs(std_t* std, packed_t* pack);
 bool build_yourself(std_t std, packed_t* pack);
 void set_flags(std_t std, packed_t* pack);
 void set_general(packed_t* pack);
@@ -100,7 +100,7 @@ error_t main
     proc_wait(&procs);
 
     /* Make .so and .a files */
-    make_libs(&std, &objs, &pack);
+    make_libs(&std, &pack);
 
     /* Wait for .so and .a files to finish */
     proc_wait(&procs);
@@ -221,11 +221,12 @@ void callback
 }
 
 void make_libs
-(std_t* std, da(path_t)* objs, packed_t* pack)
+(std_t* std, packed_t* pack)
 {
     /* Init variables */
     cmd_t so_cmd = {0}, arc_cmd = {0};
     u32 i = 0;
+    da(path_t)* objs = pack->obj_files;
 
     /* Set .a library command and flags */
     str_init(std->alloc, &arc_cmd, 2048);
@@ -344,11 +345,13 @@ void set_flags
 {
     /* Init variables */
     u32 i = 0;
+    char* arg = 0;
 
     /* Iterate over the args and find given flags - arguments which are not a flag will be ignored */
     for(; i < std.args.count; ++i) {
-        if(cstreq("-v", (char*)std.args.base[i].base)) { pack->general->verbose = true; }
-        if(cstreq("-b", (char*)std.args.base[i].base)) { pack->general->always_make = true; }
+        arg = (char*)std.args.base[i].base;
+        if(cstreq("-v", arg)) { pack->general->verbose = true; }
+        if(cstreq("-b", arg)) { pack->general->always_make = true; }
     }
 }
 
@@ -362,7 +365,7 @@ void set_general
     set_slice_cstr(&general->ar, "ar");
     set_slice_cstr(&general->cc, "gcc");
     set_slice_cstr(&general->obj_ext, "o");
-    set_slice_cstr(&general->crt_name, "fcrt0.S");
+    set_slice_cstr(&general->crt_name, "fcrt0.s");
 
     /* c_flags ends with -o because in program we append
      * output name after the c_flags so its convenient
