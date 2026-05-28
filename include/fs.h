@@ -77,11 +77,12 @@ error_t path_basename(path_t* base, path_t* out);
 error_t path_get_all_files(path_t* p, da(path_t)* out);
 error_t dir_list_dir(path_t* path,
    void (*callback)(sl_cstr_t* path, sl_cstr_t name, bool is_dir, void* arg), void* arg);
+error_t dir_remove_recursive(path_t* path);
 
 /* TBD
  * error_t file_read_lines(allocator_t* alloc, path_t* path, da(str_t)* out);
  * error_t path_dirname(path_t* p, path_t* out);
- * error_t dir_remove_recursive(path_t* path);
+ *
  */
 
 #ifdef __cplusplus

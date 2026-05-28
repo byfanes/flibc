@@ -13,17 +13,13 @@ static void path_get_all_files_cb
     /* Init variables */
     callback_pack_t *pack = arg;
     path_t tmp = {0};
-    
+
     /* Construct new path */
     da_init(pack->alloc, &tmp, 128);
     strcat_sl(&tmp, *path);
-    
-    /* Check for '/' at the end if not append */
-    if(tmp.count > 0 && tmp.items[tmp.count - 1] != '/')
-    { strcat_cstr(&tmp, "/"); }
-    
+
     /* Append the name and its finished */
-    strcat_sl(&tmp, name);
+    path_join(&tmp, &name);
 
     if(is_dir) {
         /* Its a directory so continue with rescursion */
