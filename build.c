@@ -59,7 +59,6 @@ error_t main
     da(proc_t) procs = {0};
     da(path_t) objs = {0};
     usize_t count = 0;
-    u32 i = 0;
 
     /* Set basics */
     pack.general = &general;
@@ -393,5 +392,5 @@ void set_general
 
     /* It ends with -o reason same as c_flags */
     set_slice_cstr(&general->build_yourself_flags,
-        "-Wl,-e,_start .build/arch/x86_64/fcrt0.o -L. -l:flibc.so -Wl,-rpath=. -o");
+        "-Wl,-e,_start .build/src/arch/x86_64/fcrt0.o -L. -l:.build/flibc.so -Wl,-rpath=. -o");
 }
