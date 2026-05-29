@@ -19,6 +19,3 @@ Codeberg(Actual work done here): https://codeberg.org/fanes/flibc
 
 > **A Modern C Runtime:** The C runtime parses arguments into slices. Your program receives explicit parameters for standard stream, the executable name, cli arguments and the standard allocator.
 
-## Example Usage
-
-You can find some examples in 'examples/' folder.
