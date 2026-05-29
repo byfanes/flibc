@@ -15,10 +15,10 @@ error_t env_get_var
 
     /* Search for the key in the array if we found it copy it to val */
     for(; i < env->vars.count; ++i) {
-        if((res = memcmp((slice_u8*)key, &env->vars.items[i].key, &out))) { return res; }
+        if((res = memcmp(key, &env->vars.items[i].key, &out))) { return res; }
         if(out) {
             str_clear(val);
-            return strcat_sl(val, env->vars.items[i].val);
+            return strcat_sl(val, &env->vars.items[i].val);
         }
     }
 

@@ -1,7 +1,7 @@
 #include "process_private.h"
 
 error_t proc_wait
-(da(proc_t)* procs)
+(da_proc_t* procs)
 {
     /* Init variables */
     u32 i = 0;

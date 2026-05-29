@@ -8,7 +8,7 @@ error_t path_basename
     ssize_t start = 0;
     ssize_t off = 0;
     bool is_set = false;
-    slice(u8) sl = {0};
+    sl_u8_t sl = {0};
 
     /* Check input */
     if(!base || !base->items || !base->count || !out || !out->items)
@@ -38,7 +38,7 @@ error_t path_basename
 
     /* Set the find part */
     set_slice(&sl, &base->items[i], (usize_t)(start - i - off));
-    strcat_sl(out, sl);
+    strcat_sl(out, &sl);
 
     return success;
 }

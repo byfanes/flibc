@@ -15,7 +15,7 @@ struct linux_dirent64_s {
 /* Update the callback*/
 error_t dir_list_dir
 (path_t* path,
- void (*callback)(sl_cstr_t* path, sl_cstr_t name, bool is_dir, void* arg),
+ void (*callback)(sl_cstr_t* path, sl_cstr_t* name, bool is_dir, void* arg),
  void* arg)
 {
     /* Init variables */
@@ -24,6 +24,7 @@ error_t dir_list_dir
     u8 buf[FLIBC_STACK_THRESHOLD] = {0};
     char *name = 0;
     linux_dirent64_t *d = 0;
+    sl_u8_t name_sl = {0};
 
     /* Check inputs */
     if(!callback) { return null_pointer; }
@@ -61,8 +62,10 @@ error_t dir_list_dir
             if(cstreq(name, ".") || cstreq(name, ".."))
             { bpos += d->d_reclen; continue; }
 
+            set_slice_cstr(&name_sl, name);
+
             /* Call back to users function */
-            callback((sl_cstr_t*)path, cstr_to_u8sl(name), (d->d_type == DT_DIR), arg);
+            callback((sl_cstr_t*)path, &name_sl, (d->d_type == DT_DIR), arg);
 
             /* Skip to next part */
             bpos += d->d_reclen;

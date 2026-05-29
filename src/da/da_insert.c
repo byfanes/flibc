@@ -1,14 +1,14 @@
 #include "da_private.h"
 
 error_t __da_insert
-(void* da, void* in, usize_t idx, usize_t el_size)
+(void* da, elsize_t el_size, void* in, idx_t idx)
 {
     /* Init variables */
     error_t res = success;
     def_da_t *def = da;
     u8 *p_in = in;
     usize_t count = 0, i = 0;
-    slice(u8) src = {0}, dst = {0};
+    sl_u8_t src = {0}, dst = {0};
 
     /* Validate user inputs - el_size can not be 0 via sizeof but user implicitly call with it */
     if(!def || !p_in) { return null_pointer; }
@@ -16,7 +16,7 @@ error_t __da_insert
     if(idx > def->count) { return out_of_bounds; }
 
     /* Check if it fits allocate otherwise  */
-    if((res = __da_grow_if(def, 1, el_size))) { return res; }
+    if((res = __da_grow_if(def, el_size, 1))) { return res; }
     def->count++;
 
     /* Set slices for the moving */

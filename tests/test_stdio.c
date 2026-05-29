@@ -7,7 +7,7 @@ error_t main
     u8 buffer[128] = {0};
     usize_t wrote = 0;
     error_t res = success;
-    slice(u8) buf_sl = {0};
+    sl_u8_t buf_sl = {0};
 
     set_slice(&buf_sl, buffer, 128);
 

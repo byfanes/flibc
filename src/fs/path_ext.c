@@ -5,7 +5,7 @@ error_t path_ext
 {
     /* Init variables */
     ssize_t i = 0;
-    slice(u8) sl = {0};
+    sl_u8_t sl = {0};
 
     /* Check input */
     if(!base || !base->items || !base->count || !out || !out->items)
@@ -23,7 +23,7 @@ error_t path_ext
             /* Append the extension to buffer */
             i++;
             set_slice(&sl, &base->items[i], base->count - (usize_t)i);
-            return strcat_sl(out, sl);
+            return strcat_sl(out, &sl);
         }
 
         /* We could not find any extersion so return cleared buffer */

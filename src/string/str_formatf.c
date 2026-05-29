@@ -8,9 +8,9 @@ error_t str_formatf
     error_t res = success;
     usize_t wrote_count = 0;
     def_da_t *def = (void*)base;
-    slice(u8) zero_sl = {0};
-    slice(u8) fmt_sl = {0};
-    slice(u8) base_sl = {0};
+    sl_u8_t zero_sl = {0};
+    sl_u8_t fmt_sl = {0};
+    sl_u8_t base_sl = {0};
 
     if(!base || !base->items || !fmt) { return null_pointer; }
 

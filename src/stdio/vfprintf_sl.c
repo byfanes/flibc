@@ -1,13 +1,13 @@
 #include "stdio_private.h"
 
 error_t vfprintf_sl
-(file_t* file, slice(u8) fmt, va_list ap)
+(file_t* file, sl_u8_t fmt, va_list ap)
 {
     /* Init variables */
     usize_t count = 0;
     error_t res = success;
     u8 buf[FLIBC_STACK_THRESHOLD];
-    slice(u8) buf_sl = {0};
+    sl_u8_t buf_sl = {0};
     void* ptr = 0;
     allocator_t* alloc = 0;
 
@@ -37,7 +37,7 @@ error_t vfprintf_sl
     if((res = __formatf(buf_sl, fmt, &count, ap))) { goto fail; }
 
     /* Write buffer to file pointer */
-    if((res = fwrite(file, buf_sl))) { goto fail; }
+    if((res = fwrite(file, &buf_sl))) { goto fail; }
 
 fail:
     /* Free if its need */

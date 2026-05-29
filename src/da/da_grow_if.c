@@ -1,7 +1,7 @@
 #include "da_private.h"
 
 error_t __da_grow_if
-(void* da, usize_t amount, usize_t el_size)
+(void* da, elsize_t el_size, count_t amount)
 {
     /* Init variables */
     def_da_t* def = da;
@@ -15,5 +15,5 @@ error_t __da_grow_if
 
     /* If it amount fits to memory return if not expand it */
     if(def->count + amount <= def->capacity) { return success; }
-    return __da_grow(da, amount, el_size);
+    return __da_grow(da, el_size, amount);
 }

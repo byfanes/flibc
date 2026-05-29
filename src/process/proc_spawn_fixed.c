@@ -1,7 +1,7 @@
 #include "process_private.h"
 
 error_t proc_spawn_fixed
-(cmd_t cmd, env_t env, da(proc_t)* procs)
+(cmd_t cmd, env_t env, da_proc_t* procs)
 {
     ssize_t pid = 0;
     ssize_t status = 0;

@@ -14,7 +14,7 @@ error_t set_slice
 
     /* Set the data */
     dummy = (void*)sl;
-    dummy->base  = (void*)base;
+    dummy->items  = (void*)base;
     dummy->count = count;
 
     return success;

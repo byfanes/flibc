@@ -5,7 +5,6 @@ error_t strcat
 {
     /* Init variables */
     error_t res = success;
-    slice(u8) src = {0};
 
     /* Validate user input */
     if(!base || !base->items) { return null_pointer; }
@@ -14,7 +13,5 @@ error_t strcat
     /* Grow string memory if needed */
     if((res = str_grow_if(base, extend->count))) { return res; }
 
-    /* Set slices for copying */
-    set_slice(&src, extend->items, extend->count);
-    return __str_copy_content(base, src);
+    return __str_copy_content(base, extend->items, extend->count);
 }

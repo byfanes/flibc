@@ -1,7 +1,7 @@
 #include "da_private.h"
 
 error_t __da_unordered_remove
-(void* da, usize_t idx, usize_t el_size)
+(void* da, elsize_t el_size, idx_t idx)
 {
     /* Init variables */
     def_da_t *def = da;

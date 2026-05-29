@@ -5,7 +5,7 @@ error_t allocator_init
 {
     /* Init variables */
     allocator_t* alloc = 0;
-    slice(u8) sl = {0};
+    sl_u8_t sl = {0};
 
     /* Check input */
     if(!set) { return null_pointer; }

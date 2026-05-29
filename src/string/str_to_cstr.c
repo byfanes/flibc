@@ -5,7 +5,7 @@ error_t str_to_cstr
 {
     /* Init variables */
     error_t res = success;
-    slice(u8) dst = {0}, src = {0};
+    sl_u8_t dst = {0}, src = {0};
 
     /* Validate user input */
     if(!alloc || !out || !base) { return null_pointer; }

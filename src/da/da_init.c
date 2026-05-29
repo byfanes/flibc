@@ -1,14 +1,15 @@
 #include "da_private.h"
 
 error_t __da_init
-(allocator_t* alloc, void* da, usize_t amount, usize_t el_size)
+(allocator_t* alloc, void* da, elsize_t el_size, count_t amount)
 {
     /* Init variables */
     error_t res = success;
     def_da_t *def = da;
 
     /* Check inputs */
-    if(!el_size || !alloc || !def) { return null_pointer; }
+    if(!el_size) { return elsize_zero; }
+    if(!alloc || !def) { return null_pointer; }
 
     /* Allocate new memory for items */
     if((res = malloc(alloc, amount * el_size, &def->items)))

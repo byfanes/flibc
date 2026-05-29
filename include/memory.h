@@ -8,36 +8,39 @@ extern "C" {
 #include "stdtypes.h"
 #include "error.h"
 
-typedef struct allocator_s allocator_t;
-
 #define TRACE_ARGS const char* file_name, usize_t line
 #define USE_TRACE_ARGS file_name, line
 #define LOC_ARGS __FILE__, __LINE__
 
-#define slice(type) CONCAT(slice_, type)
 #define ccstr_to_u8(ccstr)  {(u8*)((ccstr)), sizeof(((ccstr))) - 1}
 
-#define can_be_slice(type)   \
-    typedef struct {         \
-        type * const base;   \
-        const usize_t count; \
-    } CONCAT(slice_, type)
+/* Those macros are used in most slice/da functions to improve readability */
+#define ptr_meta(ptr) (ptr), sizeof((ptr)->items[0])
+#define ptr_meta_check(ptr, item) (ptr), (sizeof((ptr)->items[0]) + 0 * sizeof((ptr)->items == item))
+#define two_ptr_meta_check(lhs, rhs) \
+     (lhs), (rhs), (sizeof((lhs)->items[0]) + 0 * sizeof((lhs)->items == (rhs)->items))
 
-can_be_slice(u8);
-can_be_slice(u16);
-can_be_slice(u32);
-can_be_slice(u64);
-can_be_slice(i8);
-can_be_slice(i16);
-can_be_slice(i32);
-can_be_slice(i64);
-can_be_slice(ssize_t);
-can_be_slice(usize_t);
+#define can_be_slice(type, name) \
+    typedef struct {             \
+        type * const items;      \
+        const usize_t count;     \
+    } name
 
-/* This type is same as slice(u8) only difference
- * is base pointer is a null-terminated C string
+can_be_slice(u8, sl_u8_t);
+can_be_slice(u16, sl_u16_t);
+can_be_slice(u32, sl_u32_t);
+can_be_slice(u64, sl_u64_t);
+can_be_slice(i8, sl_i8_t);
+can_be_slice(i16, sl_i16_t);
+can_be_slice(i32, sl_i32_t);
+can_be_slice(i64, sl_i64_t);
+can_be_slice(ssize_t, sl_ssize_t);
+can_be_slice(usize_t, sl_usize_t);
+
+/* This type is same as sl_u8_t only difference
+ * is items pointer is a null-terminated C string
  */
-typedef slice(u8) sl_cstr_t;
+typedef sl_u8_t sl_cstr_t;
 
 /* TODO: Right now a lot of functions dont free the memory (when they failed) which they allocated
  * and this causes some leak we should migrate to goto defer system rather than if return
@@ -51,6 +54,7 @@ enum allocator_flags_e {
     allocator_dont_check_leaks = (1 << 0)
 };
 
+typedef struct allocator_s allocator_t;
 typedef enum allocator_flags_e allocator_flags_t;
 
 error_t allocator_set_flags(allocator_t* alloc, u32 flags);
@@ -58,8 +62,8 @@ error_t allocator_init(allocator_t** set);
 error_t allocator_deinit(allocator_t** set);
 error_t allocator_get_from_ptr(void* ptr, allocator_t** set);
 
-slice(u8) cstr_to_u8sl(const char* cstr);
-error_t set_slice(const void* sl, const void* base, usize_t count);
+sl_u8_t cstr_to_u8sl(const char* cstr);
+error_t set_slice(const void* sl, const void* items, usize_t count);
 error_t set_slice_cstr(const void* sl, const char* str);
 
 error_t __malloc(allocator_t* alloc, usize_t n, void* set, TRACE_ARGS);
@@ -74,31 +78,23 @@ error_t __realloc(allocator_t* alloc, usize_t n, void* set, TRACE_ARGS);
 
 error_t free(void* set);
 
-/* This is both for using typed slices and preventing mechanisim to avoid compiliers'
- * automatic memset calls because those functions collide
- */
 error_t __memset(void* dst, usize_t el_size, u8 c);
-#define memset(dst, c) __memset((dst), sizeof((dst)->base[0]), (c))
+#define memset(dst, c) __memset(ptr_meta((dst)), (c))
 
 error_t __memcpy(void* dst, void* src, usize_t el_size);
-#define memcpy(dst, src) \
-    __memcpy((dst), (src), sizeof((dst)->base[0]) + 0 * sizeof((dst)->base == (src)->base))
+#define memcpy(dst, src) __memcpy(two_ptr_meta_check((dst), (src)))
 
 error_t __memswap(void* lhs, void* rhs, usize_t el_size);
-#define memswap(lhs, rhs) \
-    __memswap((lhs), (rhs), sizeof((lhs)->base[0]) + 0 * sizeof((lhs)->base == (rhs)->base))
+#define memswap(lhs, rhs) __memswap(two_ptr_meta_check((lhs), (rhs)))
 
 error_t __memmove(void* dst, void* src, usize_t el_size);
-#define memmove(dst, src) \
-    __memmove((dst), (src), sizeof((dst)->base[0]) + 0 * sizeof((dst)->base == (src)->base))
+#define memmove(dst, src) __memmove(two_ptr_meta_check((dst), (src)))
 
 error_t __memcmp(void* lhs, void* rhs, usize_t el_size, bool* out);
-#define memcmp(lhs, rhs, res) \
-    __memcmp((lhs), (rhs), sizeof((lhs)->base[0]) + 0 * sizeof((lhs)->base == (rhs)->base), (res))
+#define memcmp(lhs, rhs, res) __memcmp(two_ptr_meta_check((lhs), (rhs)), (res))
 
 error_t __memcmp_min(void* lhs, void* rhs, usize_t el_size, bool* out);
-#define memcmp_min(lhs, rhs, res) \
-    __memcmp_min((lhs), (rhs), sizeof((lhs)->base[0]) + 0 * sizeof((lhs)->base == (rhs)->base), (res))
+#define memcmp_min(lhs, rhs, res)  __memcmp_min(two_ptr_meta_check((lhs), (rhs)), (res))
 
 #ifdef __cplusplus
 }

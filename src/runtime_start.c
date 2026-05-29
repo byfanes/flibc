@@ -26,11 +26,11 @@ void runtime_start
     /* Init variables */
     error_t ret = 0;
     usize_t i = 0;
-    slice(u8) args[MAX_ARGS_COUNT] = {0}, *args_ptr = 0;
+    sl_u8_t args[MAX_ARGS_COUNT] = {0}, *args_ptr = 0;
     std_t std = {0};
     char **envp = 0, *env_cstr = 0;
     u32 envc = 0, eq_idx = 0;
-    slice(u8) val_sl = {0}, key_sl = {0};
+    sl_u8_t val_sl = {0}, key_sl = {0};
 
     /* Check argc and get first of them which is path to executable */
     if(argc > 0) {
@@ -44,7 +44,7 @@ void runtime_start
 
     /* Check for if its needed to allocate memory or not */
     if(argc > MAX_ARGS_COUNT) {
-        if(malloc(std.alloc, sizeof(slice(u8)) * (u32)argc, &args_ptr))
+        if(malloc(std.alloc, sizeof(sl_u8_t) * (u32)argc, &args_ptr))
         { early_panic("CTR Panic: Could not allocate memory for args slice list!\n"); }
     } else {
         args_ptr = args;
@@ -63,7 +63,7 @@ void runtime_start
 
     /* Set all of the arguments one by one */
     for(i = 0; i < argc; ++i) {
-        set_slice(&std.args.base[i], argv[i], strlen(argv[i]));
+        set_slice(&std.args.items[i], argv[i], strlen(argv[i]));
     }
 
     /* Find how many environment variables passed 1 for skiping argv's last null */

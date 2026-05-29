@@ -28,8 +28,8 @@ error_t main
     error_t res = success;
     u32 read_count = 0;
     u8 buf[128] = {0};
-    slice(u8) buf_sl = {0};
-    slice(u8) write_sl = {0};
+    sl_u8_t buf_sl = {0};
+    sl_u8_t write_sl = {0};
     da(str_t) list = {0};
     str_t tmp = {0};
     u32 i = 0;

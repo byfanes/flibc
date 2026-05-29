@@ -1,7 +1,7 @@
 #include "da_private.h"
 
 error_t __da_pop_last
-(void* da, void* out, usize_t el_size)
+(void* da, usize_t el_size, void* out)
 {
     /* Init variables */
     def_da_t *def = da;
@@ -11,5 +11,5 @@ error_t __da_pop_last
      */
     if(def->count == 0) { return out_of_bounds; }
 
-    return __da_pop(da, out, def->count - 1, el_size);
+    return __da_pop(da, el_size, out, def->count - 1);
 }

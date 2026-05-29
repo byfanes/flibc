@@ -1,7 +1,7 @@
 #include "stdio_private.h"
 
 error_t fprintf_sl
-(file_t* file, slice(u8) fmt, ...)
+(file_t* file, sl_u8_t fmt, ...)
 {
     /* Init variables */
     va_list ap;

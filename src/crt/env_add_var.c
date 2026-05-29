@@ -1,7 +1,7 @@
 #include "crt_private.h"
 
 error_t env_add_var
-(allocator_t* alloc, env_t* env, slice(u8)* key, slice(u8)* val)
+(allocator_t* alloc, env_t* env, sl_u8_t* key, sl_u8_t* val)
 {
     /* Init variables */
     env_var_t var = {0};
@@ -10,14 +10,14 @@ error_t env_add_var
     /* Check input */
     /* Note: val count can be zero for things like 'PAGER=' */
     if(!alloc || !env || !env->vars.items ||
-       !key->base || !val->base || !key->count)
+       !key->items || !val->items || !key->count)
     { return null_pointer; }
 
     /* Init strings and cat with corresponding slices */
     if((res = str_init(alloc, &var.continues, key->count + val->count + 1))) { return res; }
-    if((res = strcat_sl(&var.continues, *key))) { return res; }
+    if((res = strcat_sl(&var.continues, key))) { return res; }
     if((res = strcat_cstr(&var.continues, "="))) { return res; }
-    if((res = strcat_sl(&var.continues, *val))) { return res; }
+    if((res = strcat_sl(&var.continues, val))) { return res; }
     if((res = strcat_cstr(&var.continues, ""))) { return res; }
 
     set_slice(&var.key, var.continues.items, key->count);

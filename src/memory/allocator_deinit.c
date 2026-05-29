@@ -13,7 +13,7 @@ error_t allocator_deinit
      * there will be a file which will exceed this limit right now
      */
     u8 buf[8192] = {0};
-    slice(u8) buf_sl = {0};
+    sl_u8_t buf_sl = {0};
     usize_t len = 0;
 
     /* Check user input */
@@ -39,7 +39,7 @@ error_t allocator_deinit
 
             /* Write directly to standard error */
             /* Ignore its fail state because it is not deinit's main goal */
-            syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)buf_sl.base, (ssize_t)len);
+            syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)buf_sl.items, (ssize_t)len);
             i += header->raw_alloced / CHUNK_SIZE - 1;
         }
 
@@ -60,7 +60,7 @@ error_t allocator_deinit
 
                    /* Write directly to standard error */
                    /* Ignore its fail state because it is not deinit's main goal */
-                   syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)buf_sl.base, (ssize_t)len);
+                   syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)buf_sl.items, (ssize_t)len);
                 } break;
             }
         }

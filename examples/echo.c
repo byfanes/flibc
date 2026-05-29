@@ -7,8 +7,8 @@ error_t main
     error_t res = success;
     u32 read_count = 0;
     u8 buf[128] = {0};
-    slice(u8) buf_sl = {0};
-    slice(u8) write_sl = {0};
+    sl_u8_t buf_sl = {0};
+    sl_u8_t write_sl = {0};
 
     /* Set the buffer slice */
     set_slice(&buf_sl, buf, sizeof(buf));

@@ -1,8 +1,8 @@
 #include "stdio_private.h"
 
-error_t fputs
-(file_t* file, slice(u8) sl)
+error_t __fputs
+(file_t* file, void* sl, usize_t el_size)
 {
     /* In the library there is no difference between fputs and fwrite */
-    return fwrite(file, sl);
+    return __fwrite(file, sl, el_size);
 }

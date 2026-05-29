@@ -2,11 +2,11 @@
 #include "stdio.h"
 
 error_t file_read_all
-(allocator_t* alloc, path_t* path, da(u8)* out)
+(allocator_t* alloc, path_t* path, da_u8_t* out)
 {
     /* Init variables */
     usize_t size = 0;
-    slice(u8) buf = {0};
+    sl_u8_t buf = {0};
     error_t res = success, res2 = success;
     file_t *file = 0;
     def_da_t *def = (void*)out;
@@ -26,7 +26,7 @@ error_t file_read_all
     /* This could be better when we move to slice pointers */
     /* Set slice and read file to buffer then set count */
     set_slice(&buf, out->items, size);
-    res = fread(file, buf, nullptr);
+    res = fread(file, &buf, nullptr);
     def->count = buf.count;
 
     /* First close the file because other wise it will leak then check read */

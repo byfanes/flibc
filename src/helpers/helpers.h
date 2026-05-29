@@ -6,8 +6,8 @@
 #include "stdarg.h"
 #include "features.h"
 
-error_t __formatf(slice(u8) buf, slice(u8) fmt, usize_t* out_len, va_list ap);
-error_t formatf(slice(u8) buf, slice(u8) fmt, usize_t* out_len, ...);
+error_t __formatf(sl_u8_t buf, sl_u8_t fmt, usize_t* out_len, va_list ap);
+error_t formatf(sl_u8_t buf, sl_u8_t fmt, usize_t* out_len, ...);
 u32 strlen(const char* s);
 bool cstreq(const char* l, const char* r);
 

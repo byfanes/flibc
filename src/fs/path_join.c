@@ -1,14 +1,14 @@
 #include "fs_private.h"
 
 error_t path_join
-(path_t* path, slice(u8)* extend)
+(path_t* path, sl_u8_t* extend)
 {
     /* Init variables */
     error_t res = success;
     def_da_t *def = (void*)path;
 
     /* Check inputs */
-    if(!path || !extend || !path->items || !extend->base)
+    if(!path || !extend || !path->items || !extend->items)
     { return null_pointer; }
 
     /* Check for space and append '/'x */

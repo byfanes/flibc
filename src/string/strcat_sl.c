@@ -1,21 +1,23 @@
 #include "string_private.h"
 
-error_t strcat_sl
-(str_t* base, slice(u8) sl)
+error_t __strcat_sl
+(str_t* base, void* raw_sl, usize_t el_size)
 {
     /* Init variables */
     error_t res = success;
+    sl_u8_t* ssl = raw_sl;
 
     /* Validate user input */
+    if(!el_size) { return elsize_zero; }
     if(!base || !base->items) { return null_pointer; }
-    if(!sl.base || !sl.count) { return success; }
+    if(!ssl || !ssl->items || !ssl->count) { return success; }
 
     /* Check for utf8 */
-    if(!is_utf8_sl(sl)) { return invalid_utf8; }
+    if(!__is_utf8_sl(raw_sl, el_size)) { return invalid_utf8; }
 
     /* Allocate new memory if needed  */
-    if((res = str_grow_if(base, sl.count))) { return res; }
+    if((res = str_grow_if(base, ssl->count))) { return res; }
 
     /* Copy the data */
-    return __str_copy_content(base, sl);
+    return __str_copy_content(base, ssl->items, el_size * ssl->count);
 }

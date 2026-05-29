@@ -8,15 +8,15 @@ struct callback_pack_s {
 };
 
 static void callback
-(sl_cstr_t* path, sl_cstr_t name, bool is_dir, void* arg)
+(sl_cstr_t* path, sl_cstr_t* name, bool is_dir, void* arg)
 {
     /* Init variables */
     callback_pack_t *pack = arg;
 
     /* Construct the full path */
     str_clear(&pack->full);
-    strcat_sl(&pack->full, *path);
-    path_join(&pack->full, &name);
+    strcat_sl(&pack->full, path);
+    path_join(&pack->full, name);
 
     if(is_dir) {
         pack->res = dir_remove_recursive(&pack->full);

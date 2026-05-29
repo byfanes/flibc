@@ -13,17 +13,17 @@ typedef struct general_s general_t;
 struct general_s {
     bool verbose;
     bool always_make;
-    slice(u8) ar;
-    slice(u8) cc;
-    slice(u8) c_ext;
-    slice(u8) old_ext;
-    slice(u8) obj_ext;
-    slice(u8) crt_name;
-    slice(u8) c_flags;
-    slice(u8) so_flags;
-    slice(u8) ar_flags;
-    slice(u8) freestanding_flags;
-    slice(u8) build_yourself_flags;
+    sl_u8_t ar;
+    sl_u8_t cc;
+    sl_u8_t c_ext;
+    sl_u8_t old_ext;
+    sl_u8_t obj_ext;
+    sl_u8_t crt_name;
+    sl_u8_t c_flags;
+    sl_u8_t so_flags;
+    sl_u8_t ar_flags;
+    sl_u8_t freestanding_flags;
+    sl_u8_t build_yourself_flags;
 };
 
 /* Packed struct which is used in callbacks to pass data around */
@@ -33,15 +33,15 @@ struct packed_s {
     general_t* general;
     std_t *std;
     path_t *build_dir;
-    da(proc_t)* procs;
-    da(path_t)* obj_files;
+    da_proc_t* procs;
+    da_path_t* obj_files;
     path_t full;
     path_t ext;
 };
 
 void build_file(path_t* full_path, path_t* out_path, packed_t *pack, bool is_crt);
 /* Callback for iterating the directory list */
-void callback(sl_cstr_t* path, sl_cstr_t name, bool is_dir, void* arg);
+void callback(sl_cstr_t* path, sl_cstr_t* name, bool is_dir, void* arg);
 void make_libs(std_t* std, packed_t* pack);
 bool build_yourself(std_t std, packed_t* pack);
 void set_flags(std_t std, packed_t* pack);
@@ -56,8 +56,8 @@ error_t main
     path_t src = {0}, build_dir = {0};
     general_t general = {0};
     packed_t pack = {0};
-    da(proc_t) procs = {0};
-    da(path_t) objs = {0};
+    da_proc_t procs = {0};
+    da_path_t objs = {0};
     usize_t count = 0;
 
     /* Set basics */
@@ -145,13 +145,13 @@ void build_file
 
     /* Allocate cmd and start building it */
     str_init(pack->std->alloc, &cmd, 256);
-    strcat_sl(&cmd, pack->general->cc);
+    strcat_sl(&cmd, &pack->general->cc);
     cmd_append(&cmd, &pack->general->freestanding_flags);
     cmd_append(&cmd, &pack->general->c_flags);
     /* Its safe to cast path_t* to slice_u8* */
     /* Dynamic arrays can decay to slices */
-    cmd_append(&cmd, (slice(u8)*)out_path);
-    cmd_append(&cmd, (slice(u8)*)full_path);
+    cmd_append(&cmd, (sl_u8_t*)out_path);
+    cmd_append(&cmd, (sl_u8_t*)full_path);
 
     /* Spawn new process within the limit which is procs capacity */
     proc_spawn_fixed(cmd, pack->std->env, pack->procs);
@@ -161,7 +161,7 @@ void build_file
 }
 
 void callback
-(sl_cstr_t* path, sl_cstr_t name, bool is_dir, void* arg)
+(sl_cstr_t* path, sl_cstr_t* name, bool is_dir, void* arg)
 {
     /* Init variables */
     usize_t count = 0;
@@ -172,8 +172,8 @@ void callback
     /* Create the full path */
     /* strset */
     str_clear(tmp);
-    strcat_sl(tmp, *path);
-    path_join(tmp, &name);
+    strcat_sl(tmp, path);
+    path_join(tmp, name);
 
     /* If its a directory iterate it too */
     if(is_dir) {
@@ -196,7 +196,7 @@ void callback
     }
 
     /* Check if its the crt file or not */
-    memcmp(&name, &pack->general->crt_name, &eq);
+    memcmp(name, &pack->general->crt_name, &eq);
 
     /* Get extension */
     path_ext(tmp, &pack->ext);
@@ -207,8 +207,8 @@ void callback
         count = pack->build_dir->count;
 
         /* Construct output path */
-        strcat_sl(pack->build_dir, *path);
-        path_join(pack->build_dir, &name);
+        strcat_sl(pack->build_dir, path);
+        path_join(pack->build_dir, name);
         path_change_ext(pack->build_dir, &pack->general->obj_ext);
 
         /* Build the current file */
@@ -225,7 +225,7 @@ void make_libs
     /* Init variables */
     cmd_t so_cmd = {0}, arc_cmd = {0};
     u32 i = 0;
-    da(path_t)* objs = pack->obj_files;
+    da_path_t* objs = pack->obj_files;
 
     /* Set .a library command and flags */
     str_init(std->alloc, &arc_cmd, 2048);
@@ -243,8 +243,8 @@ void make_libs
     for(; i < objs->count; ++i) {
         if(pack->general->verbose)
         { fprintf(std->io.out, "Adding %v to list\n", (objs->items + i)); }
-        cmd_append(&so_cmd, (void*)(objs->items + i));
-        cmd_append(&arc_cmd, (void*)(objs->items + i));
+        cmd_append(&so_cmd, (sl_u8_t*)(objs->items + i));
+        cmd_append(&arc_cmd, (sl_u8_t*)(objs->items + i));
         str_deinit(objs->items + i);
     }
 
@@ -274,8 +274,8 @@ bool build_yourself
     str_init(std.alloc, &exe_file, std.exe.count);
 
     /* Construct the paths */
-    strcat_sl(&c_file, std.exe);
-    strcat_sl(&exe_file, std.exe);
+    strcat_sl(&c_file, &std.exe);
+    strcat_sl(&exe_file, &std.exe);
     path_change_ext(&c_file, &pack->general->c_ext);
 
     /* Get last modification times */
@@ -303,9 +303,9 @@ bool build_yourself
     cmd_append(&cmd, &pack->general->freestanding_flags);
     /* Its safe to cast path_t* to slice_u8* */
     /* Dynamic arrays can decay to slices */
-    cmd_append(&cmd, (slice_u8*)&c_file);
+    cmd_append(&cmd, (sl_u8_t*)&c_file);
     cmd_append(&cmd, &pack->general->build_yourself_flags);
-    cmd_append(&cmd, (slice_u8*)&exe_file);
+    cmd_append(&cmd, (sl_u8_t*)&exe_file);
 
     /* Print the command if program is started with verbose */
     if(pack->general->verbose) {
@@ -318,9 +318,9 @@ bool build_yourself
 
     /* Clear and start construct the new command and append the args */
     str_clear(&cmd);
-    cmd_append(&cmd, (slice_u8*)&exe_file);
+    cmd_append(&cmd, (sl_u8_t*)&exe_file);
     for(; i < std.args.count; ++i) {
-        cmd_append(&cmd, std.args.base + i);
+        cmd_append(&cmd, std.args.items + i);
     }
 
     /* Overwrite the current program and start the new build script  */
@@ -348,7 +348,7 @@ void set_flags
 
     /* Iterate over the args and find given flags - arguments which are not a flag will be ignored */
     for(; i < std.args.count; ++i) {
-        arg = (char*)std.args.base[i].base;
+        arg = (char*)std.args.items[i].items;
         if(cstreq("-v", arg)) { pack->general->verbose = true; }
         if(cstreq("-b", arg)) { pack->general->always_make = true; }
     }

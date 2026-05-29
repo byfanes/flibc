@@ -15,8 +15,8 @@ extern "C" {
  * for function which mutates the variable they take as pointer other oners dont
  */
 
-typedef da(u8) str_t;
-can_be_da(str_t);
+typedef da_u8_t str_t;
+can_be_da(str_t, da_str_t);
 
 error_t str_init(allocator_t* alloc, str_t* out, usize_t amount);
 error_t str_deinit(str_t* out);
@@ -25,14 +25,19 @@ error_t str_from_cstr(allocator_t* alloc, str_t* out, const char* cstr);
 error_t strdup(allocator_t* alloc, str_t* base, str_t* out);
 
 error_t str_formatf(str_t* base, const char* fmt, ...);
-error_t str_formatf_sl(str_t* base, slice(u8) fmt, ...);
+error_t str_formatf_sl(str_t* base, sl_u8_t fmt, ...);
 
 error_t strcpy(str_t* base, str_t* cpy);
 error_t strcat(str_t* base, str_t* extend);
-error_t strcat_sl(str_t* base, slice(u8) sl);
+
+/* We allow user to pass different pointers in strcat_sl because we will check it for utf8 */
+error_t __strcat_sl(str_t* base, void* sl, usize_t el_size);
+#define strcat_sl(base, sl) __strcat_sl((base), (sl), sizeof((sl)->items[0]))
+
 error_t strcat_cstr(str_t* base, const char* cstr);
 error_t str_utf8len(str_t* base, usize_t* out);
-error_t sl_utf8len(slice(u8) sl, usize_t* out);
+error_t __sl_utf8len(void* sl, usize_t el_size, usize_t* out);
+#define sl_utf8len(sl, out) __sl_utf8len((sl), sizeof((sl)->items[0]), out)
 
 error_t str_grow(str_t* str, usize_t amount);
 error_t str_grow_if(str_t* str, usize_t amount);
@@ -44,7 +49,8 @@ error_t str_clear(str_t* str);
 /* Those functions just matches the data so they can not result with an error */
 bool streq(str_t* lhs, str_t* rhs);
 bool streq_cstr(str_t* lhs, const char* cstr);
-bool is_utf8_sl(slice(u8) sl);
+bool __is_utf8_sl(void* sl, usize_t el_size);
+#define is_utf8_sl(sl) __is_utf8_sl((sl), sizeof((sl)->base[0]))
 
 #ifdef __cplusplus
 }

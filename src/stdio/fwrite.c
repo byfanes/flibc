@@ -1,16 +1,20 @@
 #include "stdio_private.h"
 
-error_t fwrite
-(file_t* file, slice(u8) sl)
+error_t __fwrite
+(file_t* file, void* raw_sl, usize_t el_size)
 {
     /* Init variables */
     error_t res = success;
     ssize_t ret = 0;
-    slice(u8) dst = {0};
+    sl_u8_t dst = {0};
+    sl_u8_t sl = {0};
 
     /* Validate user inputs */
-    if(!file) { return null_pointer; }
-    if(!sl.base || !sl.count) { return success; }
+    if(!file || !raw_sl) { return null_pointer; }
+    if(!el_size) { return el_size; }
+    set_slice(&sl, ((sl_u8_t*)raw_sl)->items, ((sl_u8_t*)raw_sl)->count * el_size);
+    if(!sl.items || !sl.count) { return success; }
+    set_slice(&sl, sl.items, sl.count * el_size);
     if(file->type == file_read) { return io_invalid_op; }
 
     /* If it does not fit to buffer fflush then write it */
@@ -19,7 +23,7 @@ error_t fwrite
         if((res = fflush(file))) { return res; }
 
         /* Call write syscall */
-        ret = syscall_3_linux(syscall_write, (ssize_t)file->fd, (ssize_t)sl.base, (ssize_t)sl.count);
+        ret = syscall_3_linux(syscall_write, (ssize_t)file->fd, (ssize_t)sl.items, (ssize_t)sl.count);
 
         /* Check return of the syscall */
         if(ret < 0) { return io_error; }

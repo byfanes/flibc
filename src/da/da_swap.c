@@ -1,7 +1,7 @@
 #include "da_private.h"
 
 error_t __da_swap
-(void* da, usize_t lhs, usize_t rhs, usize_t el_size)
+(void* da, elsize_t el_size, idx_t lhs, idx_t rhs)
 {
     /* Init variables */
     def_da_t* def = da;

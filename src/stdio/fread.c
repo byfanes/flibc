@@ -1,24 +1,27 @@
 #include "stdio_private.h"
 
-error_t fread
-(file_t* file, slice(u8) buf, u32* _Nullable read_count)
+error_t __fread
+(file_t* file, void* buf, usize_t el_size, u32* _Nullable read_count)
 {
     /* Init variables */
     ssize_t ret = 0;
+    sl_u8_t sl = {0};
 
     /* Validate user inputs */
-    if(!file) { return null_pointer; }
-    if(!buf.count || !buf.base) { return null_pointer; }
+    if(!file || !buf) { return null_pointer; }
+    if(!el_size) { return elsize_zero; }
+    set_slice(&sl, ((sl_u8_t*)buf)->items, ((sl_u8_t*)buf)->count * el_size);
+    if(!sl.count || !sl.items) { return null_pointer; }
+    set_slice(&sl, sl.items, sl.count * el_size);
     if(file->type == file_write || file->type == file_append) { return io_invalid_op; }
 
     /* Call read syscall */
-    ret = syscall_3_linux(syscall_read, file->fd, (ssize_t)buf.base, (ssize_t)buf.count);
+    ret = syscall_3_linux(syscall_read, file->fd, (ssize_t)sl.items, (ssize_t)sl.count);
 
     /* Check return of the syscall */
     if(ret < 0) { return io_error; }
     if(read_count) { *read_count = (u32)ret; }
-    if(ret < (ssize_t)buf.count) { return io_partial; }
+    if(ret < (ssize_t)sl.count) { return io_partial; }
 
     return success;
 }
-

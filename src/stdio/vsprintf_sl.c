@@ -1,12 +1,12 @@
 #include "stdio_private.h"
 
 error_t vsprintf_sl
-(slice(u8) buf, usize_t* _Nullable wrote_count, slice(u8) fmt, va_list ap)
+(sl_u8_t buf, usize_t* _Nullable wrote_count, sl_u8_t fmt, va_list ap)
 {
     /* Init variables */
     usize_t count = 0;
     error_t res = success;
-    slice(u8) zero_sl = {0};
+    sl_u8_t zero_sl = {0};
 
     /* Set it if its given */
     if(wrote_count) { *wrote_count = 0; }

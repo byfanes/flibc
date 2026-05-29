@@ -4,7 +4,7 @@ error_t str_utf8len
 (str_t* base, usize_t* out)
 {
     /* Init variables */
-    slice(u8) sl = {0};
+    sl_u8_t sl = {0};
 
     /* Validate user input and early returns */
     if(!out || !base) { return null_pointer; }
@@ -14,5 +14,5 @@ error_t str_utf8len
     set_slice(&sl, base->items, base->count);
 
     /* Use sl_utf8len function to calculate */
-    return sl_utf8len(sl, out);
+    return sl_utf8len(&sl, out);
 }

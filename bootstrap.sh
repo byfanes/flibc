@@ -12,7 +12,15 @@ ARCH=$(uname -m)
 C_FILES=$(find src -name '*.c')
 ASM_FILES=$(find "src/arch/$ARCH/" -name '*.s')
 
-clang -O0 -g3 \
+gcc -O0 -g3  \
+    -Wall -Wextra -Wpedantic \
+    -Wconversion -Wsign-conversion \
+    -Wformat -Wformat-overflow -Wformat-truncation \
+    -Wstrict-prototypes -Wmissing-prototypes \
+    -Wshadow -Wpointer-arith \
+    -Wwrite-strings -Wundef \
+    -Wfloat-equal -Wcast-align -Wno-int-conversion \
+    -Wswitch-default -std=c89 -pedantic -Werror \
     -ffreestanding -fno-builtin -nostdinc -nostdlib \
     -Iinclude -nostartfiles \
     -Wl,-e,_start \

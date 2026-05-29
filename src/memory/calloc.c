@@ -7,7 +7,7 @@ error_t __calloc
 {
     /* Init variables */
     error_t res = success;
-    slice(u8) sl = {0};
+    sl_u8_t sl = {0};
 
     /* Allocate memory - User input validation done here */
     if((res = __malloc(alloc, size, set, USE_TRACE_ARGS))) { return res; }

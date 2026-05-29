@@ -1,12 +1,12 @@
 #include "da_private.h"
 
 error_t __da_remove
-(void* da, usize_t idx, usize_t el_size)
+(void* da, elsize_t el_size, idx_t idx)
 {
     /* Init variables */
     def_da_t *def = da;
     usize_t count  = 0;
-    slice(u8) src = {0}, dst = {0};
+    sl_u8_t src = {0}, dst = {0};
 
     /* Validate user inputs - el_size can not be 0 via sizeof but user implicitly call with it */
     if(!def || !def->items) { return null_pointer; }

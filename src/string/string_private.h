@@ -8,6 +8,6 @@
 /* This is an internal function so it does not perform
  * any validation for arguments or its available length
  */
-error_t __str_copy_content(str_t* str, slice(u8) sl);
+error_t __str_copy_content(str_t* str, const void* ptr, usize_t amount);
 
 #endif /* __FLIBC_STRING_PRIVATE_H__ */

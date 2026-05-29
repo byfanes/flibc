@@ -5,18 +5,18 @@ error_t __memmove
 (void* dst, void* src, usize_t el_size)
 {
     /* Init variables */
-    slice(u8) *dsl = dst, *ssl = src;
+    sl_u8_t *dsl = dst, *ssl = src;
     u8 *d = 0, *s = 0;
     usize_t i = 0;
 
     /* Validate user inputs */
-    if(!dsl || !ssl || !dsl->base || !ssl->base) { return null_pointer; }
+    if(!dsl || !ssl || !dsl->items || !ssl->items) { return null_pointer; }
     if(ssl->count > dsl->count) { return small_buffer; }
     if(!el_size) { return elsize_zero; }
 
     /* Alias for the pointers */
-    d = dsl->base;
-    s = ssl->base;
+    d = dsl->items;
+    s = ssl->items;
 
     /* If they are the exact same memory address, do nothing */
     if (d == s) { return success; }

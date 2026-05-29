@@ -1,22 +1,26 @@
 #include "string_private.h"
 
-error_t sl_utf8len
-(slice(u8) sl, usize_t* out)
+error_t __sl_utf8len
+(void* raw_sl, usize_t el_size, usize_t* out)
 {
     /* Init variables */
     usize_t i = 0, count = 0;
     u8 c = 0;
     u32 codepoint = 0;
+    sl_u8_t sl = {0};
 
     /* Validate user input */
-    if(!out) { return null_pointer; }
-    if(!sl.base || !sl.count) { *out = 0; return success; }
+    if(!out || !raw_sl) { return null_pointer; }
+    if(!el_size) { return elsize_zero; }
 
+    set_slice(&sl, ((sl_u8_t*)raw_sl)->items, ((sl_u8_t*)raw_sl)->count * el_size);
+    if(!sl.items || !sl.count) { *out = 0; return success; }
+    
     /* Last byte of each sequence increments the loop
      * other ones should be handled in the flow
      */
     for(;i < sl.count; ++i, ++count) {
-        c = sl.base[i];
+        c = sl.items[i];
         codepoint = 0;
         /* Ascii 0aaa bbbb */
         if(!(c >> 7)) { continue; }
@@ -26,7 +30,7 @@ error_t sl_utf8len
             /* Check and fetch the new byte */
             if(i + 1 >= sl.count) { goto invalid; }
             codepoint = ((u32)(c & 0x1F) << 6);
-            c = sl.base[++i];
+            c = sl.items[++i];
 
             /* New byte should be 10aa bbbb (second) 2 = 0b10 */
             if((c >> 6) != 2) { goto invalid; }
@@ -42,12 +46,12 @@ error_t sl_utf8len
             /* Check and fetch the new byte */
             if(i + 2 >= sl.count) { goto invalid; }
             codepoint = ((u32)(c & 0x0F) << 12);
-            c = sl.base[++i];
+            c = sl.items[++i];
 
             /* New byte should be 10aa bbbb (second) 2 = 0b10 */
             if((c >> 6) != 2) { goto invalid; }
             codepoint |= ((u32)(c & 0x3F) << 6);
-            c = sl.base[++i];
+            c = sl.items[++i];
 
             /* New byte should be 10aa bbbb (third) 2 = 0b10 */
             if((c >> 6) != 2) { goto invalid; }
@@ -66,17 +70,17 @@ error_t sl_utf8len
             /* Check and fetch the new byte */
             if(i + 3 >= sl.count) { goto invalid; }
             codepoint = ((u32)(c & 0x07) << 18);
-            c = sl.base[++i];
+            c = sl.items[++i];
 
             /* New byte should be 10aa bbbb (second) 2 = 0b10 */
             if((c >> 6) != 2) { goto invalid; }
             codepoint |= ((u32)(c & 0x3F) << 12);
-            c = sl.base[++i];
+            c = sl.items[++i];
 
             /* New byte should be 10aa bbbb (third) 2 = 0b10 */
             if((c >> 6) != 2) { goto invalid; }
             codepoint |= ((u32)(c & 0x3F) << 6);
-            c = sl.base[++i];
+            c = sl.items[++i];
 
             /* New byte should be 10aa bbbb (fourth) 2 = 0b10 */
             if((c >> 6) != 2) { goto invalid; }

@@ -12,10 +12,10 @@ error_t main
     bool cmp_res = false;
 
     /* Brace initialization for const fields */
-    slice(u8) sl_buf1  = { 0 };
-    slice(u8) sl_buf2  = { 0 };
-    slice(u8) sl_half1 = { 0 };
-    slice(u8) sl_half2 = { 0 };
+    sl_u8_t sl_buf1  = { 0 };
+    sl_u8_t sl_buf2  = { 0 };
+    sl_u8_t sl_half1 = { 0 };
+    sl_u8_t sl_half2 = { 0 };
 
     (void)std;
 

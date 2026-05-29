@@ -2,14 +2,14 @@
 #include "../da/da_private.h"
 
 error_t cmd_append
-(cmd_t* cmd, slice(u8)* sl)
+(cmd_t* cmd, sl_u8_t* sl)
 {
     /* Init variables */
     error_t res = success;
     def_da_t *def = (void*)cmd;
 
     /* Check inputs */
-    if(!cmd || !sl || !cmd->items || !sl->base)
+    if(!cmd || !sl || !cmd->items || !sl->items)
     { return null_pointer; }
 
     /* Check for space and append '/'x */

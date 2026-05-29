@@ -128,7 +128,7 @@ struct allocator_s {
  */
 typedef struct slice_dummy_s slice_dummy_t;
 struct slice_dummy_s {
-    u8 *base;
+    u8 *items;
     usize_t count;
 };
 

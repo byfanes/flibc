@@ -1,7 +1,7 @@
 #include "fs_private.h"
 
 error_t path_change_ext
-(path_t* path, slice(u8)* ext)
+(path_t* path, sl_u8_t* ext)
 {
     /* Init variables */
     ssize_t i = 0;
@@ -11,11 +11,11 @@ error_t path_change_ext
     error_t res = success;
 
     /* Check inputs - Right now we treat zero counts as null pointer */
-    if(!path || !ext || !path->items || !path->count || !ext->base || !ext->count)
+    if(!path || !ext || !path->items || !path->count || !ext->items || !ext->count)
     { return null_pointer; }
 
     /* Check extension has a '.'  */
-    has_ext_dot = (ext->base[0] == '.');
+    has_ext_dot = (ext->items[0] == '.');
 
     /* Iterate over the buffer */
     /* Note: This only works for linux because of the paths */
