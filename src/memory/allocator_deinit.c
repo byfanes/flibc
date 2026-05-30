@@ -15,6 +15,9 @@ error_t allocator_deinit
     u8 buf[8192] = {0};
     sl_u8_t buf_sl = {0};
     usize_t len = 0;
+    u32 raw = 0;
+
+    sl_u8_t msg = ccstr_to_u8("Memory Leak: %u bytes from %s:%d is not freed\n");
 
     /* Check user input */
     if(!set) { return null_pointer; }
@@ -33,38 +36,25 @@ error_t allocator_deinit
             if(!bit) { continue; }
             /* Leaked memory */
             header = (heap_header_t*)(uintptr_t)((u8*)(alloc + 1) + i * CHUNK_SIZE);
-            formatf(buf_sl,
-                cstr_to_u8sl("Memory Leak: %u bytes from %s:%d is not freed\n"),
-                &len, header->req_alloced, header->file_name, header->line);
+            formatf(buf_sl, msg, &len, header->wanted_alloc, header->file_name, header->line);
 
             /* Write directly to standard error */
             /* Ignore its fail state because it is not deinit's main goal */
             syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)buf_sl.items, (ssize_t)len);
-            i += header->raw_alloced / CHUNK_SIZE - 1;
+            raw = ALIGN_64(header->wanted_alloc + ADDITIONAL_HEADER_SIZE);
+            i += raw / CHUNK_SIZE - 1;
         }
 
         /* Check for the nodes in allocator */
-        for(i = 0; i < ALLOCATOR_NODE_COUNT; ++i) {
-            switch(alloc->nodes[i].type) {
-                case heap_node_empty: continue;
+        for(i = 0; i < ALLOCATOR_HEADER_COUNT; ++i) {
+            header = alloc->headers[i];
+            if(!header) { continue; }
+            formatf(buf_sl, msg, &len, header->wanted_alloc, header->file_name, header->line);
 
-                default: {
-                    /* TODO: Maybe we can return an error but it does not effect the function */
-                } continue;
-
-                case raw_chunk_allocation: {
-                    header = (heap_header_t*)(uintptr_t)alloc->nodes[i].start;
-                    formatf(buf_sl,
-                    cstr_to_u8sl("Memory Leak: %u bytes from %s:%d is not freed\n"),
-                    &len, header->req_alloced, header->file_name, header->line);
-
-                   /* Write directly to standard error */
-                   /* Ignore its fail state because it is not deinit's main goal */
-                   syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)buf_sl.items, (ssize_t)len);
-                } break;
-            }
+            /* Write directly to standard error */
+            /* Ignore its fail state because it is not deinit's main goal */
+            syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)buf_sl.items, (ssize_t)len);
         }
-
     }
 
     /* If there is another allocator deinit it too */
@@ -72,24 +62,15 @@ error_t allocator_deinit
         if((res = allocator_deinit(&alloc->next))) { return res; }
     }
 
-    for(i = 0; i < ALLOCATOR_NODE_COUNT; ++i) {
-        switch(alloc->nodes[i].type) {
-            case heap_node_empty: continue;
+    for(i = 0; i < ALLOCATOR_HEADER_COUNT; ++i) {
+        header = alloc->headers[i];
+        if(!header) { continue; }
+        raw = ALIGN_64(header->wanted_alloc + ADDITIONAL_HEADER_SIZE);
+        /* If we cant free any memory just stop and return an error no future freeing */
+        if(0 != syscall_2_linux(syscall_munmap, (ssize_t)header, (ssize_t)raw))
+        { return memory_error; }
 
-            default: {
-                /* TODO: Maybe we can return an error but it does not effect the function */
-            } continue;
-
-            case raw_chunk_allocation: {
-                header = (heap_header_t*)(uintptr_t)alloc->nodes[i].start;
-                /* If we cant free any memory just stop and return an error no future freeing */
-                if(0 != syscall_2_linux(syscall_munmap, (ssize_t)header, (ssize_t)header->raw_alloced))
-                { return memory_error; }
-
-                alloc->nodes[i].type = heap_node_empty;
-                alloc->nodes[i].start = nullptr;
-            } break;
-        }
+        alloc->headers[i] = nullptr;
     }
 
     /* Give back the memory to os */

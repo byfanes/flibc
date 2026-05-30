@@ -65,8 +65,6 @@ typedef  int64_t i64;
 #define NULL 0
 #define nullptr ((void*)0)
 
-#define arch_size (sizeof(void*))
-
 #define CONCAT_IMPL(a, b) a ## b
 #define CONCAT(a, b) CONCAT_IMPL(a, b)
 

@@ -28,6 +28,8 @@ error_t allocator_init
     alloc->free_pointer = allocator_free_pointer;
     alloc->init = allocator_init;
     alloc->deinit = allocator_deinit;
+    alloc->overflow = allocator_overflow;
+    alloc->underflow = allocator_underflow;
 
     *set = alloc;
     return success;

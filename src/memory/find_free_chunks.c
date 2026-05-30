@@ -54,5 +54,5 @@ u32 __find_free_chunks
     }
 
     /* We searched the whole bitmap and couldn't find a streak big enough */
-    return CHUNK_IDX_FAILED;
+    return CHUNK_IDX_FULL;
 }

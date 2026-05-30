@@ -23,10 +23,6 @@
 
 #define INTERNAL static INLINE
 
-#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
-#define typeof __typeof__
-#endif
-
 #ifndef _Nullable
 #define _Nullable
 #endif /* _Nullable */

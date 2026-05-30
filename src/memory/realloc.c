@@ -28,7 +28,7 @@ error_t __realloc
     }
     /* set -> ptr(addr) -> data */
     he = (heap_header_t*)(void*)ba - 1;
-    prev = he->req_alloced;
+    prev = he->wanted_alloc;
 
     /* Allocate new memory and set it*/
     if((res = __malloc(alloc, n, set, USE_TRACE_ARGS))) { return res; }

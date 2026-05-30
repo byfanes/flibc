@@ -11,6 +11,8 @@ enum error_e {
 
     /* Generic Error Values */
     null_pointer,
+    heap_overflow,
+    heap_underflow,
     invalid_pointer,
     invalid_argument,
     out_of_bounds,

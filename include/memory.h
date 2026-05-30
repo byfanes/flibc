@@ -46,8 +46,9 @@ typedef sl_u8_t sl_cstr_t;
  * and this causes some leak we should migrate to goto defer system rather than if return
  */
 
-/* We can support up to 32 flags right now this value depends
- * on allocator_t->flags size which is u32 those flags assigned
+/* We can support up to 32 flags (its usize_t but it shrinks down to 32 bits in x86 system)
+ * this value depends so to be safe we can only use maxium 32 flags
+ * on allocator_t->flags size which is usize_t those flags assigned
  * via bit so we need to shift them
  */
 enum allocator_flags_e {

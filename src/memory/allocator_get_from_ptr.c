@@ -9,11 +9,17 @@ error_t allocator_get_from_ptr
 {
     /* Init variables */
     heap_header_t* header = 0;
-
+    error_t res = success;
+    
     /* One byte is null byte so skip that*/
     header = ((heap_header_t*)ptr - 1);
 
-    if(!__validate_header(header)) { return invalid_pointer; }
+    res = __validate_header(header);
+    if(res == invalid_pointer) { return res; }
+    else if (res == heap_underflow)
+    { header->alloc->underflow(header->alloc, header); }
+    else if (res == heap_overflow)
+    { header->alloc->overflow(header->alloc, header); }
 
     *set = header->alloc;
 

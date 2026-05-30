@@ -7,7 +7,7 @@
 
 #define ALIGN_64(n) ((n + 63) & (u64)(~63))
 
-/* Assuming a normal OS' page size is 4KB */
+/* Assuming a OS' page size is 4KB */
 #define PAGE_SIZE (1024*4)
 
 /* Every chunk is 64 bytes */
@@ -19,10 +19,13 @@
 
 #define CHUNK_MAX (ALLOCATION_SIZE / CHUNK_SIZE)
 
+#define RAW_ALLOCATION_THRESHOLD (ALLOCATION_SIZE / 16)
+#define ADDITIONAL_HEADER_SIZE (sizeof(heap_header_t) + sizeof(usize_t))
+
 /* We give it a big number so if we use it without
  * any checking we can segfault if it happens
  */
-#define CHUNK_IDX_FAILED 0xFFFFFFFF
+#define CHUNK_IDX_FULL ((u16)-1)
 
 /* This calculation is for how many bits we need
  * to allocate so we can control over all the chunks
@@ -32,52 +35,35 @@
  */
 #define ALLOCATOR_NEEDED_BITS (CHUNK_MAX / 8)
 
-/* This calculation for needed node count we need to
+/* This calculation for needed header count we need to
  * update this calculation every time we change allocator struct
  * basicly we have a page(4KB) for the allocator struct we use
  * 5 pointers inside it (next - init - deinit - alloc_pointer - free_pointer)
- * functions and u32 (which is flags) and last one is check bits which is u8[ALLOCATOR_NEEDED_BITS]
- * and diveding this number with a node size gives use the amount usable nodes in an allocator
+ * functions and usize_t(which is flags) and last one is check bits which is u8[ALLOCATOR_NEEDED_BITS]
+ * and diveding this number with a header size gives use the amount usable headers in an allocator
  */
-#define ALLOCATOR_NODE_COUNT \
-((PAGE_SIZE - (sizeof(void*)*5 + sizeof(u32) + sizeof(u8[ALLOCATOR_NEEDED_BITS]))) \
-    / sizeof(heap_node_t))
+#define ALLOCATOR_HEADER_COUNT \
+((PAGE_SIZE - (sizeof(void*)*7 + sizeof(u32) + sizeof(u8[ALLOCATOR_NEEDED_BITS]))) \
+    / sizeof(heap_header_t*))
 
 typedef struct heap_header_s heap_header_t;
 
-/* TODO: this struct can be compressed a little bit more */
+/* For used chunk count use we can align wanted_alloc to (CHUNK_SIZE) and divide to (CHUNK_SIZE) */
+/* For checking if its raw allocation we can either use wanted and compare
+ * to THRESHOLD or we can check its allocator and look for the current
+ * header's pointer in headers list
+ */
+/* Safety array is set to ABCDEF for checking */
 struct heap_header_s {
     allocator_t* alloc;
     const char* file_name;
-    bool is_raw_chunk;
-    u32 req_alloced;
-    u32 raw_alloced;
     u32 line;
-    u16 chunk_idx;
+    u32 wanted_alloc;
+    u16 idx;
+
+    u8 safety[sizeof(void*) + 6];
     /* This should be last one */
     usize_t first_null;
-};
-
-/* We make this as an enum rather than bool because
- * we might need more types in the future
- */
-enum heap_node_type_e {
-    /* This is for checking a node is empty or not because
-     * when we are creating we init all of them with 0
-     */
-    heap_node_empty,
-    /* raw_chunk_allocation is used when user wants to do more than
-     * (ALLOCATION_SIZE / 16) which is (1024*64) bytes of allocation
-     */
-    raw_chunk_allocation
-};
-
-typedef enum heap_node_type_e heap_node_type_t;
-typedef struct heap_node_s heap_node_t;
-
-struct heap_node_s {
-    heap_node_type_t type;
-    void* start;
 };
 
 /* Some typedefs to keep clean the struct definition */
@@ -88,12 +74,15 @@ typedef error_t (*f_allocator_free_pointer)(allocator_t* alloc, void* set);
 typedef error_t (*f_allocator_init)(allocator_t** set);
 typedef error_t (*f_allocator_deinit)(allocator_t** set);
 
+typedef void (*f_allocator_detect_underflow)(allocator_t* alloc, heap_header_t* header);
+typedef void (*f_allocator_detect_overflow)(allocator_t* alloc, heap_header_t* header);
+
 /* For the pointer to free use allocators' pointer not any other one and
  * for the user base pointer to give user some memory you can use this pointer again
  * but jumping 1 allocator ahead to access it then do all of the stuff
  */
 /* Note: If the struct is change do not forget to update the calculations for
- * 'ALLOCATOR_NODE_COUNT' and 'ALLOCATOR_NEEDED_BITS'
+ * 'ALLOCATOR_HEADER_COUNT' and 'ALLOCATOR_NEEDED_BITS'
  */
 struct allocator_s {
     /* Next allocator for if current allocator fills up and we need more space
@@ -109,15 +98,24 @@ struct allocator_s {
     f_allocator_init init;
     f_allocator_deinit deinit;
 
-    /* We can support up to 32 flags right now */
-    u32 flags;
+    /* They might be useless but we can detect it so might as well use it
+     * Note: Those functions can yap a lot because used in both get and free
+     * functions and which are called a lot in DAs
+     */
+    f_allocator_detect_overflow overflow;
+    f_allocator_detect_underflow underflow;
+
+    /* We can support up to 32 flags because in x86 it will down to 32 bits */
+    usize_t flags;
 
     /* We expect a OS should 4KB as page size its not mandatory but it aligns better
-     * Look up for the 'ALLOCATOR_NODE_COUNT' calculation before modifying this array
-     * since its a small sized array (167 - 253 (depending on arch)) we can iterate
-     * over them because we indicate free nodes via 'heap_node_empty' which is zero
+     * Look up for the 'ALLOCATOR_HEADER_COUNT' calculation before modifying this array
+     * since its a small sized array (248 - 504 (depending on arch)) we can iterate
+     * over them because zero means its empty. This headers pointed because we can not
+     * find them inside the data segment (allocated like this '[allocator][data]' ) so
+     * we need to store their pointer to access later via allocator
      */
-    heap_node_t nodes[ALLOCATOR_NODE_COUNT];
+    heap_header_t* headers[ALLOCATOR_HEADER_COUNT];
 
     /* Look up for 'ALLOCATOR_NEEDED_BITS' before changing this array */
     u8 free_bits[ALLOCATOR_NEEDED_BITS];
@@ -139,9 +137,12 @@ error_t allocator_alloc_pointer
 (allocator_t* alloc, usize_t n, void* set, const char* file_name, usize_t line);
 error_t allocator_free_pointer(allocator_t* alloc, void* set);
 
+void allocator_overflow(allocator_t* alloc, heap_header_t* header);
+void allocator_underflow(allocator_t* alloc, heap_header_t* header);
+
 void __set_chunks_free(u8* bitmap_bytes, u32 start_bit, u32 n);
 void __set_chunks_used(u8* bitmap_bytes, u32 start_bit, u32 n);
 u32 __find_free_chunks(u8* bitmap_bytes, u32 total_bits, u32 n);
-bool __validate_header(heap_header_t* header);
+error_t __validate_header(heap_header_t* header);
 
 #endif /* __FLIBC_MEMORY_PRIVATE_H__ */
