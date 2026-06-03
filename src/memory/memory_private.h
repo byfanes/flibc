@@ -53,7 +53,8 @@ typedef struct heap_header_s heap_header_t;
  * to THRESHOLD or we can check its allocator and look for the current
  * header's pointer in headers list
  */
-/* Safety array is set to ABCDEF for checking */
+/* Safety array is set to ABCDEF... for checking */
+/* Note: If we need more elements in here we might truncate some bytes from safety */
 struct heap_header_s {
     allocator_t* alloc;
     const char* file_name;
@@ -76,6 +77,13 @@ typedef error_t (*f_allocator_deinit)(allocator_t** set);
 
 typedef void (*f_allocator_detect_underflow)(allocator_t* alloc, heap_header_t* header);
 typedef void (*f_allocator_detect_overflow)(allocator_t* alloc, heap_header_t* header);
+
+/* TODO: We can make allocator faster via using allocated elements' headers
+ * Every header has wanted_alloc which we can use to calculate chunk count allocated
+ * by that header and skip to next part and if that is full too do something so on
+ * so forth until we find new free chunks or we get to end of the allocator's heap
+ * so continue with next allocator
+ */
 
 /* For the pointer to free use allocators' pointer not any other one and
  * for the user base pointer to give user some memory you can use this pointer again

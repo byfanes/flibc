@@ -38,6 +38,11 @@ extern ssize_t syscall_6_linux
 #define syscall_munmap 11
 #define syscall_access 21
 #define syscall_nanosleep 35
+#define syscall_socket 41
+#define syscall_connect 42
+#define syscall_accept 43
+#define syscall_bind 49
+#define syscall_listen 50
 #define syscall_fork 57
 #define syscall_execve 59
 #define syscall_exit 60
