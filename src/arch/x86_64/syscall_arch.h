@@ -37,6 +37,7 @@ extern ssize_t syscall_6_linux
 #define syscall_mmap 9
 #define syscall_munmap 11
 #define syscall_access 21
+#define syscall_sched_yield 24
 #define syscall_nanosleep 35
 #define syscall_socket 41
 #define syscall_connect 42
@@ -113,6 +114,14 @@ extern ssize_t syscall_6_linux
 #define S_ISLNK(mode)  (((mode) & S_IFMT) == S_IFLNK)
 #define S_ISSOCK(mode) (((mode) & S_IFMT) == S_IFSOCK)
 
+#define CLONE_VM        0x00000100
+#define CLONE_FS        0x00000200
+#define CLONE_FILES     0x00000400
+#define CLONE_SIGHAND   0x00000800
+#define CLONE_THREAD    0x00010000
+
+#define THREAD_FLAGS (CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | CLONE_THREAD)
+
 #define AT_FDCWD        -100
 #define DT_REG          8
 #define DT_DIR          4
@@ -121,6 +130,15 @@ extern ssize_t syscall_6_linux
 #define EINTR 4
 
 #define CLOCK_MONOTONIC 1
+
+/* Forward declaration */
+struct std_s;
+struct thread_s;
+
+/* For threads and this needs to be implemented in assembly */
+extern ssize_t thread_clone_linux
+(ssize_t flags, void *child_stack, void* (*fn)(struct std_s* std, void*),
+ struct std_s* std, void *arg, struct thread_s* thread);
 
 #else /* __linux__ */
 #error "Unsupported OS"
