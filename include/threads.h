@@ -8,6 +8,7 @@ extern "C" {
 #include "stdtypes.h"
 #include "features.h"
 #include "memory.h"
+#include "atomics.h"
 #include "crt.h"
 
 /* 2 MB */
@@ -15,6 +16,7 @@ extern "C" {
 
 typedef struct thread_ctrl_s thread_ctrl_t;
 typedef struct thread_s thread_t;
+typedef struct mutex_s mutex_t;
 
 /* TODO: We might add stack data structure */
 /* TODO: We should add block data struct to keeping the same addres while growing the list */
@@ -23,16 +25,22 @@ can_be_da(thread_t, da_thread_t);
 can_be_da(void*, da_retval_t);
 
 struct thread_ctrl_s {
-    volatile bool done;
-    u8 pad[7];
+    volatile u32 done;
+    u8 pad[4];
     volatile void* ret_val;
 };
 
 struct thread_s {
     ssize_t tid;
-    u8* stack;
     thread_ctrl_t* ctrl;
 };
+
+struct mutex_s {
+    volatile i32 state;
+};
+
+error_t mutex_lock(mutex_t* mutex);
+error_t mutex_unlock(mutex_t* mutex);
 
 void thread_yield(void);
 error_t thread_create_std(std_t* std, thread_t* thread, void*(*func)(std_t*, void*), void* _Nullable arg);

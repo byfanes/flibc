@@ -3,12 +3,13 @@
 .global thread_clone_linux
 
 thread_clone_linux:
+        mov rax, rsi
         sub rsi, 32
 
         mov [rsi +  0], rdx
         mov [rsi +  8], rcx
         mov [rsi + 16], r8
-        mov [rsi + 24], r9
+        mov [rsi + 24], rax
 
         mov rax, 56
         xor rdx, rdx
@@ -31,22 +32,12 @@ thread_clone_linux:
         mov rbx, [rsp + 24]
 
         cmp rdi, 0
-        je .L_null_std
-        call rax
-
-        mov rdi, rbx
-        mov rsi, rax
-        call __thread_end
-
-        mov rax, 60
-        xor rdi, rdi
-        syscall
-
-.L_null_std:
+        jne .L_not_null_std
         mov rdi, rsi
         xor rsi, rsi
+.L_not_null_std:
         call rax
-        
+
         mov rdi, rbx
         mov rsi, rax
         call __thread_end

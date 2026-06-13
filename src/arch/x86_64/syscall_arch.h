@@ -54,6 +54,7 @@ extern ssize_t syscall_6_linux
 #define syscall_mkdir 83
 #define syscall_rmdir 84
 #define syscall_unlink 87
+#define syscall_futex 202
 #define syscall_getdents64 217
 #define syscall_gettime 228
 #define syscall_openat 257
@@ -114,6 +115,9 @@ extern ssize_t syscall_6_linux
 #define S_ISLNK(mode)  (((mode) & S_IFMT) == S_IFLNK)
 #define S_ISSOCK(mode) (((mode) & S_IFMT) == S_IFSOCK)
 
+#define FUTEX_WAIT 0
+#define FUTEX_WAKE 1
+
 #define CLONE_VM        0x00000100
 #define CLONE_FS        0x00000200
 #define CLONE_FILES     0x00000400
@@ -128,6 +132,7 @@ extern ssize_t syscall_6_linux
 #define F_OK 0
 
 #define EINTR 4
+#define EAGAIN 11
 
 #define CLOCK_MONOTONIC 1
 

@@ -1,6 +1,6 @@
 #include "threads_private.h"
 
-/* This is a interl function so we dont check inputs */
+/* This is a internal function so we dont check inputs */
 error_t __thread_new
 (u8* stack_ptr, thread_t* thread, void*(*func)(std_t*, void*), std_t* std, void* arg)
 {
