@@ -11,5 +11,6 @@ error_t __socket_write
     
     ret = syscall_3_linux(syscall_write, sock->fd, sl->items, (ssize_t)(sl->count * el_size));
     if(ret < 0) { return io_error; }
+    if(ret == 0) { return connection_closed; }
     return success;
 }

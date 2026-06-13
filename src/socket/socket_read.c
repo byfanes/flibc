@@ -11,6 +11,7 @@ error_t __socket_read
     
     ret = syscall_3_linux(syscall_read, sock->fd, sl->items, (ssize_t)(sl->count * el_size));
     if(ret < 0) { return io_error; }
-    if(!read_count) { *read_count = (usize_t)ret; }
+    if(read_count) { *read_count = (usize_t)ret; }
+    if(!ret) { return connection_closed; }
     return success;
 }

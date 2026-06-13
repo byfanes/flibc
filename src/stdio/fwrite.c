@@ -11,7 +11,7 @@ error_t __fwrite
 
     /* Validate user inputs */
     if(!file || !raw_sl) { return null_pointer; }
-    if(!el_size) { return el_size; }
+    if(!el_size) { return elsize_zero; }
     set_slice(&sl, ((sl_u8_t*)raw_sl)->items, ((sl_u8_t*)raw_sl)->count * el_size);
     if(!sl.items || !sl.count) { return success; }
     set_slice(&sl, sl.items, sl.count * el_size);

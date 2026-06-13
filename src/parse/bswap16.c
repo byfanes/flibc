@@ -3,5 +3,5 @@
 u16 bswap16
 (u16 x)
 {
-    return x<<8 | x>>8;
+    return (u16)(x<<8 | x>>8);
 }

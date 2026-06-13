@@ -39,9 +39,22 @@ enum error_e {
     io_error,
     io_partial,
     io_invalid_op,
+    thread_failed,
+    connection_closed,
 
     /* Fatal Errors */
-    ssp_fail
+    ssp_fail,
+
+    /* This is for users to inherit the error_t
+     * for example:
+     * enum user_error_e {
+     *     success = 0
+     *     __start_of_user_error = __flibc_error_count
+     *     my_error,
+     *     my_other_error,
+     * }
+     */
+    __flibc_error_count
 };
 
 typedef enum error_e error_t;
