@@ -7,8 +7,8 @@
 #include "../helpers/helpers.h"
 
 struct file_s {
-    ssize_t fd;
-    usize_t count;
+    ssz fd;
+    usz count;
     file_type_t type;
     mutex_t mutex;
     u8 buf[FLIBC_FILE_BUFFER_SIZE];

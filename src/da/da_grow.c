@@ -1,7 +1,7 @@
 #include "da_private.h"
 
 error_t __da_grow
-(void* da, elsize_t el_size, count_t amount)
+(void* da, usz el_size, usz amount)
 {
     /* Init variables */
     def_da_t* def = da;

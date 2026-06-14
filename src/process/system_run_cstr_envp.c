@@ -19,7 +19,7 @@ error_t system_run_cstr_envp
     argv[argc++] = 0;
 
     /* Call execve syscall */
-    syscall_3_linux(syscall_execve, (ssize_t)"/usr/bin/sh", (ssize_t)argv, (ssize_t)envp);
+    syscall_3_linux(syscall_execve, (ssz)"/usr/bin/sh", (ssz)argv, (ssz)envp);
 
     /* Execve syscall wont return in success other wise its failed */
     return process_error;

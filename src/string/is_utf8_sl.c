@@ -1,10 +1,10 @@
 #include "string_private.h"
 
 bool __is_utf8_sl
-(void* sl, usize_t el_size)
+(void* sl, usz el_size)
 {
     /* Init variables */
-    usize_t count = 0;
+    usz count = 0;
     sl_u8_t* ssl = sl;
 
     /* Validate user input */

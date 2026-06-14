@@ -2,7 +2,7 @@
 #include "error.h"
 
 error_t __memswap
-(void* lhs, void* rhs, usize_t el_size)
+(void* lhs, void* rhs, usz el_size)
 {
     /* Init variables */
     sl_u8_t *lsl = lhs, *rsl = rhs;

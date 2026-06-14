@@ -24,7 +24,7 @@ static void set_header
     { header->safety[i] = 'A' + (u8)i; }
 
     /* Last null byte */
-    *(usize_t*)(uintptr_t)((u8*)ptr + sizeof(heap_header_t) + n) = 0;
+    *(usz*)(uintptr_t)((u8*)ptr + sizeof(heap_header_t) + n) = 0;
 
     /* Set users pointer too */
     *set = header + 1;
@@ -42,7 +42,7 @@ static error_t alloc_big_chunk
         if(!alloc->headers[header_idx]) {
             /* Call syscall for new chunk memory */
             ptr = (u8*)syscall_6_linux(syscall_mmap, 0, chunk_count * CHUNK_SIZE,
-            (PROT_READ|PROT_WRITE), (MAP_PRIVATE|MAP_ANONYMOUS), (ssize_t)(-1), 0);
+            (PROT_READ|PROT_WRITE), (MAP_PRIVATE|MAP_ANONYMOUS), (ssz)(-1), 0);
 
             /* Error check */
             if(!ptr || ptr == MMAP_FAILED) { return memory_error; }
@@ -114,17 +114,17 @@ static error_t alloc_small_chunk
 }
 
 error_t allocator_alloc_pointer
-(allocator_t* alloc, usize_t n, void* set, const char* file_name, u32 line)
+(allocator_t* alloc, usz n, void* set, const char* file_name, u32 line)
 {
     /* Init variables */
-    usize_t needed = 0, chunk_count = 0;
+    usz needed = 0, chunk_count = 0;
     error_t res = success;
     
     /* Check input */
     if(!alloc || !set) { return null_pointer; }
 
-    /* usize_t is for end null bytes and align it */
-    needed = (n + sizeof(heap_header_t) + sizeof(usize_t));
+    /* usz is for end null bytes and align it */
+    needed = (n + sizeof(heap_header_t) + sizeof(usz));
     needed = ALIGN_64(needed);
     chunk_count = needed / CHUNK_SIZE;
 

@@ -6,7 +6,7 @@ error_t allocator_deinit
     /* Init variables */
     error_t res = success;
     allocator_t *alloc = 0;
-    usize_t i = 0;
+    usz i = 0;
     bool bit = 0;
     heap_header_t *header = 0;
     /* sizeof buf might be a problem in the future but i dont think
@@ -14,7 +14,7 @@ error_t allocator_deinit
      */
     u8 buf[8192] = {0};
     sl_u8_t buf_sl = {0};
-    usize_t len = 0;
+    usz len = 0;
     u32 raw = 0;
 
     sl_u8_t msg = ccstr_to_u8("Memory Leak: %u bytes from %s:%d is not freed\n");
@@ -42,7 +42,7 @@ error_t allocator_deinit
 
             /* Write directly to standard error */
             /* Ignore its fail state because it is not deinit's main goal */
-            syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)buf_sl.items, (ssize_t)len);
+            syscall_3_linux(syscall_write, UNIX_STDERR, (ssz)buf_sl.items, (ssz)len);
             raw = ALIGN_64(header->wanted_alloc + ADDITIONAL_HEADER_SIZE);
             i += raw / CHUNK_SIZE - 1;
         }
@@ -55,7 +55,7 @@ error_t allocator_deinit
 
             /* Write directly to standard error */
             /* Ignore its fail state because it is not deinit's main goal */
-            syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)buf_sl.items, (ssize_t)len);
+            syscall_3_linux(syscall_write, UNIX_STDERR, (ssz)buf_sl.items, (ssz)len);
         }
     }
 
@@ -69,7 +69,7 @@ error_t allocator_deinit
         if(!header) { continue; }
         raw = ALIGN_64(header->wanted_alloc + ADDITIONAL_HEADER_SIZE);
         /* If we cant free any memory just stop and return an error no future freeing */
-        if(0 != syscall_2_linux(syscall_munmap, (ssize_t)header, (ssize_t)raw))
+        if(0 != syscall_2_linux(syscall_munmap, (ssz)header, (ssz)raw))
         { return memory_error; }
 
         alloc->headers[i] = nullptr;
@@ -78,7 +78,7 @@ error_t allocator_deinit
     mutex_unlock(&alloc->meta.mutex);
 
     /* Give back the memory to os */
-    if(0 != syscall_2_linux(syscall_munmap, (ssize_t)alloc, RAW_ALLOCATION_SIZE))
+    if(0 != syscall_2_linux(syscall_munmap, (ssz)alloc, RAW_ALLOCATION_SIZE))
     { return memory_error; }
 
     *set = 0;

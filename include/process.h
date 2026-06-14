@@ -14,7 +14,7 @@ typedef struct proc_s proc_t;
 
 /* We might need to add new things here so making it a struct is better */
 struct proc_s {
-    ssize_t handle;
+    ssz handle;
 };
 
 can_be_da(proc_t, da_proc_t);

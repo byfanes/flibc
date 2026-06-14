@@ -83,8 +83,8 @@ _static_assert(sizeof(void*) == 8, pointer_size_must_be_8bytes);
 #else
 _static_assert(sizeof(void*) == 4, pointer_size_must_be_4bytes);
 #endif
-_static_assert(sizeof(usize_t) == sizeof(void*), usize_must_match_pointer_size);
-_static_assert(sizeof(ssize_t) == sizeof(void*), ssize_must_match_pointer_size);
+_static_assert(sizeof(usz) == sizeof(void*), usize_must_match_pointer_size);
+_static_assert(sizeof(ssz) == sizeof(void*), ssize_must_match_pointer_size);
 
 _static_assert(4096 == PAGE_SIZE, a_page_must_4kb);
 _static_assert(sizeof(allocator_t) == PAGE_SIZE, allocator_must_fit_to_a_page);
@@ -146,24 +146,24 @@ void __flibc_struct_member_check_function(void)
     _struct_array_baked(linux_dirent64_t, d_name, char, 1, 19);
 
     /* fs_stat_t's members should never change its baked so */
-    _struct_member_baked(fs_stat_t, st_dev, usize_t, 0);
-    _struct_member_baked(fs_stat_t, st_ino, usize_t, 1*sizeof(usize_t));
-    _struct_member_baked(fs_stat_t, st_nlink, usize_t, 2*sizeof(usize_t));
-    _struct_member_baked(fs_stat_t, st_mode, u32, 3*sizeof(usize_t));
-    _struct_member_baked(fs_stat_t, st_uid, u32, 3*sizeof(usize_t) + 1*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_gid, u32, 3*sizeof(usize_t) + 2*sizeof(u32));
-    _struct_member_baked(fs_stat_t, __pad0, u32, 3*sizeof(usize_t) + 3*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_rdev, usize_t, 3*sizeof(usize_t) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_size, ssize_t, 4*sizeof(usize_t) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_blksize, ssize_t, 5*sizeof(usize_t) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_blocks, ssize_t, 6*sizeof(usize_t) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_atime, usize_t, 7*sizeof(usize_t) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_atime_nsec, usize_t, 8*sizeof(usize_t) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_mtime, usize_t, 9*sizeof(usize_t) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_mtime_nsec, usize_t, 10*sizeof(usize_t) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_ctime, usize_t, 11*sizeof(usize_t) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_ctime_nsec, usize_t, 12*sizeof(usize_t) + 4*sizeof(u32));
-    _struct_array_baked(fs_stat_t, __unused, ssize_t, 3, 13*sizeof(usize_t) + 4*sizeof(u32));
+    _struct_member_baked(fs_stat_t, st_dev, usz, 0);
+    _struct_member_baked(fs_stat_t, st_ino, usz, 1*sizeof(usz));
+    _struct_member_baked(fs_stat_t, st_nlink, usz, 2*sizeof(usz));
+    _struct_member_baked(fs_stat_t, st_mode, u32, 3*sizeof(usz));
+    _struct_member_baked(fs_stat_t, st_uid, u32, 3*sizeof(usz) + 1*sizeof(u32));
+    _struct_member_baked(fs_stat_t, st_gid, u32, 3*sizeof(usz) + 2*sizeof(u32));
+    _struct_member_baked(fs_stat_t, __pad0, u32, 3*sizeof(usz) + 3*sizeof(u32));
+    _struct_member_baked(fs_stat_t, st_rdev, usz, 3*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(fs_stat_t, st_size, ssz, 4*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(fs_stat_t, st_blksize, ssz, 5*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(fs_stat_t, st_blocks, ssz, 6*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(fs_stat_t, st_atime, usz, 7*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(fs_stat_t, st_atime_nsec, usz, 8*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(fs_stat_t, st_mtime, usz, 9*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(fs_stat_t, st_mtime_nsec, usz, 10*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(fs_stat_t, st_ctime, usz, 11*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(fs_stat_t, st_ctime_nsec, usz, 12*sizeof(usz) + 4*sizeof(u32));
+    _struct_array_baked(fs_stat_t, __unused, ssz, 3, 13*sizeof(usz) + 4*sizeof(u32));
 
     /* thread_ctrl_t used in assembly so we need to check them too */
     _struct_member_baked(thread_ctrl_t, done, volatile u64, 0);

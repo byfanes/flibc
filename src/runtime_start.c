@@ -14,18 +14,18 @@ static void early_panic
 (const char* msg)
 {
     /* Ignore its failure because we will close the program after it */
-    syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)msg, (ssize_t)strlen(msg));
+    syscall_3_linux(syscall_write, UNIX_STDERR, (ssz)msg, (ssz)strlen(msg));
     exit(255);
 }
 
 /* This function will be called from assembly */
-void runtime_start(usize_t argc, char** argv);
+void runtime_start(usz argc, char** argv);
 void runtime_start
-(usize_t argc, char** argv)
+(usz argc, char** argv)
 {
     /* Init variables */
     error_t ret = 0;
-    usize_t i = 0;
+    usz i = 0;
     sl_u8_t args[MAX_ARGS_COUNT] = {0}, *args_ptr = 0;
     std_t std = {0};
     char **envp = 0, *env_cstr = 0;

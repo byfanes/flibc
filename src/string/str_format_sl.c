@@ -6,7 +6,7 @@ error_t str_formatf_sl
     /* Init variables */
     va_list ap;
     error_t res = success;
-    usize_t wrote_count = 0;
+    usz wrote_count = 0;
     def_da_t *def = (void*)base;
     sl_u8_t zero_sl = {0}, base_sl = {0};
 

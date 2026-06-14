@@ -21,7 +21,7 @@
 #define CHUNK_MAX (ALLOCATION_SIZE / CHUNK_SIZE)
 
 #define RAW_ALLOCATION_THRESHOLD (ALLOCATION_SIZE / 16)
-#define ADDITIONAL_HEADER_SIZE (sizeof(heap_header_t) + sizeof(usize_t))
+#define ADDITIONAL_HEADER_SIZE (sizeof(heap_header_t) + sizeof(usz))
 
 /* We give it a big number so if we use it without
  * any checking we can segfault if it happens
@@ -63,12 +63,12 @@ struct heap_header_s {
 
     u8 safety[sizeof(void*) + 6];
     /* This should be last one */
-    usize_t first_null;
+    usz first_null;
 };
 
 /* Some typedefs to keep clean the struct definition */
 typedef error_t (*f_allocator_alloc_pointer)
-     (allocator_t* alloc, usize_t n, void* set, const char* file_name, u32 line);
+     (allocator_t* alloc, usz n, void* set, const char* file_name, u32 line);
 
 typedef error_t (*f_allocator_free_pointer)(allocator_t* alloc, void* set);
 typedef error_t (*f_allocator_init)(allocator_t** set);
@@ -144,14 +144,14 @@ struct allocator_s {
 typedef struct slice_dummy_s slice_dummy_t;
 struct slice_dummy_s {
     u8 *items;
-    usize_t count;
+    usz count;
 };
 
 /* We can make some function pointers in allocator_t via that
  * in fuctions like malloc/calloc etc we can use custom allocators too.
  */
 error_t allocator_alloc_pointer
-(allocator_t* alloc, usize_t n, void* set, const char* file_name, u32 line);
+(allocator_t* alloc, usz n, void* set, const char* file_name, u32 line);
 error_t allocator_free_pointer(allocator_t* alloc, void* set);
 
 void allocator_overflow(allocator_t* alloc, heap_header_t* header);

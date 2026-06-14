@@ -1,11 +1,11 @@
 #include "da_private.h"
 
 error_t __da_remove
-(void* da, elsize_t el_size, idx_t idx)
+(void* da, usz el_size, usz idx)
 {
     /* Init variables */
     def_da_t *def = da;
-    usize_t count  = 0;
+    usz count  = 0;
     sl_u8_t src = {0}, dst = {0};
 
     /* Validate user inputs - el_size can not be 0 via sizeof but user implicitly call with it */

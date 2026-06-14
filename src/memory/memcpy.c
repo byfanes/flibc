@@ -2,7 +2,7 @@
 #include "error.h"
 
 error_t __memcpy
-(void* dst, void* src, usize_t el_size)
+(void* dst, void* src, usz el_size)
 {
     /* Init variables */
     sl_u8_t *dsl = dst, *ssl = src;

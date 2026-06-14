@@ -1,11 +1,11 @@
 #include "da_private.h"
 
 error_t __da_pop
-(void* da, elsize_t el_size, void* out, idx_t idx)
+(void* da, usz el_size, void* out, usz idx)
 {
     /* Init variables */
     def_da_t *def = da;
-    usize_t i = 0;
+    usz i = 0;
     u8 *p_out = out;
 
     /* Validate user inputs - el_size can not be 0 via sizeof but user implicitly call with it */

@@ -6,7 +6,7 @@ error_t file_copy
 (allocator_t* alloc, path_t* from, path_t* to)
 {
     /* Init variables */
-    usize_t size = 0;
+    usz size = 0;
     file_t* file = 0;
     sl_u8_t buf = {0};
     void* ptr = 0;

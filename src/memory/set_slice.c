@@ -1,7 +1,7 @@
 #include "memory_private.h"
 
 error_t set_slice
-(const void* sl, const void* base, usize_t count)
+(const void* sl, const void* base, usz count)
 {
     /* slice_u8 can be assign because its defined in memory.h
      * we will convert this type to perform out actions

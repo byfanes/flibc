@@ -3,7 +3,7 @@
 error_t socket_close
 (socket_t* sock)
 {
-    usize_t i = 0;
+    usz i = 0;
 
     if(!sock) { return null_pointer; }
     

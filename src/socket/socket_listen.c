@@ -3,7 +3,7 @@
 error_t socket_listen
 (socket_t* sock)
 {
-    ssize_t ret = 0;
+    ssz ret = 0;
 
     if(!sock) { return null_pointer; }
     

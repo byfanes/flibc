@@ -11,7 +11,7 @@ error_t time_sleep
     time.nsec = ms % 1000;
 
     /* Call and check syscall */
-    if(0 != syscall_2_linux(syscall_nanosleep, (ssize_t)&time, (ssize_t)nullptr))
+    if(0 != syscall_2_linux(syscall_nanosleep, (ssz)&time, (ssz)nullptr))
     { return time_error; }
 
     return success;

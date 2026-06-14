@@ -8,7 +8,7 @@ extern "C" {
 #include "stdtypes.h"
 #include "features.h"
 
-_Noreturn void exit(ssize_t code);
+_Noreturn void exit(ssz code);
 _Noreturn void abort(void);
 
 #ifdef __cplusplus

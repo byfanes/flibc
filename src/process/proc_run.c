@@ -4,7 +4,7 @@ error_t proc_run
 (cmd_t cmd, env_t env)
 {
     /* Init variables */
-    ssize_t pid = 0;
+    ssz pid = 0;
 
     /* Check input */
     if(!cmd.count || !cmd.items || !env.list.items)

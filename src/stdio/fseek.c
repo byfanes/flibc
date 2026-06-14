@@ -1,11 +1,11 @@
 #include "stdio_private.h"
 
 error_t fseek
-(file_t* file, usize_t off, seek_type_t type, usize_t* _Nullable out)
+(file_t* file, usz off, seek_type_t type, usz* _Nullable out)
 {
     /* Init variables */
     int32_t whence = 0;
-    ssize_t ret = 0;
+    ssz ret = 0;
 
     /* Validate user inputs */
     if(!file) { return null_pointer; }
@@ -21,12 +21,12 @@ error_t fseek
 
     mutex_lock(&file->mutex);
     /* Call lseek syscall */
-    ret = syscall_3_linux(syscall_lseek, (ssize_t)file->fd, (ssize_t)off, whence);
+    ret = syscall_3_linux(syscall_lseek, (ssz)file->fd, (ssz)off, whence);
     mutex_unlock(&file->mutex);
 
     /* Check return of the syscall */
     if(ret == -1) { return io_error; }
-    if(out) { *out = (usize_t)ret; }
+    if(out) { *out = (usz)ret; }
 
     return success;
 }

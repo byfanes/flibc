@@ -4,9 +4,7 @@ error_t path_basename
 (path_t* base, path_t* out)
 {
     /* Init variables */
-    ssize_t i = 0;
-    ssize_t start = 0;
-    ssize_t off = 0;
+    ssz i = 0, start = 0, off = 0;
     bool is_set = false;
     sl_u8_t sl = {0};
 
@@ -18,10 +16,10 @@ error_t path_basename
     da_clear(out);
 
     /* Set start for cases like 'src/name' which does not have '.' */
-    start = (ssize_t)base->count;
+    start = (ssz)base->count;
 
     /* Note: This only works for linux because of the paths */
-    i = (ssize_t)base->count - 1;
+    i = (ssz)base->count - 1;
 
     /* If its a directory skip the '/' and find directory name */
     if(base->items[i] == '/') { i--; off = 1;}
@@ -37,7 +35,7 @@ error_t path_basename
     }
 
     /* Set the find part */
-    set_slice(&sl, &base->items[i], (usize_t)(start - i - off));
+    set_slice(&sl, &base->items[i], (usz)(start - i - off));
     strcat_sl(out, &sl);
 
     return success;

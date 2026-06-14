@@ -1,7 +1,7 @@
 #include "da_private.h"
 
 error_t __da_pop_last
-(void* da, usize_t el_size, void* out)
+(void* da, usz el_size, void* out)
 {
     /* Init variables */
     def_da_t *def = da;

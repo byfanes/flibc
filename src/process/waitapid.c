@@ -1,15 +1,15 @@
 #include "process_private.h"
 
 error_t waitapid
-(ssize_t pid)
+(ssz pid)
 {
     /* Init variables */
-    ssize_t ret = 0;
+    ssz ret = 0;
     int status = 0;
 
     for(;;) {
         /* Call wait for checking if the child is finished */
-        ret = syscall_4_linux(syscall_wait4, pid, (ssize_t)&status, 0, 0);
+        ret = syscall_4_linux(syscall_wait4, pid, (ssz)&status, 0, 0);
 
         /* Process has been interupted try again */
         if(ret == -EINTR) { continue; }

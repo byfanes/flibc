@@ -23,7 +23,7 @@ extern "C" {
 #define can_be_slice(type, name) \
     typedef struct {             \
         type * const items;      \
-        const usize_t count;     \
+        const usz count;         \
     } name
 
 can_be_slice(u8, sl_u8_t);
@@ -34,8 +34,8 @@ can_be_slice(i8, sl_i8_t);
 can_be_slice(i16, sl_i16_t);
 can_be_slice(i32, sl_i32_t);
 can_be_slice(i64, sl_i64_t);
-can_be_slice(ssize_t, sl_ssize_t);
-can_be_slice(usize_t, sl_usize_t);
+can_be_slice(ssz, sl_ssz_t);
+can_be_slice(usz, sl_usz_t);
 
 /* This type is same as sl_u8_t only difference
  * is items pointer is a null-terminated C string
@@ -68,37 +68,37 @@ error_t allocator_deinit(allocator_t** set);
 error_t allocator_get_from_ptr(void* ptr, allocator_t** set);
 
 sl_u8_t cstr_to_u8sl(const char* cstr);
-error_t set_slice(const void* sl, const void* items, usize_t count);
+error_t set_slice(const void* sl, const void* items, usz count);
 error_t set_slice_cstr(const void* sl, const char* str);
 
-error_t __malloc(allocator_t* alloc, usize_t n, void* set, TRACE_ARGS);
+error_t __malloc(allocator_t* alloc, usz n, void* set, TRACE_ARGS);
 #define malloc(alloc, n, set) __malloc(alloc, n, set, LOC_ARGS)
 
-error_t __calloc(allocator_t* alloc, usize_t n, void* set, TRACE_ARGS);
+error_t __calloc(allocator_t* alloc, usz n, void* set, TRACE_ARGS);
 #define calloc(alloc, n, set) __calloc(alloc, n, set, LOC_ARGS)
 
 /* TODO: realloc can optimized */
-error_t __realloc(allocator_t* alloc, usize_t n, void* set, TRACE_ARGS);
+error_t __realloc(allocator_t* alloc, usz n, void* set, TRACE_ARGS);
 #define realloc(alloc, n, set) __realloc(alloc, n, set, LOC_ARGS)
 
 error_t free(void* set);
 
-error_t __memset(void* dst, usize_t el_size, u8 c);
+error_t __memset(void* dst, usz el_size, u8 c);
 #define memset(dst, c) __memset(ptr_meta((dst)), (c))
 
-error_t __memcpy(void* dst, void* src, usize_t el_size);
+error_t __memcpy(void* dst, void* src, usz el_size);
 #define memcpy(dst, src) __memcpy(two_ptr_meta_check((dst), (src)))
 
-error_t __memswap(void* lhs, void* rhs, usize_t el_size);
+error_t __memswap(void* lhs, void* rhs, usz el_size);
 #define memswap(lhs, rhs) __memswap(two_ptr_meta_check((lhs), (rhs)))
 
-error_t __memmove(void* dst, void* src, usize_t el_size);
+error_t __memmove(void* dst, void* src, usz el_size);
 #define memmove(dst, src) __memmove(two_ptr_meta_check((dst), (src)))
 
-error_t __memcmp(void* lhs, void* rhs, usize_t el_size, bool* out);
+error_t __memcmp(void* lhs, void* rhs, usz el_size, bool* out);
 #define memcmp(lhs, rhs, res) __memcmp(two_ptr_meta_check((lhs), (rhs)), (res))
 
-error_t __memcmp_min(void* lhs, void* rhs, usize_t el_size, bool* out);
+error_t __memcmp_min(void* lhs, void* rhs, usz el_size, bool* out);
 #define memcmp_min(lhs, rhs, res)  __memcmp_min(two_ptr_meta_check((lhs), (rhs)), (res))
 
 #ifdef __cplusplus

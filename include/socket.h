@@ -108,7 +108,7 @@ struct sock_addr_s {
 };
 
 struct socket_s {
-    ssize_t fd;
+    ssz fd;
     sock_addr_t addr;
     /* For 16 byte alignment */
     u32 __padding;
@@ -124,9 +124,9 @@ error_t socket_connect(socket_t* sock);
 error_t socket_listen(socket_t* sock);
 error_t socket_accept(socket_t* sock, socket_t* out);
 error_t socket_close(socket_t* sock);
-error_t __socket_read(socket_t* sock, void* buf, usize_t el_size, usize_t* _Nullable read_count);
+error_t __socket_read(socket_t* sock, void* buf, usz el_size, usz* _Nullable read_count);
 #define socket_read(sock, buf, read) __socket_read(sock, ptr_meta(buf), read)
-error_t __socket_write(socket_t* sock, void* buf, usize_t el_size);
+error_t __socket_write(socket_t* sock, void* buf, usz el_size);
 #define socket_write(sock, buf) __socket_write(sock, ptr_meta(buf))
 
 u64 htonll(u64 x);

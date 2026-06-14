@@ -4,7 +4,7 @@ error_t vfprintf_sl
 (file_t* file, sl_u8_t fmt, va_list ap)
 {
     /* Init variables */
-    usize_t count = 0;
+    usz count = 0;
     error_t res = success;
     u8 buf[FLIBC_STACK_THRESHOLD];
     sl_u8_t buf_sl = {0};

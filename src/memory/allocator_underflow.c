@@ -3,7 +3,7 @@
 void allocator_underflow
 (allocator_t* alloc, heap_header_t* header)
 {
-    usize_t len = 0;
+    usz len = 0;
     u8 buf[8192] = {0};
     sl_u8_t buf_sl = {0};
     sl_u8_t msg =
@@ -13,6 +13,6 @@ void allocator_underflow
     (void)alloc;
     
     formatf(buf_sl, msg, &len, header->file_name, header->line, header->wanted_alloc);
-    syscall_3_linux(syscall_write, UNIX_STDERR, (ssize_t)buf_sl.items, (ssize_t)len);
+    syscall_3_linux(syscall_write, UNIX_STDERR, (ssz)buf_sl.items, (ssz)len);
 
 }

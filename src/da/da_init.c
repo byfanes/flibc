@@ -1,7 +1,7 @@
 #include "da_private.h"
 
 error_t __da_init
-(allocator_t* alloc, void* da, elsize_t el_size, count_t amount)
+(allocator_t* alloc, void* da, usz el_size, usz amount)
 {
     /* Init variables */
     error_t res = success;

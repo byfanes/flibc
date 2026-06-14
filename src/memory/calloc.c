@@ -3,7 +3,7 @@
 #include "syscall.h"
 
 error_t __calloc
-(allocator_t* alloc, usize_t size, void* set, TRACE_ARGS)
+(allocator_t* alloc, usz size, void* set, TRACE_ARGS)
 {
     /* Init variables */
     error_t res = success;

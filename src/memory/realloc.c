@@ -2,13 +2,13 @@
 #include "error.h"
 
 error_t __realloc
-(allocator_t* alloc, usize_t n, void* set, TRACE_ARGS)
+(allocator_t* alloc, usz n, void* set, TRACE_ARGS)
 {
     /* Init variables */
     error_t res = success;
     heap_header_t *he = 0;
     u8 *ba = 0, *n_ba = 0;
-    usize_t min = 0, i = 0, prev = 0;
+    usz min = 0, i = 0, prev = 0;
 
     /* Validate user inputs */
     if(!set) { return null_pointer; }

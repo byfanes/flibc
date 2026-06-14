@@ -1,7 +1,7 @@
 #include "stdio_private.h"
 
 error_t sprintf
-(sl_u8_t buf, usize_t* _Nullable wrote_count, const char* fmt, ...)
+(sl_u8_t buf, usz* _Nullable wrote_count, const char* fmt, ...)
 {
     /* Init variables */
     va_list ap;

@@ -1,10 +1,10 @@
 #include "string_private.h"
 
 error_t __sl_utf8len
-(void* raw_sl, usize_t el_size, usize_t* out)
+(void* raw_sl, usz el_size, usz* out)
 {
     /* Init variables */
-    usize_t i = 0, count = 0;
+    usz i = 0, count = 0;
     u8 c = 0;
     u32 codepoint = 0;
     sl_u8_t sl = {0};

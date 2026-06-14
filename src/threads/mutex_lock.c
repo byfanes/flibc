@@ -10,7 +10,7 @@ error_t mutex_lock(mutex_t* mutex)
 
     while(atomic_xchg_i32(&mutex->state, 2) != 0) {
         
-        syscall_6_linux(syscall_futex, (ssize_t)&mutex->state, FUTEX_WAIT, 2, 0, 0, 0);
+        syscall_6_linux(syscall_futex, (ssz)&mutex->state, FUTEX_WAIT, 2, 0, 0, 0);
     }
 
     return success;

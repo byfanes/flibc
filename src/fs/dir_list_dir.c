@@ -7,7 +7,7 @@ error_t dir_list_dir
  void* arg)
 {
     /* Init variables */
-    ssize_t fd = 0, nread = 0, bpos = 0;
+    ssz fd = 0, nread = 0, bpos = 0;
     error_t res = success;
     u8 buf[FLIBC_STACK_THRESHOLD] = {0};
     char *name = 0;
@@ -20,7 +20,7 @@ error_t dir_list_dir
 
     /* Open directory via syscall */
     fd = syscall_4_linux(syscall_openat,
-        AT_FDCWD, (ssize_t)path->items, O_RDONLY | O_DIRECTORY, 0);
+        AT_FDCWD, (ssz)path->items, O_RDONLY | O_DIRECTORY, 0);
 
     /* Check return of the syscall */
     if(fd < 0) { return fs_error; }
@@ -29,7 +29,7 @@ error_t dir_list_dir
     for(;;) {
 
         /* Get information from the syscall */
-        nread = syscall_3_linux(syscall_getdents64, fd, (ssize_t)buf, sizeof(buf));
+        nread = syscall_3_linux(syscall_getdents64, fd, (ssz)buf, sizeof(buf));
         /* Check for error and end */
         if(nread == 0) { res = success; goto end; }
         if(nread < 0) { res = fs_error; goto end; }

@@ -1,10 +1,10 @@
 #include "stdio_private.h"
 
 error_t vsprintf_sl
-(sl_u8_t buf, usize_t* _Nullable wrote_count, sl_u8_t fmt, va_list ap)
+(sl_u8_t buf, usz* _Nullable wrote_count, sl_u8_t fmt, va_list ap)
 {
     /* Init variables */
-    usize_t count = 0;
+    usz count = 0;
     error_t res = success;
     sl_u8_t zero_sl = {0};
 

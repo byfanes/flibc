@@ -1,7 +1,7 @@
 #include "string_private.h"
 
 error_t str_utf8len
-(str_t* base, usize_t* out)
+(str_t* base, usz* out)
 {
     /* Init variables */
     sl_u8_t sl = {0};

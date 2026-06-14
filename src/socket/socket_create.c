@@ -4,7 +4,7 @@ error_t socket_create
 (socket_t* out, sock_family_t family, sock_type_t type,
  sock_protocol_t protocol, const char* addr, u16 port)
 {
-    ssize_t ret = 0;
+    ssz ret = 0;
     error_t res = success; 
     sock_addr_in_t* in = 0;
     

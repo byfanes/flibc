@@ -1,7 +1,7 @@
 #include "string_private.h"
 
 error_t __str_copy_content
-(str_t* str, const void* ptr, usize_t amount)
+(str_t* str, const void* ptr, usz amount)
 {
     /* Init variables */
     sl_u8_t dst = {0}, src = {0};

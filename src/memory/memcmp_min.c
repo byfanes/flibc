@@ -2,11 +2,11 @@
 #include "error.h"
 
 error_t __memcmp_min
-(void* lhs, void* rhs, usize_t el_size, bool* out)
+(void* lhs, void* rhs, usz el_size, bool* out)
 {
     /* Init variables */
     sl_u8_t *lsl = lhs, *rsl = rhs;
-    usize_t count = 0, i = 0;
+    usz count = 0, i = 0;
 
     /* Validate user inputs */
     if(!lsl || !rsl || !out || !lsl->items || !rsl->items) { return null_pointer; }

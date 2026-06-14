@@ -4,7 +4,7 @@ error_t proc_spawn
 (cmd_t cmd, env_t env, da_proc_t* procs)
 {
     /* Init variables */
-    ssize_t pid = 0;
+    ssz pid = 0;
     proc_t proc = {0};
 
     /* Check input */

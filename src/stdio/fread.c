@@ -1,10 +1,10 @@
 #include "stdio_private.h"
 
 error_t __fread
-(file_t* file, void* buf, usize_t el_size, u32* _Nullable read_count)
+(file_t* file, void* buf, usz el_size, u32* _Nullable read_count)
 {
     /* Init variables */
-    ssize_t ret = 0;
+    ssz ret = 0;
     sl_u8_t sl = {0};
     error_t res = success;
 
@@ -19,12 +19,12 @@ error_t __fread
     mutex_lock(&file->mutex);
 
     /* Call read syscall */
-    ret = syscall_3_linux(syscall_read, file->fd, (ssize_t)sl.items, (ssize_t)sl.count);
+    ret = syscall_3_linux(syscall_read, file->fd, (ssz)sl.items, (ssz)sl.count);
 
     /* Check return of the syscall */
     if(ret < 0) { res = io_error; goto end; }
     if(read_count) { *read_count = (u32)ret; }
-    if(ret < (ssize_t)sl.count) { res = io_partial; goto end; }
+    if(ret < (ssz)sl.count) { res = io_partial; goto end; }
 
 end:
     mutex_unlock(&file->mutex);

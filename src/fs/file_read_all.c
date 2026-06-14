@@ -5,7 +5,7 @@ error_t file_read_all
 (allocator_t* alloc, path_t* path, da_u8_t* out)
 {
     /* Init variables */
-    usize_t size = 0;
+    usz size = 0;
     sl_u8_t buf = {0};
     error_t res = success, res2 = success;
     file_t *file = 0;

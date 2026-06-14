@@ -2,12 +2,12 @@
 #include "error.h"
 
 error_t __memmove
-(void* dst, void* src, usize_t el_size)
+(void* dst, void* src, usz el_size)
 {
     /* Init variables */
     sl_u8_t *dsl = dst, *ssl = src;
     u8 *d = 0, *s = 0;
-    usize_t i = 0;
+    usz i = 0;
 
     /* Validate user inputs */
     if(!dsl || !ssl || !dsl->items || !ssl->items) { return null_pointer; }
@@ -29,7 +29,7 @@ error_t __memmove
     } else {
         /* Destination is after Source. Copy backwards (right-to-left).
          * We do ssl->count * el_size down to 1 to avoid underflowing
-         * the unsigned usize_t `i` past 0.
+         * the unsigned usz `i` past 0.
          */
         for (i = ssl->count * el_size; i > 0; --i) {
             d[i - 1] = s[i - 1];

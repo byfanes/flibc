@@ -31,7 +31,7 @@ struct thread_ctrl_s {
 };
 
 struct thread_s {
-    ssize_t tid;
+    ssz tid;
     thread_ctrl_t* ctrl;
 };
 

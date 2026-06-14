@@ -4,7 +4,7 @@ error_t path_change_ext
 (path_t* path, sl_u8_t* ext)
 {
     /* Init variables */
-    ssize_t i = 0;
+    ssz i = 0;
     def_da_t *def = (void*)path;
     bool has_dot = false;
     bool has_ext_dot = false;
@@ -19,11 +19,11 @@ error_t path_change_ext
 
     /* Iterate over the buffer */
     /* Note: This only works for linux because of the paths */
-    for(i = (ssize_t)path->count - 1; i >= 0; --i) {
+    for(i = (ssz)path->count - 1; i >= 0; --i) {
         /* Found the end point */
         /* Set count to indicate right of the dot */
         if(path->items[i] == '.') {
-            def->count = (usize_t)(i + 1);
+            def->count = (usz)(i + 1);
             has_dot = true;
             break;
         }

@@ -4,8 +4,8 @@ error_t fflush
 (file_t* _Nullable file)
 {
     /* Init variables */
-    ssize_t ret = 0;
-    usize_t count = 0;
+    ssz ret = 0;
+    usz count = 0;
     error_t res = success;
 
     /* Validate user inputs */
@@ -19,11 +19,11 @@ error_t fflush
     file->count = 0;
 
     /* Call write syscall */
-    ret = syscall_3_linux(syscall_write, (ssize_t)file->fd, (ssize_t)file->buf, (ssize_t)count);
+    ret = syscall_3_linux(syscall_write, (ssz)file->fd, (ssz)file->buf, (ssz)count);
 
     /* Check return of the syscall */
     if(ret < 0) { res = io_error; goto end; }
-    if(ret != (ssize_t)count) { res = io_partial; goto end; }
+    if(ret != (ssz)count) { res = io_partial; goto end; }
 
 end:
     mutex_unlock(&file->mutex);

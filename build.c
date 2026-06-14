@@ -58,7 +58,7 @@ error_t main
     packed_t pack = {0};
     da_proc_t procs = {0};
     da_path_t objs = {0};
-    usize_t count = 0;
+    usz count = 0;
 
     /* Set basics */
     pack.general = &general;
@@ -164,7 +164,7 @@ void callback
 (sl_cstr_t* path, sl_cstr_t* name, bool is_dir, void* arg)
 {
     /* Init variables */
-    usize_t count = 0;
+    usz count = 0;
     bool eq = false;
     packed_t *pack = arg, new = *pack;
     path_t* tmp = &pack->full;

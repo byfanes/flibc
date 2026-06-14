@@ -70,7 +70,7 @@ INTERNAL void octal_format
 }
 
 error_t formatf
-(sl_u8_t buf, sl_u8_t fmt, usize_t* out_len, ...)
+(sl_u8_t buf, sl_u8_t fmt, usz* out_len, ...)
 {
     /* Init variables */
     va_list ap;
@@ -85,7 +85,7 @@ error_t formatf
 }
 
 error_t __formatf
-(sl_u8_t buf, sl_u8_t fmt, usize_t* out_len, va_list va)
+(sl_u8_t buf, sl_u8_t fmt, usz* out_len, va_list va)
 {
     /* Init variables */
     u32 count = 0, i = 0, len = 0;

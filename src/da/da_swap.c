@@ -1,11 +1,11 @@
 #include "da_private.h"
 
 error_t __da_swap
-(void* da, elsize_t el_size, idx_t lhs, idx_t rhs)
+(void* da, usz el_size, usz lhs, usz rhs)
 {
     /* Init variables */
     def_da_t* def = da;
-    usize_t i = 0;
+    usz i = 0;
     u8 c = 0;
 
     /* Validate user inputs - el_size can not be 0 via sizeof but user implicitly call with it */

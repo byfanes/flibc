@@ -1,7 +1,7 @@
 #include "string_private.h"
 
 error_t __strcat_sl
-(str_t* base, void* raw_sl, usize_t el_size)
+(str_t* base, void* raw_sl, usz el_size)
 {
     /* Init variables */
     error_t res = success;

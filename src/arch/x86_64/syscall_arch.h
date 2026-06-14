@@ -11,20 +11,20 @@ extern "C" {
 #ifdef __linux__
 
 /* Linux syscalls functions written in assembly this is for linking */
-extern ssize_t syscall_0_linux
-(ssize_t num);
-extern ssize_t syscall_1_linux
-(ssize_t num, ssize_t arg1);
-extern ssize_t syscall_2_linux
-(ssize_t num, ssize_t arg1, ssize_t arg2);
-extern ssize_t syscall_3_linux
-(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3);
-extern ssize_t syscall_4_linux
-(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4);
-extern ssize_t syscall_5_linux
-(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4, ssize_t arg5);
-extern ssize_t syscall_6_linux
-(ssize_t num, ssize_t arg1, ssize_t arg2, ssize_t arg3, ssize_t arg4, ssize_t arg5, ssize_t arg6);
+extern ssz syscall_0_linux
+(ssz num);
+extern ssz syscall_1_linux
+(ssz num, ssz arg1);
+extern ssz syscall_2_linux
+(ssz num, ssz arg1, ssz arg2);
+extern ssz syscall_3_linux
+(ssz num, ssz arg1, ssz arg2, ssz arg3);
+extern ssz syscall_4_linux
+(ssz num, ssz arg1, ssz arg2, ssz arg3, ssz arg4);
+extern ssz syscall_5_linux
+(ssz num, ssz arg1, ssz arg2, ssz arg3, ssz arg4, ssz arg5);
+extern ssz syscall_6_linux
+(ssz num, ssz arg1, ssz arg2, ssz arg3, ssz arg4, ssz arg5, ssz arg6);
 
 #define MAX_PATH 4096
 
@@ -141,8 +141,8 @@ struct std_s;
 struct thread_s;
 
 /* For threads and this needs to be implemented in assembly */
-extern ssize_t thread_clone_linux
-(ssize_t flags, void *child_stack, void* (*fn)(struct std_s* std, void*),
+extern ssz thread_clone_linux
+(ssz flags, void *child_stack, void* (*fn)(struct std_s* std, void*),
  struct std_s* std, void *arg);
 
 #else /* __linux__ */

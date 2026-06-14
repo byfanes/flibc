@@ -1,7 +1,7 @@
 #include "da_private.h"
 
 error_t __da_push_sl
-(void* da, usize_t el_size, void* sl)
+(void* da, usz el_size, void* sl)
 {
     /* Init variables */
     error_t res = success;

@@ -5,7 +5,7 @@ error_t __thread_new
 (u8* stack_ptr, thread_t* thread, void*(*func)(std_t*, void*), std_t* std, void* arg)
 {
     /* Init variables */
-    ssize_t ret = 0;
+    ssz ret = 0;
 
     /* Set thread control postion to retrive retval and done flags later */
     thread->ctrl = (thread_ctrl_t*)(uintptr_t)(stack_ptr + THREAD_STACK_SIZE - sizeof(thread_ctrl_t));

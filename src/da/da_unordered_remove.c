@@ -1,11 +1,11 @@
 #include "da_private.h"
 
 error_t __da_unordered_remove
-(void* da, elsize_t el_size, idx_t idx)
+(void* da, usz el_size, usz idx)
 {
     /* Init variables */
     def_da_t *def = da;
-    usize_t i = 0;
+    usz i = 0;
 
     /* Validate user inputs - n_size can not be 0 via sizeof but user implicitly call with it */
     if(!def || !def->items) { return null_pointer; }

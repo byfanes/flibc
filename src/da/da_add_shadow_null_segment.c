@@ -1,11 +1,11 @@
 #include "da_private.h"
 
 error_t __da_add_shadow_null_segment
-(void* da, usize_t el_size)
+(void* da, usz el_size)
 {
     /* Init variables */
     def_da_t* def = da;
-    usize_t* ptr = 0;
+    usz* ptr = 0;
 
     /* Check input */
     if(!def || !def->items) { return null_pointer; }
@@ -16,7 +16,7 @@ error_t __da_add_shadow_null_segment
      * which is set by the allocator
      */
     if(def->count != def->capacity) {
-        ptr = (usize_t*)(uintptr_t)(def->items + def->count * el_size);
+        ptr = (usz*)(uintptr_t)(def->items + def->count * el_size);
         *ptr = 0;
     }
 

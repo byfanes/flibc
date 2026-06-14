@@ -66,6 +66,8 @@ typedef uint32_t u32;
 typedef  int32_t i32;
 typedef uint64_t u64;
 typedef  int64_t i64;
+typedef  usize_t usz;
+typedef  ssize_t ssz;
 
 #ifdef __x86_64__
 #define SIZE_IS_64BITS
@@ -90,7 +92,7 @@ typedef  int64_t i64;
 
 #define ARRAY_LEN(x) (sizeof((x)) / sizeof((x)[0]))
 
-#define offsetof(type, member) ((ssize_t)&(((type *)0)->member))
+#define offsetof(type, member) ((ssz)&(((type *)0)->member))
 
 #ifdef __cplusplus
 }

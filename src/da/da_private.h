@@ -10,8 +10,8 @@
 typedef struct def_da_s def_da_t;
 struct def_da_s {
     u8* items;
-    usize_t count;
-    usize_t capacity;
+    usz count;
+    usz capacity;
 };
 
 #endif /* __FLIBC_DA_PRIVATE_H__ */

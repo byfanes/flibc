@@ -12,7 +12,7 @@ error_t path_exists
 
     /* Check if not fail set it */
     if((res = str_add_shadow_null(p))) { return res; }
-    if((0 == syscall_2_linux(syscall_access, (ssize_t)p->items, F_OK)))
+    if((0 == syscall_2_linux(syscall_access, (ssz)p->items, F_OK)))
     { *out = true; }
     
     return success;

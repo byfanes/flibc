@@ -2,7 +2,7 @@
 #include "error.h"
 
 error_t __memset
-(void* dst, usize_t el_size, u8 c)
+(void* dst, usz el_size, u8 c)
 {
     /* Init variable */
     sl_u8_t *dsl = dst;

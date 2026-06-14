@@ -5,7 +5,7 @@ error_t fopen
 {
     /* Init variables */
     error_t res = success;
-    ssize_t fd = 0, flags = O_CLOEXEC;
+    ssz fd = 0, flags = O_CLOEXEC;
 
     /* Validate user inputs */
     if(!alloc || !name || !out) { return null_pointer; }
@@ -22,7 +22,7 @@ error_t fopen
     }
 
     /* Call read syscall */
-    fd = syscall_3_linux(syscall_open, (ssize_t)name, flags, 0666);
+    fd = syscall_3_linux(syscall_open, (ssz)name, flags, 0666);
 
     /* Check return of the syscall */
     if(fd < 0) { return io_error; }

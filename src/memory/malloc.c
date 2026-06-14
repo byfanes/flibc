@@ -3,7 +3,7 @@
 #include "syscall.h"
 
 error_t __malloc
-(allocator_t* alloc, usize_t size, void* set, TRACE_ARGS)
+(allocator_t* alloc, usz size, void* set, TRACE_ARGS)
 {
     /* This is a wrapper function */
     if(!alloc || !alloc->meta.alloc_pointer) { return null_pointer; }

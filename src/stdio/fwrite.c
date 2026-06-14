@@ -1,11 +1,11 @@
 #include "stdio_private.h"
 
 error_t __fwrite
-(file_t* file, void* raw_sl, usize_t el_size)
+(file_t* file, void* raw_sl, usz el_size)
 {
     /* Init variables */
     error_t res = success;
-    ssize_t ret = 0;
+    ssz ret = 0;
     sl_u8_t dst = {0};
     sl_u8_t sl = {0};
 
@@ -24,11 +24,11 @@ error_t __fwrite
         if((res = fflush(file))) { goto end; }
 
         /* Call write syscall */
-        ret = syscall_3_linux(syscall_write, (ssize_t)file->fd, (ssize_t)sl.items, (ssize_t)sl.count);
+        ret = syscall_3_linux(syscall_write, (ssz)file->fd, (ssz)sl.items, (ssz)sl.count);
 
         /* Check return of the syscall */
         if(ret < 0) { res = io_error; goto end; }
-        if(ret != (ssize_t)sl.count) { res = io_partial; goto end; }
+        if(ret != (ssz)sl.count) { res = io_partial; goto end; }
 
         goto end;
     }

@@ -1,13 +1,13 @@
 #include "da_private.h"
 
 error_t __da_insert
-(void* da, elsize_t el_size, void* in, idx_t idx)
+(void* da, usz el_size, void* in, usz idx)
 {
     /* Init variables */
     error_t res = success;
     def_da_t *def = da;
     u8 *p_in = in;
-    usize_t count = 0, i = 0;
+    usz count = 0, i = 0;
     sl_u8_t src = {0}, dst = {0};
 
     /* Validate user inputs - el_size can not be 0 via sizeof but user implicitly call with it */
