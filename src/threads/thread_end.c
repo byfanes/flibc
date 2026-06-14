@@ -9,6 +9,6 @@ void __thread_end(thread_ctrl_t* ctrl, void* ret);
 void __thread_end
 (thread_ctrl_t* ctrl, void* ret)
 {
-    atomic_xchg_u32(&ctrl->done, 1);
-    ctrl->ret_val = ret;
+    atomic_xchg_u64(&ctrl->done, 1);
+    atomic_xchg_u64(&ctrl->ret_val, (u64)ret);
 }

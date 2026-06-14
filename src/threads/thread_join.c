@@ -12,7 +12,7 @@ error_t thread_join
 
     /* Right now we rely on volatile behaviour but we might switch to atomics later */
     /* Check the cpu if its finished if not pass cpu back to os */
-    while(!atomic_load_u32(&thread->ctrl->done))
+    while(!atomic_load_u64(&thread->ctrl->done))
     { thread_yield(); }
 
     /* If user give a return value postion set it */

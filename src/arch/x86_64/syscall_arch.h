@@ -143,7 +143,7 @@ struct thread_s;
 /* For threads and this needs to be implemented in assembly */
 extern ssize_t thread_clone_linux
 (ssize_t flags, void *child_stack, void* (*fn)(struct std_s* std, void*),
- struct std_s* std, void *arg, struct thread_s* thread);
+ struct std_s* std, void *arg);
 
 #else /* __linux__ */
 #error "Unsupported OS"

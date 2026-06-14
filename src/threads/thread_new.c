@@ -16,7 +16,7 @@ error_t __thread_new
 
     /* Create the new thread */
     ret = thread_clone_linux(THREAD_FLAGS, stack_ptr + THREAD_STACK_SIZE - sizeof(thread_ctrl_t),
-        func, std, arg, thread);
+        func, std, arg);
 
     /* Check if its a error */
     if(ret < 0) {

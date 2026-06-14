@@ -8,6 +8,7 @@ extern "C" {
 #include "stdtypes.h"
 
 /* TODO: Currently we are not doing any memory order so we might need them in future */
+/* TODO: Add usize_t and ssize_t too */
 
 bool atomic_cas_u32(volatile u32* ptr, u32 expected, u32 new_val);
 bool atomic_cas_u64(volatile u64* ptr, u64 expected, u64 new_val);

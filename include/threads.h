@@ -24,10 +24,10 @@ typedef struct mutex_s mutex_t;
 can_be_da(thread_t, da_thread_t);
 can_be_da(void*, da_retval_t);
 
+/* We use u64 for both variables for alignment */
 struct thread_ctrl_s {
-    volatile u32 done;
-    u8 pad[4];
-    volatile void* ret_val;
+    volatile u64 done;
+    volatile u64 ret_val;
 };
 
 struct thread_s {
