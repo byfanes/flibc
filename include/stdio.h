@@ -35,6 +35,8 @@ struct stdio_s {
     file_t *out, *in, *err;
 };
 
+/* TODO: We might add flags for example skipping mutex and assuming its used in only one thread so */
+
 error_t fclose(file_t** file);
 error_t fopen(allocator_t* alloc, const char* name, file_t** out, file_type_t type);
 error_t fopen_stderr(allocator_t* alloc, file_t** out);

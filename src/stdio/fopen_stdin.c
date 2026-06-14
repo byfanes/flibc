@@ -16,6 +16,7 @@ error_t fopen_stdin
     (*out)->fd = UNIX_STDIN;
     (*out)->count = 0;
     (*out)->type = file_read;
+    (*out)->mutex.state = 0;
 
     return res;
 }

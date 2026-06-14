@@ -41,6 +41,7 @@ error_t fopen
     (*out)->fd = fd;
     (*out)->count = 0;
     (*out)->type = type;
+    (*out)->mutex.state = 0;
 
     return res;
 }

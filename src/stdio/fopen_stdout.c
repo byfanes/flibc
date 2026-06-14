@@ -16,6 +16,7 @@ error_t fopen_stdout
     (*out)->fd = UNIX_STDOUT;
     (*out)->count = 0;
     (*out)->type = file_write;
+    (*out)->mutex.state = 0;
 
     return res;
 }

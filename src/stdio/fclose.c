@@ -15,12 +15,14 @@ error_t fclose
         if((res = fflush(*file))) { return res; }
     }
 
+    mutex_lock(&(*file)->mutex);
     if(!((*file)-> fd == UNIX_STDERR || (*file)-> fd == UNIX_STDIN || (*file)-> fd == UNIX_STDOUT))
     {
         /* Call and check return of close syscall */
         if(0 != syscall_1_linux(syscall_close, (*file)->fd))
         { return io_error; }
     }
+    mutex_unlock(&(*file)->mutex);
 
     /* Free the memory back zeroed by the free */
     if((res = free(file))) { return res; }
