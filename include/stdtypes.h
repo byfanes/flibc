@@ -32,17 +32,30 @@ typedef unsigned int       uint32_t;
         typedef __int64          int64_t;
         typedef unsigned __int64 uint64_t;
     #endif
-#else
-    /* Linux / macOS / Unix (LP64): long is natively 64-bit */
+#elif defined(__x86_64__) || defined(__aarch64__) || defined(__LP64__)
+    /* 64-bit Linux / macOS / Unix (LP64): long is natively 64-bit */
     typedef long               int64_t;
     typedef unsigned long      uint64_t;
+#else
+    /* 32-bit Linux / Unix: long is 32-bit, so we MUST use long long for 64-bit types */
+    __extension__ typedef long long          int64_t;
+    __extension__ typedef unsigned long long uint64_t;
 #endif
 
 /* pointer-sized */
-typedef  int64_t intptr_t;
-typedef uint64_t uintptr_t;
-typedef uint64_t usize_t;
-typedef  int64_t ssize_t;
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64) || defined(__LP64__)
+    /* 64-bit architectures */
+    typedef  int64_t intptr_t;
+    typedef uint64_t uintptr_t;
+    typedef uint64_t usize_t;
+    typedef  int64_t ssize_t;
+#else
+    /* 32-bit architectures */
+    typedef  int32_t intptr_t;
+    typedef uint32_t uintptr_t;
+    typedef uint32_t usize_t;
+    typedef  int32_t ssize_t;
+#endif
 
 /* short aliases */
 typedef  uint8_t  u8;
@@ -53,6 +66,10 @@ typedef uint32_t u32;
 typedef  int32_t i32;
 typedef uint64_t u64;
 typedef  int64_t i64;
+
+#ifdef __x86_64__
+#define SIZE_IS_64BITS
+#endif
 
 /* Booleans */
 #if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
@@ -70,6 +87,10 @@ typedef  int64_t i64;
 
 #define FLIBC_STACK_THRESHOLD 4096
 #define FLIBC_FILE_BUFFER_SIZE 4096
+
+#define ARRAY_LEN(x) (sizeof((x)) / sizeof((x)[0]))
+
+#define offsetof(type, member) ((ssize_t)&(((type *)0)->member))
 
 #ifdef __cplusplus
 }

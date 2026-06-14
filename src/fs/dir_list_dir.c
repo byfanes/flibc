@@ -1,17 +1,5 @@
 #include "fs_private.h"
 
-/* TODO: This is not cross-platform like other functions
- * This struct has been stolen from linux kernel
- */
-typedef struct linux_dirent64_s linux_dirent64_t;
-struct linux_dirent64_s {
-    u64 d_ino;
-    i64 d_off;
-    u16 d_reclen;
-    u8 d_type;
-    char d_name[1];
-};
-
 /* Update the callback*/
 error_t dir_list_dir
 (path_t* path,
