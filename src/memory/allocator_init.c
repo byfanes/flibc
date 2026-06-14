@@ -24,12 +24,14 @@ error_t allocator_init
     memset(&sl, 0);
 
     /* This is an default allocator so we can use default functions */
-    alloc->alloc_pointer = allocator_alloc_pointer;
-    alloc->free_pointer = allocator_free_pointer;
-    alloc->init = allocator_init;
-    alloc->deinit = allocator_deinit;
-    alloc->overflow = allocator_overflow;
-    alloc->underflow = allocator_underflow;
+    alloc->meta.alloc_pointer = allocator_alloc_pointer;
+    alloc->meta.free_pointer = allocator_free_pointer;
+    alloc->meta.init = allocator_init;
+    alloc->meta.deinit = allocator_deinit;
+    alloc->meta.overflow = allocator_overflow;
+    alloc->meta.underflow = allocator_underflow;
+    alloc->meta.mutex.state = 0;
+    alloc->meta.next = 0;
 
     *set = alloc;
     return success;

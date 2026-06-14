@@ -56,19 +56,19 @@ static error_t alloc_big_chunk
         }
     }
 
-    if(alloc->next) {
+    if(alloc->meta.next) {
         /* If there is a next allocator try to use it */
-        return alloc->alloc_pointer(alloc->next, n, set, file_name, line);
+        return alloc->meta.alloc_pointer(alloc->meta.next, n, set, file_name, line);
     }
 
     /* If there is not a next allocator create it and use it */
-    if((res = alloc->init(&alloc->next))) { return res; }
+    if((res = alloc->meta.init(&alloc->meta.next))) { return res; }
 
     /* Set flags from previous allocator*/
-    if((res = allocator_set_flags(alloc->next, (u32)alloc->flags))) { return res; }
+    if((res = allocator_set_flags(alloc->meta.next, alloc->meta.flags))) { return res; }
 
     /* If there is a next allocator try to use it */
-    return alloc->alloc_pointer(alloc->next, n, set, file_name, line);
+    return alloc->meta.alloc_pointer(alloc->meta.next, n, set, file_name, line);
 }
 
 static error_t alloc_small_chunk
@@ -83,19 +83,19 @@ static error_t alloc_small_chunk
     idx = __find_free_chunks(alloc->free_bits, CHUNK_MAX, chunk_count);
 
     if(idx == CHUNK_IDX_FULL) {
-        if(alloc->next) {
+        if(alloc->meta.next) {
             /* If there is a next allocator try to use it */
-            return alloc->alloc_pointer(alloc->next, n, set, file_name, line);
+            return alloc->meta.alloc_pointer(alloc->meta.next, n, set, file_name, line);
         }
 
         /* If there is not a next allocator create it and use it */
-        if((res = alloc->init(&alloc->next))) { return res; }
+        if((res = alloc->meta.init(&alloc->meta.next))) { return res; }
 
         /* Set flags from previous allocator*/
-        if((res = allocator_set_flags(alloc->next, (u32)alloc->flags))) { return res; }
+        if((res = allocator_set_flags(alloc->meta.next, alloc->meta.flags))) { return res; }
 
         /* If there is a next allocator try to use it */
-        return alloc->alloc_pointer(alloc->next, n, set, file_name, line);
+        return alloc->meta.alloc_pointer(alloc->meta.next, n, set, file_name, line);
     }
 
     /* Mark them as they are part of the memory */
@@ -114,11 +114,12 @@ static error_t alloc_small_chunk
 }
 
 error_t allocator_alloc_pointer
-(allocator_t* alloc, usize_t n, void* set, const char* file_name, usize_t line)
+(allocator_t* alloc, usize_t n, void* set, const char* file_name, u32 line)
 {
     /* Init variables */
     usize_t needed = 0, chunk_count = 0;
-
+    error_t res = success;
+    
     /* Check input */
     if(!alloc || !set) { return null_pointer; }
 
@@ -131,16 +132,19 @@ error_t allocator_alloc_pointer
     /* Allocated more than 4GB is prohibited */
     if(needed > (u32)(-1)) { return exceeding_memory_allocation; }
 
-    /* It is safe case a file should not have more line than
-     * 4B if it has it is not my problem
-     */
-
+    mutex_lock(&alloc->meta.mutex);
+    
     /* We got a request which is greater than threshold */
     if (needed >= RAW_ALLOCATION_SIZE) {
-        return alloc_big_chunk(alloc, (u32)n, (u32)chunk_count, set, file_name, (u32)line);
+        res = alloc_big_chunk(alloc, (u32)n, (u32)chunk_count, set, file_name, (u32)line);
+        goto end;
     }
     /* We are making an allocation which is less than threshold
      * which will be (probably) easier to fit in the chunks
      */
-    return alloc_small_chunk(alloc, (u32)n, (u32)chunk_count, set, file_name, (u32)line);
+    res = alloc_small_chunk(alloc, (u32)n, (u32)chunk_count, set, file_name, (u32)line);
+
+end:
+    mutex_unlock(&alloc->meta.mutex);
+    return res;
 }

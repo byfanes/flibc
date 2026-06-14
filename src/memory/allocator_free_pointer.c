@@ -20,11 +20,13 @@ error_t allocator_free_pointer
     res = __validate_header(header);
     if(res == invalid_pointer) { return res; }
     else if (res == heap_underflow)
-    { header->alloc->underflow(header->alloc, header); }
+    { header->alloc->meta.underflow(header->alloc, header); }
     else if (res == heap_overflow)
-    { header->alloc->overflow(header->alloc, header); }
+    { header->alloc->meta.overflow(header->alloc, header); }
 
     total = ALIGN_64(header->wanted_alloc + ADDITIONAL_HEADER_SIZE);
+
+    mutex_lock(&alloc->meta.mutex);
 
     if(total < RAW_ALLOCATION_THRESHOLD) {
         /* Set free small chunk to zero*/
@@ -32,7 +34,11 @@ error_t allocator_free_pointer
 
         /* Zero the user's pointer */
         *(void**)set = 0;
-        return success;
+        /* Result is already success but we reassign it for
+         * safety in case the logic changes later
+         */
+        res = success;
+        goto end;
     }
 
     alloc->headers[header->idx] = nullptr;
@@ -40,10 +46,13 @@ error_t allocator_free_pointer
     /* If we cant free any memory just stop and return an error */
     if(0 != syscall_2_linux(syscall_munmap, (ssize_t)header, total)) {
         alloc->headers[header->idx] = header;
-        return memory_error;
+        res = memory_error;
+        goto end;
     }
 
     /* Zero the user's pointer */
     *(void**)set = 0;
-    return success;
+end:
+    mutex_unlock(&alloc->meta.mutex);
+    return res;
 }

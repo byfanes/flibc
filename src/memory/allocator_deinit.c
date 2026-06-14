@@ -24,8 +24,10 @@ error_t allocator_deinit
     alloc = *set;
     if(!alloc) { return null_pointer; }
 
+    mutex_lock(&alloc->meta.mutex);
+
     /* Check if the allocator needs to do leak detection or not */
-    if(!(alloc->flags & allocator_dont_check_leaks)) {
+    if(!(alloc->meta.flags & allocator_dont_check_leaks)) {
         set_slice(&buf_sl, buf, sizeof(buf));
 
         /* Check for the chunks in allocator */
@@ -58,8 +60,8 @@ error_t allocator_deinit
     }
 
     /* If there is another allocator deinit it too */
-    if(alloc->next) {
-        if((res = allocator_deinit(&alloc->next))) { return res; }
+    if(alloc->meta.next) {
+        if((res = allocator_deinit(&alloc->meta.next))) { return res; }
     }
 
     for(i = 0; i < ALLOCATOR_HEADER_COUNT; ++i) {
@@ -72,6 +74,8 @@ error_t allocator_deinit
 
         alloc->headers[i] = nullptr;
     }
+
+    mutex_unlock(&alloc->meta.mutex);
 
     /* Give back the memory to os */
     if(0 != syscall_2_linux(syscall_munmap, (ssize_t)alloc, RAW_ALLOCATION_SIZE))

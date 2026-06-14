@@ -5,7 +5,11 @@ error_t allocator_set_flags
 {
     /* TODO: we can add some checking for allocator flags */
     if(!alloc) { return null_pointer; }
-    alloc->flags = flags;
-    if(alloc->next) { return allocator_set_flags(alloc->next, flags); }
+    mutex_lock(&alloc->meta.mutex);
+
+    alloc->meta.flags = flags;
+    if(alloc->meta.next) { return allocator_set_flags(alloc->meta.next, flags); }
+
+    mutex_unlock(&alloc->meta.mutex);
     return success;
 }

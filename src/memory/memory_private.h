@@ -2,6 +2,7 @@
 #define __FLIBC_MEMORY_PRIVATE_H__
 
 #include "memory.h"
+#include "threads.h"
 #include "syscall.h"
 #include "../helpers/helpers.h"
 
@@ -35,18 +36,16 @@
  */
 #define ALLOCATOR_NEEDED_BITS (CHUNK_MAX / 8)
 
-/* This calculation for needed header count we need to
- * update this calculation every time we change allocator struct
- * basicly we have a page(4KB) for the allocator struct we use
- * 5 pointers inside it (next - init - deinit - alloc_pointer - free_pointer)
- * functions and usize_t(which is flags) and last one is check bits which is u8[ALLOCATOR_NEEDED_BITS]
- * and diveding this number with a header size gives use the amount usable headers in an allocator
+/* Allocators' meta data stored in a different struct so we can use that struct
+ * and decouple somethings and make it little bit safer
  */
 #define ALLOCATOR_HEADER_COUNT \
-((PAGE_SIZE - (sizeof(void*)*7 + sizeof(u32) + sizeof(u8[ALLOCATOR_NEEDED_BITS]))) \
+    ((PAGE_SIZE - sizeof(allocator_meta_t) - ALLOCATOR_NEEDED_BITS) \
     / sizeof(heap_header_t*))
 
+
 typedef struct heap_header_s heap_header_t;
+typedef struct allocator_meta_s allocator_meta_t;
 
 /* For used chunk count use we can align wanted_alloc to (CHUNK_SIZE) and divide to (CHUNK_SIZE) */
 /* For checking if its raw allocation we can either use wanted and compare
@@ -69,7 +68,7 @@ struct heap_header_s {
 
 /* Some typedefs to keep clean the struct definition */
 typedef error_t (*f_allocator_alloc_pointer)
-     (allocator_t* alloc, usize_t n, void* set, const char* file_name, usize_t line);
+     (allocator_t* alloc, usize_t n, void* set, const char* file_name, u32 line);
 
 typedef error_t (*f_allocator_free_pointer)(allocator_t* alloc, void* set);
 typedef error_t (*f_allocator_init)(allocator_t** set);
@@ -85,18 +84,20 @@ typedef void (*f_allocator_detect_overflow)(allocator_t* alloc, heap_header_t* h
  * so continue with next allocator
  */
 
-/* For the pointer to free use allocators' pointer not any other one and
- * for the user base pointer to give user some memory you can use this pointer again
- * but jumping 1 allocator ahead to access it then do all of the stuff
- */
-/* Note: If the struct is change do not forget to update the calculations for
- * 'ALLOCATOR_HEADER_COUNT' and 'ALLOCATOR_NEEDED_BITS'
- */
-struct allocator_s {
+struct allocator_meta_s {
     /* Next allocator for if current allocator fills up and we need more space
      * every allocator handled via its previous one
      */
     allocator_t* next;
+
+    u32 flags;
+
+    /* TODO: Lock mutex for the whole allocation time this will slow the allocator a
+     * lot because every operation uses same allocator and even if we move to
+     * child allocator the parent allocator still be locked until
+     * child allocator finishes
+     */
+    mutex_t mutex;
 
     /* If user wants to implement their allocator they should add those functions and
      * set it in allocator
@@ -112,13 +113,21 @@ struct allocator_s {
      */
     f_allocator_detect_overflow overflow;
     f_allocator_detect_underflow underflow;
+ };
 
-    /* We can support up to 32 flags because in x86 it will down to 32 bits */
-    usize_t flags;
+/* For the pointer to free use allocators' pointer not any other one and
+ * for the user base pointer to give user some memory you can use this pointer again
+ * but jumping 1 allocator ahead to access it then do all of the stuff
+ */
+/* Note: If the struct is change do not forget to update the calculations for
+ * 'ALLOCATOR_HEADER_COUNT' and 'ALLOCATOR_NEEDED_BITS'
+ */
+struct allocator_s {
+    allocator_meta_t meta;
 
     /* We expect a OS should 4KB as page size its not mandatory but it aligns better
      * Look up for the 'ALLOCATOR_HEADER_COUNT' calculation before modifying this array
-     * since its a small sized array (248 - 504 (depending on arch)) we can iterate
+     * since its a small sized array (248 - 503 (depending on arch)) we can iterate
      * over them because zero means its empty. This headers pointed because we can not
      * find them inside the data segment (allocated like this '[allocator][data]' ) so
      * we need to store their pointer to access later via allocator
@@ -142,7 +151,7 @@ struct slice_dummy_s {
  * in fuctions like malloc/calloc etc we can use custom allocators too.
  */
 error_t allocator_alloc_pointer
-(allocator_t* alloc, usize_t n, void* set, const char* file_name, usize_t line);
+(allocator_t* alloc, usize_t n, void* set, const char* file_name, u32 line);
 error_t allocator_free_pointer(allocator_t* alloc, void* set);
 
 void allocator_overflow(allocator_t* alloc, heap_header_t* header);

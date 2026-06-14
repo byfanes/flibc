@@ -8,7 +8,7 @@ extern "C" {
 #include "stdtypes.h"
 #include "error.h"
 
-#define TRACE_ARGS const char* file_name, usize_t line
+#define TRACE_ARGS const char* file_name, u32 line
 #define USE_TRACE_ARGS file_name, line
 #define LOC_ARGS __FILE__, __LINE__
 
@@ -50,6 +50,10 @@ typedef sl_u8_t sl_cstr_t;
  * this value depends so to be safe we can only use maxium 32 flags
  * on allocator_t->flags size which is usize_t those flags assigned
  * via bit so we need to shift them
+ */
+
+/* TODO: We can add skip mutex flags and make the allocator little bit faster and
+ * the usage will be for single threaded
  */
 enum allocator_flags_e {
     allocator_dont_check_leaks = (1 << 0)
