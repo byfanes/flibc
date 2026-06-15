@@ -41,7 +41,7 @@ static error_t alloc_big_chunk
     for(; header_idx < ALLOCATOR_HEADER_COUNT; ++header_idx) {
         if(!alloc->headers[header_idx]) {
             /* Call syscall for new chunk memory */
-            ptr = (u8*)syscall_6_linux(syscall_mmap, 0, chunk_count * CHUNK_SIZE,
+            ptr = (u8*)syscall_6_linux(syscall_mmap, 0, (ssz)(chunk_count * CHUNK_SIZE),
             (PROT_READ|PROT_WRITE), (MAP_PRIVATE|MAP_ANONYMOUS), (ssz)(-1), 0);
 
             /* Error check */

@@ -10,7 +10,7 @@ error_t socket_create
     
     if(!out || !addr) { return null_pointer; }
 
-    ret = syscall_3_linux(syscall_socket, family, type, protocol.value);
+    ret = syscall_3_linux(syscall_socket, family, type, (ssz)protocol.value);
     if(ret == -1) { return socket_error; }
 
     out->fd = ret;

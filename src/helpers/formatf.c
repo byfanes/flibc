@@ -173,7 +173,7 @@ error_t __formatf
 
         /* Handle %p it will write as hexadecimal */
 	else if(fmt.items[i] == 'p') {
-	    cur_u64 = (u64)va_arg(ap, void*);
+	    cur_u64 = (u64)(uintptr_t)va_arg(ap, void*);
             if(buf.items) {
                 buf.items[count] = '0';
                 buf.items[count + 1] = 'x';

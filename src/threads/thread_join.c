@@ -12,11 +12,11 @@ error_t thread_join
 
     /* Right now we rely on volatile behaviour but we might switch to atomics later */
     /* Check the cpu if its finished if not pass cpu back to os */
-    while(!atomic_load_u64(&thread->ctrl->done))
+    while(!atomic_load_ssz(&thread->ctrl->done))
     { thread_yield(); }
 
     /* If user give a return value postion set it */
-    if(ret_val) { *ret_val = (void*)thread->ctrl->ret_val; }
+    if(ret_val) { *ret_val = (void*)(uintptr_t)thread->ctrl->ret_val; }
 
     ptr = (u8*)(thread->ctrl + 1) - THREAD_STACK_SIZE;
 

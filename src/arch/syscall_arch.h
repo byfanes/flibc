@@ -7,57 +7,70 @@ extern "C" {
 
 #include "features.h"
 #include "stdtypes.h"
+#include "syscall.h"
 
 #ifdef __linux__
 
 /* Linux syscalls functions written in assembly this is for linking */
-extern ssz syscall_0_linux
-(ssz num);
-extern ssz syscall_1_linux
-(ssz num, ssz arg1);
-extern ssz syscall_2_linux
-(ssz num, ssz arg1, ssz arg2);
-extern ssz syscall_3_linux
-(ssz num, ssz arg1, ssz arg2, ssz arg3);
-extern ssz syscall_4_linux
-(ssz num, ssz arg1, ssz arg2, ssz arg3, ssz arg4);
-extern ssz syscall_5_linux
-(ssz num, ssz arg1, ssz arg2, ssz arg3, ssz arg4, ssz arg5);
 extern ssz syscall_6_linux
-(ssz num, ssz arg1, ssz arg2, ssz arg3, ssz arg4, ssz arg5, ssz arg6);
+(ssz num, ssz r1, ssz r2, ssz r3, ssz r4, ssz r5, ssz r6);
+
+ssz syscall_0_linux
+(ssz num);
+
+ssz syscall_1_linux
+(ssz num, ssz r1);
+
+ssz syscall_2_linux
+(ssz num, ssz r1, ssz r2);
+
+ssz syscall_3_linux
+(ssz num, ssz r1, ssz r2, ssz r3);
+
+ssz syscall_4_linux
+(ssz num, ssz r1, ssz r2, ssz r3, ssz r4);
+
+ssz syscall_5_linux
+(ssz num, ssz r1, ssz r2, ssz r3, ssz r4, ssz r5);
 
 #define MAX_PATH 4096
 
-#define syscall_read 0
-#define syscall_write 1
-#define syscall_open 2
-#define syscall_close 3
-#define syscall_stat 4
-#define syscall_lseek 8
-#define syscall_mmap 9
-#define syscall_munmap 11
-#define syscall_access 21
-#define syscall_sched_yield 24
-#define syscall_nanosleep 35
-#define syscall_socket 41
-#define syscall_connect 42
-#define syscall_accept 43
-#define syscall_bind 49
-#define syscall_listen 50
-#define syscall_fork 57
-#define syscall_execve 59
-#define syscall_exit 60
-#define syscall_wait4 61
-#define syscall_getcwd 79
-#define syscall_chdir 80
-#define syscall_rename 82
-#define syscall_mkdir 83
-#define syscall_rmdir 84
-#define syscall_unlink 87
-#define syscall_futex 202
+#define syscall_read        0
+#define syscall_write       1
+#define syscall_open        2
+#define syscall_close       3
+#define syscall_stat        4
+#define syscall_lseek       8
+#define syscall_exit        60
+#define syscall_fork        57
+#define syscall_execve      59
+#define syscall_wait4       61
+
+#define syscall_mmap        9
+#define syscall_munmap      11
+
+#define syscall_access      21
+#define syscall_getcwd      79
+#define syscall_chdir      80
+#define syscall_rename     82
+#define syscall_mkdir      83
+#define syscall_rmdir      84
+#define syscall_unlink     87
+#define syscall_openat     257
 #define syscall_getdents64 217
-#define syscall_gettime 228
-#define syscall_openat 257
+
+#define syscall_sched_yield 24
+#define syscall_nanosleep   35
+#define syscall_gettime     228
+#define CLOCK_MONOTONIC     1
+
+#define syscall_futex      202
+
+#define syscall_socket     41
+#define syscall_connect    42
+#define syscall_accept     43
+#define syscall_bind       49
+#define syscall_listen     50
 
 #define UNIX_STDIN 0
 #define UNIX_STDOUT 1

@@ -166,8 +166,8 @@ void __flibc_struct_member_check_function(void)
     _struct_array_baked(fs_stat_t, __unused, ssz, 3, 13*sizeof(usz) + 4*sizeof(u32));
 
     /* thread_ctrl_t used in assembly so we need to check them too */
-    _struct_member_baked(thread_ctrl_t, done, volatile u64, 0);
-    _struct_member_baked(thread_ctrl_t, ret_val, volatile u64, sizeof(u64));
+    _struct_member_baked(thread_ctrl_t, done, volatile ssz, 0);
+    _struct_member_baked(thread_ctrl_t, ret_val, volatile ssz, sizeof(u64));
 
     /* sock_addr_t's members should never change its baked so */
     _struct_member_baked(sock_addr_t, family, u16, 0);

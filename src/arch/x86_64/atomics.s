@@ -42,6 +42,7 @@ atomic_cas_i32:
         mov     eax, esi
         lock cmpxchg dword ptr [rdi], edx
         sete    al
+        movzx eax, al
         ret
 
 atomic_cas_usz:
@@ -51,6 +52,7 @@ atomic_cas_i64:
         mov     rax, rsi
         lock cmpxchg qword ptr [rdi], rdx
         sete    al
+        movzx rax, al
         ret
 
 atomic_load_u32:

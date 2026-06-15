@@ -12,7 +12,7 @@ error_t __thread_new
 
     /* Set thread control to defaults */
     thread->ctrl->done = false;
-    thread->ctrl->ret_val = nullptr;
+    thread->ctrl->ret_val = 0;
 
     /* Create the new thread */
     ret = thread_clone_linux(THREAD_FLAGS, stack_ptr + THREAD_STACK_SIZE - sizeof(thread_ctrl_t),

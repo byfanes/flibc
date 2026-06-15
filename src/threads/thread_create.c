@@ -10,7 +10,7 @@ error_t thread_create
      * to cast because in assembly it checks from std pointer if
      * its zero it acts like void*(*func)(void*)
      */
-    void* (*user_func)(struct std_s* std, void*) = (uintptr_t)func;
+    void* (*user_func)(struct std_s* std, void*) = (void* (*)(struct std_s* std, void*))(uintptr_t)func;
 
     /* Check inputs */
     if(!thread || !alloc || !func) { return null_pointer; }

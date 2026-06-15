@@ -9,7 +9,7 @@ error_t __socket_read
     if(!sl || !sock || !sl->items) { return null_pointer; }
     if(!el_size) { return elsize_zero; }
     
-    ret = syscall_3_linux(syscall_read, sock->fd, sl->items, (ssz)(sl->count * el_size));
+    ret = syscall_3_linux(syscall_read, sock->fd, (ssz)sl->items, (ssz)(sl->count * el_size));
     if(ret < 0) { return io_error; }
     if(read_count) { *read_count = (usz)ret; }
     if(!ret) { return connection_closed; }

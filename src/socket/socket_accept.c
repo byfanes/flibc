@@ -8,7 +8,7 @@ error_t socket_accept
 
     if(!sock || !out) { return null_pointer; }
     
-    ret = syscall_3_linux(syscall_accept, sock->fd, (ssz)&out->addr, &len);
+    ret = syscall_3_linux(syscall_accept, sock->fd, (ssz)&out->addr, (ssz)&len);
     if(ret < 0) { return socket_error; }
     out->fd = ret;
 
