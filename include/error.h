@@ -41,6 +41,7 @@ enum error_e {
     io_invalid_op,
     thread_failed,
     mutex_error,
+    thread_cond_error,
     connection_closed,
 
     /* Fatal Errors */

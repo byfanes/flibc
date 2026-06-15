@@ -14,6 +14,7 @@ extern "C" {
 /* 2 MB */
 #define THREAD_STACK_SIZE 1024*1024*2
 
+typedef struct thread_cond_s thread_cond_t;
 typedef struct thread_ctrl_s thread_ctrl_t;
 typedef struct thread_s thread_t;
 typedef struct mutex_s mutex_t;
@@ -38,6 +39,14 @@ struct thread_s {
 struct mutex_s {
     volatile i32 state;
 };
+
+struct thread_cond_s {
+    volatile u32 seq;
+};
+
+error_t thread_cond_wait(thread_cond_t* cond, mutex_t* mutex);
+error_t thread_cond_signal(thread_cond_t* cond);
+error_t thread_cond_broadcast(thread_cond_t* cond);
 
 error_t mutex_lock(mutex_t* mutex);
 error_t mutex_unlock(mutex_t* mutex);
