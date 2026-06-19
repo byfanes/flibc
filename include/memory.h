@@ -83,23 +83,32 @@ error_t __realloc(allocator_t* alloc, usz n, void* set, TRACE_ARGS);
 
 error_t free(void* set);
 
-error_t __memset(void* dst, usz el_size, u8 c);
-#define memset(dst, c) __memset(ptr_meta((dst)), (c))
+error_t __memset_sl(void* dst, usz el_size, u8 c);
+#define memset(dst, c) __memset_sl(ptr_meta((dst)), (c))
 
-error_t __memcpy(void* dst, void* src, usz el_size);
-#define memcpy(dst, src) __memcpy(two_ptr_meta_check((dst), (src)))
+error_t __memcpy_sl(void* dst, void* src, usz el_size);
+#define memcpy(dst, src) __memcpy_sl(two_ptr_meta_check((dst), (src)))
 
-error_t __memswap(void* lhs, void* rhs, usz el_size);
-#define memswap(lhs, rhs) __memswap(two_ptr_meta_check((lhs), (rhs)))
+error_t __memswap_sl(void* lhs, void* rhs, usz el_size);
+#define memswap(lhs, rhs) __memswap_sl(two_ptr_meta_check((lhs), (rhs)))
 
-error_t __memmove(void* dst, void* src, usz el_size);
-#define memmove(dst, src) __memmove(two_ptr_meta_check((dst), (src)))
+error_t __memmove_sl(void* dst, void* src, usz el_size);
+#define memmove(dst, src) __memmove_sl(two_ptr_meta_check((dst), (src)))
 
-error_t __memcmp(void* lhs, void* rhs, usz el_size, bool* out);
-#define memcmp(lhs, rhs, res) __memcmp(two_ptr_meta_check((lhs), (rhs)), (res))
+error_t __memcmp_sl(void* lhs, void* rhs, usz el_size, bool* out);
+#define memcmp(lhs, rhs, res) __memcmp_sl(two_ptr_meta_check((lhs), (rhs)), (res))
 
-error_t __memcmp_min(void* lhs, void* rhs, usz el_size, bool* out);
+error_t __memcmp_sl_min(void* lhs, void* rhs, usz el_size, bool* out);
 #define memcmp_min(lhs, rhs, res)  __memcmp_min(two_ptr_meta_check((lhs), (rhs)), (res))
+
+error_t memset_raw(void* ptr, u8 c, usz n);
+error_t memcpy_raw(void* dst, void* src, usz n);
+error_t memswap_raw(void* lhs, void* rhs, usz n);
+error_t memmove_raw(void* dst, void* src, usz n);
+error_t memcmp_raw(void* lhs, void* rhs, usz n, bool* out);
+
+error_t zeroed_len(void* ptr, usz size);
+#define zeroed(ptr) zeroed_len((ptr), sizeof(ptr))
 
 #ifdef __cplusplus
 }
