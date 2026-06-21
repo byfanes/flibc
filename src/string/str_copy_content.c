@@ -7,8 +7,8 @@ error_t __str_copy_content
     sl_u8_t dst = {0}, src = {0};
 
     /* Fetch and set data */
-    set_slice(&dst, &str->items[str->count], amount);
-    set_slice(&src, ptr, amount);
+    slice_set(&dst, &str->items[str->count], amount);
+    slice_set(&src, ptr, amount);
 
     /* Move data and increase the count if its successful */
     return da_push_sl(str, &src);

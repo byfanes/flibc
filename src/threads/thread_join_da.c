@@ -13,7 +13,7 @@ error_t thread_join_da
     { return null_pointer; }
 
     /* Zero the item count */
-    set_slice(ret_vals, ret_vals->items, 0);
+    slice_set(ret_vals, ret_vals->items, 0);
     /* Grow if it needs more */
     if(ret_vals->capacity < threads->capacity) {
         if((res = da_grow(ret_vals, threads->capacity - ret_vals->capacity)))

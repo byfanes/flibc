@@ -1,6 +1,6 @@
 #include "error.h"
-#include "stdtypes.h"
-#include "stdlib.h"
+#include "base.h"
+#include "std.h"
 
 /*
  * The "canary" value.

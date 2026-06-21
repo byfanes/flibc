@@ -14,13 +14,13 @@ error_t __da_remove
     if(idx >= def->count) { return out_of_bounds; }
 
     /* Set slices for the moving. Arguments are valid in here so no need to check */
-    set_slice(&src, &def->items[(idx + 1) * el_size], count);
-    set_slice(&dst, &def->items[idx * el_size], count);
+    slice_set(&src, &def->items[(idx + 1) * el_size], count);
+    slice_set(&dst, &def->items[idx * el_size], count);
     count = (def->count - idx - 1) * el_size;
 
     /* Decrease count */
     def->count--;
 
     /* Shift the memory and return the result */
-    return memmove(&dst, &src);
+    return mem_move(&dst, &src);
 }

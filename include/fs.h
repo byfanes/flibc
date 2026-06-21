@@ -54,10 +54,10 @@ error_t path_stat(path_t* p, fs_stat_t* out);
 error_t path_join(path_t* path, sl_u8_t* extend);
 error_t path_change_ext(path_t* path, sl_u8_t* ext);
 
-error_t is_path_absolute(path_t* p, bool* out);
-error_t is_path_relative(path_t* p, bool* out);
-error_t is_path_dir(path_t* p, bool* out);
-error_t is_path_file(path_t* p, bool* out);
+error_t path_is_absolute(path_t* p, bool* out);
+error_t path_is_relative(path_t* p, bool* out);
+error_t path_is_dir(path_t* p, bool* out);
+error_t path_is_file(path_t* p, bool* out);
 
 error_t dir_remove(path_t* path);
 error_t dir_exists(path_t* path, bool* out);

@@ -35,8 +35,8 @@ error_t path_basename
     }
 
     /* Set the find part */
-    set_slice(&sl, &base->items[i], (usz)(start - i - off));
-    strcat_sl(out, &sl);
+    slice_set(&sl, &base->items[i], (usz)(start - i - off));
+    str_cat_sl(out, &sl);
 
     return success;
 }

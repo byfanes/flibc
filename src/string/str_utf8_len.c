@@ -1,6 +1,6 @@
 #include "string_private.h"
 
-error_t str_utf8len
+error_t str_utf8_len
 (str_t* base, usz* out)
 {
     /* Init variables */
@@ -11,8 +11,8 @@ error_t str_utf8len
     if(!base->items || !base->count) { *out = 0; return success; }
 
     /* Set slice for length checking */
-    set_slice(&sl, base->items, base->count);
+    slice_set(&sl, base->items, base->count);
 
     /* Use sl_utf8len function to calculate */
-    return sl_utf8len(&sl, out);
+    return sl_utf8_len(&sl, out);
 }

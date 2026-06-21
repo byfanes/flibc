@@ -21,11 +21,11 @@ error_t __da_insert
 
     /* Set slices for the moving */
     count = (def->count - idx - 1) * el_size;
-    set_slice(&src, &def->items[idx * el_size], count);
-    set_slice(&dst, &def->items[(idx + 1) *el_size], count);
+    slice_set(&src, &def->items[idx * el_size], count);
+    slice_set(&dst, &def->items[(idx + 1) *el_size], count);
 
     /* Shift the memory */
-    if((res = memmove(&dst, &src))) { return res; }
+    if((res = mem_move(&dst, &src))) { return res; }
 
     /* Add the new blob */
     for(;i < el_size; ++i) {

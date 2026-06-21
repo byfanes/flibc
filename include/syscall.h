@@ -5,8 +5,7 @@
 extern "C" {
 #endif
 
-#include "features.h"
-#include "stdtypes.h"
+#include "base.h"
 
 #if defined(__x86_64__)
     #include "../src/arch/syscall_arch.h"

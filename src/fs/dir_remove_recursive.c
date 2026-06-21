@@ -15,7 +15,7 @@ static void callback
 
     /* Construct the full path */
     str_clear(&pack->full);
-    strcat_sl(&pack->full, path);
+    str_cat_sl(&pack->full, path);
     path_join(&pack->full, name);
 
     if(is_dir) {

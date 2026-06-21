@@ -21,7 +21,7 @@ error_t __thread_new
     /* Check if its a error */
     if(ret < 0) {
         /* Set it back to zero */
-        free(&stack_ptr);
+        mem_free(&stack_ptr);
         thread->ctrl = nullptr;
         thread->tid = 0;
         return thread_failed;

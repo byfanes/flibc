@@ -3,7 +3,7 @@
 
 #include "process.h"
 #include "syscall.h"
-#include "stdlib.h"
+#include "std.h"
 
 error_t waitapid(ssz pid);
 

@@ -16,7 +16,7 @@ error_t thread_create
     if(!thread || !alloc || !func) { return null_pointer; }
 
     /* Allocate stack memory */
-    if((res = malloc(alloc, THREAD_STACK_SIZE, &stack_ptr))) { return res; }
+    if((res = mem_alloc(alloc, &stack_ptr, THREAD_STACK_SIZE))) { return res; }
 
     /* Call thread new to handle rest of the execution */
     return __thread_new(stack_ptr, thread, user_func, nullptr, arg);

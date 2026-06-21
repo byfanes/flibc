@@ -12,19 +12,19 @@ error_t str_to_cstr
 
     /* If string is null return a null cstr */
     if(!base->items || !base->count) {
-        return calloc(alloc, 1, out);
+        return mem_calloc(alloc, out, 1);
     }
 
-    if((res = malloc(alloc, base->count + 1, out))) { return res; }
+    if((res = mem_alloc(alloc, out, base->count + 1))) { return res; }
 
     /* Set slices for copying */
-    set_slice(&src, base->items, base->count);
-    set_slice(&dst, (*out), base->count);
+    slice_set(&src, base->items, base->count);
+    slice_set(&dst, (*out), base->count);
 
     /* Copy the data and set last byte to null */
-    res = memcpy(&dst, &src);
+    res = mem_cpy(&dst, &src);
     (*out)[base->count] = 0;
 
-    if(res) { free(out); return res; }
+    if(res) { mem_free(out); return res; }
     return success;
 }

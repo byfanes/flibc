@@ -1,8 +1,6 @@
-#include "crt.h"
-#include "features.h"
-#include "stdlib.h"
+#include "std.h"
+#include "base.h"
 #include "syscall.h"
-#include "stdtypes.h"
 #include "helpers/helpers.h"
 
 /* Linux start */
@@ -14,7 +12,7 @@ static void early_panic
 (const char* msg)
 {
     /* Ignore its failure because we will close the program after it */
-    syscall_3_linux(syscall_write, UNIX_STDERR, (ssz)msg, (ssz)strlen(msg));
+    syscall_3_linux(syscall_write, UNIX_STDERR, (ssz)msg, (ssz)cstr_len(msg));
     exit(255);
 }
 
@@ -34,7 +32,7 @@ void runtime_start
 
     /* Check argc and get first of them which is path to executable */
     if(argc > 0) {
-        set_slice(&std.exe, argv[0], strlen(argv[0]));
+        slice_set(&std.exe, argv[0], cstr_len(argv[0]));
         argv++; argc--;
     }
 
@@ -44,26 +42,26 @@ void runtime_start
 
     /* Check for if its needed to allocate memory or not */
     if(argc > MAX_ARGS_COUNT) {
-        if(malloc(std.alloc, sizeof(sl_u8_t) * (u32)argc, &args_ptr))
+        if(mem_alloc(std.alloc, &args_ptr, sizeof(sl_u8_t) * (u32)argc))
         { early_panic("CTR Panic: Could not allocate memory for args slice list!\n"); }
     } else {
         args_ptr = args;
     }
 
     /* Open standard files */
-    if(fopen_stdin(std.alloc, &std.io.in))
+    if(io_open_stdin(std.alloc, &std.io.in))
     { early_panic("CTR Panic: Could not open standard input file!\n"); }
-    if(fopen_stdout(std.alloc, &std.io.out))
+    if(io_open_stdout(std.alloc, &std.io.out))
     { early_panic("CTR Panic: Could not open standard output file!\n"); }
-    if(fopen_stderr(std.alloc, &std.io.err))
+    if(io_open_stderr(std.alloc, &std.io.err))
     { early_panic("CTR Panic: Could not open standard error file!\n"); }
 
     /* Set slice for _args to parse now */
-    set_slice(&std.args, args_ptr, (u32)argc);
+    slice_set(&std.args, args_ptr, (u32)argc);
 
     /* Set all of the arguments one by one */
     for(i = 0; i < argc; ++i) {
-        set_slice(&std.args.items[i], argv[i], strlen(argv[i]));
+        slice_set(&std.args.items[i], argv[i], cstr_len(argv[i]));
     }
 
     /* Find how many environment variables passed 1 for skiping argv's last null */
@@ -89,8 +87,8 @@ void runtime_start
         /* Split string to corresponding pieces */
         /* TODO: We don’t support variables that are not assigned with “=” or separated by commas */
         while(env_cstr[eq_idx] && env_cstr[eq_idx] != '=') { eq_idx++; }
-        set_slice(&key_sl, env_cstr, eq_idx);
-        set_slice(&val_sl, &env_cstr[eq_idx + 1], strlen(env_cstr) - eq_idx);
+        slice_set(&key_sl, env_cstr, eq_idx);
+        slice_set(&val_sl, &env_cstr[eq_idx + 1], cstr_len(env_cstr) - eq_idx);
 
         /* Add the new variable */
         if(env_add_var(std.alloc, &std.env, &key_sl, &val_sl))
@@ -105,7 +103,7 @@ void runtime_start
 
     /* Free if its needed */
     if(argc > MAX_ARGS_COUNT) {
-        if(free(&args_ptr))
+        if(mem_free(&args_ptr))
         { early_panic("CTR Panic: Could not free the args slice!\n"); }
     }
 
@@ -121,11 +119,11 @@ void runtime_start
     { early_panic("CTR Panic: Could not free the environment variable list!\n"); }
 
     /* Close the standard files */
-    if(fclose(&std.io.in))
+    if(io_close(&std.io.in))
     { early_panic("CTR Panic: Could not close standard input file!\n"); }
-    if(fclose(&std.io.out))
+    if(io_close(&std.io.out))
     { early_panic("CTR Panic: Could not close standard output file!\n"); }
-    if(fclose(&std.io.err))
+    if(io_close(&std.io.err))
     { early_panic("CTR Panic: Could not close standard error file!\n"); }
 
     /* Free default allocator */

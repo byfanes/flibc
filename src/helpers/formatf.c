@@ -1,7 +1,13 @@
 #include "helpers.h"
 
-INTERNAL void hex_format
-(u8* buf, u32* count, u64 num)
+/* Its located in string header but we dont need any other things
+ * so we only cstreq and cstrlen from the linker
+ */
+extern bool cstr_eq(const char* l, const char* r);
+extern usz cstr_len(const char* str);
+
+static void hex_format
+(u8* buf, usz* count, u64 num)
 {
     /* Init variables */
     u32 times = 0, i = 0;
@@ -23,8 +29,8 @@ INTERNAL void hex_format
     *count += times;
 }
 
-INTERNAL void decimal_format
-(u8* buf, u32* count, u64 num)
+static void decimal_format
+(u8* buf, usz* count, u64 num)
 {
     /* Init variables */
     u32 times = 0, i = 0;
@@ -45,8 +51,8 @@ INTERNAL void decimal_format
     *count += times;
 }
 
-INTERNAL void octal_format
-(u8* buf, u32* count, u64 num)
+static void octal_format
+(u8* buf, usz* count, u64 num)
 {
     /* Init variables */
     u32 times = 0, i = 0;
@@ -88,7 +94,7 @@ error_t __formatf
 (sl_u8_t buf, sl_u8_t fmt, usz* out_len, va_list va)
 {
     /* Init variables */
-    u32 count = 0, i = 0, len = 0;
+    usz count = 0, i = 0, len = 0;
     bool long_num = false;
     u64 cur_u64 = 0;
     i64 cur_i64 = 0;
@@ -186,11 +192,11 @@ error_t __formatf
         /* Handle %s it will write a cstr */
         else if(fmt.items[i] == 's') {
             cur_cstr = va_arg(ap, char*);
-            len = strlen(cur_cstr);
-            set_slice(&cur_vec, cur_cstr, len);
+            len = cstr_len(cur_cstr);
+            slice_set(&cur_vec, cur_cstr, len);
             if(buf.items) {
-                set_slice(&buf_sl, &buf.items[count], len);
-                memcpy(&buf_sl, &cur_vec);
+                slice_set(&buf_sl, &buf.items[count], len);
+                mem_cpy(&buf_sl, &cur_vec);
             }
             count += len;
         }
@@ -199,10 +205,10 @@ error_t __formatf
         else if(fmt.items[i] == 'v') {
             cur_vec_ptr = va_arg(ap, sl_u8_t*);
             if(buf.items) {
-                set_slice(&buf_sl, &buf.items[count], buf.count - len);
-                if(memcpy(&buf_sl, cur_vec_ptr)) { return small_buffer; }
+                slice_set(&buf_sl, &buf.items[count], buf.count - count);
+                if(mem_cpy(&buf_sl, cur_vec_ptr)) { return small_buffer; }
             }
-            count += (u32)cur_vec_ptr->count;
+            count += cur_vec_ptr->count;
         }
 
         else {

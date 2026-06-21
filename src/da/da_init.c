@@ -12,7 +12,7 @@ error_t __da_init
     if(!alloc || !def) { return null_pointer; }
 
     /* Allocate new memory for items */
-    if((res = malloc(alloc, amount * el_size, &def->items)))
+    if((res = mem_alloc(alloc, &def->items, amount * el_size)))
     { return res; }
 
     /* Set stats for the da */

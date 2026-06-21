@@ -1,5 +1,5 @@
 #include "fs_private.h"
-#include "stdio.h"
+#include "io.h"
 
 error_t file_read_all
 (allocator_t* alloc, path_t* path, da_u8_t* out)
@@ -21,16 +21,16 @@ error_t file_read_all
 
     /* Add shadow byte to make cstr, set buffer, open file and read it */
     str_add_shadow_null(path);
-    if((res = fopen(alloc, (char*)path->items, &file, file_read))) { return res; }
+    if((res = io_open(alloc, (char*)path->items, &file, file_read))) { return res; }
 
     /* This could be better when we move to slice pointers */
     /* Set slice and read file to buffer then set count */
-    set_slice(&buf, out->items, size);
-    res = fread(file, &buf, nullptr);
+    slice_set(&buf, out->items, size);
+    res = io_read(file, &buf, nullptr);
     def->count = buf.count;
 
     /* First close the file because other wise it will leak then check read */
-    if((res2 = fclose(&file))) { return res2; }
+    if((res2 = io_close(&file))) { return res2; }
     /* We expect it to read same as file size so in this case we check io_partial too */
     if(res) { return res; }
 

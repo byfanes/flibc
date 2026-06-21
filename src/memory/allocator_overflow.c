@@ -8,7 +8,7 @@ void allocator_overflow
     sl_u8_t buf_sl = {0};
     sl_u8_t msg =
         ccstr_to_u8("Overflow detected: Allocation in %s:%d for %u bytes has overflow!\n");
-    set_slice(&buf_sl, buf, sizeof(buf));
+    slice_set(&buf_sl, buf, sizeof(buf));
 
     (void)alloc;
     

@@ -22,5 +22,5 @@ error_t __da_grow
     if(allocator_get_from_ptr(def->items, &alloc)) { return invalid_pointer; }
 
     /* Get new chun of memory */
-    return realloc(alloc, def->capacity * el_size, &def->items);
+    return mem_realloc(alloc, &def->items, def->capacity * el_size);
 }

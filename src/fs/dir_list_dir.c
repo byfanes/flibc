@@ -47,10 +47,10 @@ error_t dir_list_dir
             name = d->d_name;
 
             /* Ignore linux's default previous and current directories */
-            if(cstreq(name, ".") || cstreq(name, ".."))
+            if(cstr_eq(name, ".") || cstr_eq(name, ".."))
             { bpos += d->d_reclen; continue; }
 
-            set_slice_cstr(&name_sl, name);
+            slice_set_cstr(&name_sl, name);
 
             /* Call back to users function */
             callback((sl_cstr_t*)path, &name_sl, (d->d_type == DT_DIR), arg);

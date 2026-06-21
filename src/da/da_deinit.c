@@ -14,5 +14,5 @@ error_t da_deinit
     def->capacity = 0;
 
     /* Free memory back it sets to zero automaticly */
-    return free(&def->items);
+    return mem_free(&def->items);
 }

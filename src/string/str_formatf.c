@@ -14,7 +14,7 @@ error_t str_formatf
 
     if(!base || !base->items || !fmt) { return null_pointer; }
 
-    set_slice(&fmt_sl, fmt, strlen(fmt));
+    slice_set(&fmt_sl, fmt, cstr_len(fmt));
 
     /* Start va and format string */
     va_start(ap, fmt);
@@ -22,7 +22,7 @@ error_t str_formatf
     str_grow_if(base, wrote_count);
 
     /* Set base_sl to start position and ap is still usable because formatf copies it */
-    set_slice(&base_sl, &base->items[base->count], wrote_count);
+    slice_set(&base_sl, &base->items[base->count], wrote_count);
     /* Assume this wont give an error because previous one should have checked it */
     __formatf(base_sl, fmt_sl, &wrote_count, ap);
     def->count += wrote_count;

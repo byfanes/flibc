@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "stdtypes.h"
+#include "base.h"
 
 /* TODO: Currently we are not doing any memory order so we might need them in future */
 

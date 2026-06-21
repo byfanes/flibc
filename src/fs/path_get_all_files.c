@@ -16,7 +16,7 @@ static void path_get_all_files_cb
 
     /* Construct new path */
     da_init(pack->alloc, &tmp, 128);
-    strcat_sl(&tmp, path);
+    str_cat_sl(&tmp, path);
 
     /* Append the name and its finished */
     path_join(&tmp, name);

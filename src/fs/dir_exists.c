@@ -12,7 +12,7 @@ error_t dir_exists
 
     /* Check if exists if yes then check is it a dir */
     if((res = path_exists(p, &is_exists))) { return res; }
-    if(is_exists) { return is_path_dir(p, out); }
+    if(is_exists) { return path_is_dir(p, out); }
 
     return success;
 }

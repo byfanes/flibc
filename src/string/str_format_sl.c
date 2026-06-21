@@ -18,7 +18,7 @@ error_t str_formatf_sl
     str_grow_if(base, wrote_count);
 
     /* Set base_sl to start position and ap is still usable because formatf copies it */
-    set_slice(&base_sl, &base->items[base->count], wrote_count);
+    slice_set(&base_sl, &base->items[base->count], wrote_count);
     /* Assume this wont give an error because previous one should have checked it */
     __formatf(base_sl, fmt, &wrote_count, ap);
     def->count += wrote_count;

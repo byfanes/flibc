@@ -21,7 +21,7 @@ error_t thread_join
     ptr = (u8*)(thread->ctrl + 1) - THREAD_STACK_SIZE;
 
     /* Free the stack memory */
-    if((res = free(&ptr))) { return res; }
+    if((res = mem_free(&ptr))) { return res; }
 
     /* Zero the thread to avoid use after free */
     thread->tid = 0;

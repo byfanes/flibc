@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "stdtypes.h"
+#include "base.h"
 
 u16 bswap16(u16 x);
 u32 bswap32(u32 x);

@@ -11,7 +11,7 @@ error_t file_exists
 
     /* Check if exists if yes then check is it a dir */
     if((res = path_exists(p, &is_exists))) { return res; }
-    if(is_exists) { return is_path_file(p, out); }
+    if(is_exists) { return path_is_file(p, out); }
 
     return success;
 }

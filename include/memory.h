@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "stdtypes.h"
+#include "base.h"
 #include "error.h"
 
 #define TRACE_ARGS const char* file_name, u32 line
@@ -68,47 +68,53 @@ error_t allocator_deinit(allocator_t** set);
 error_t allocator_get_from_ptr(void* ptr, allocator_t** set);
 
 sl_u8_t cstr_to_u8sl(const char* cstr);
-error_t set_slice(const void* sl, const void* items, usz count);
-error_t set_slice_cstr(const void* sl, const char* str);
+error_t slice_set(const void* sl, const void* items, usz count);
+error_t slice_set_cstr(const void* sl, const char* str);
 
-error_t __malloc(allocator_t* alloc, usz n, void* set, TRACE_ARGS);
-#define malloc(alloc, n, set) __malloc(alloc, n, set, LOC_ARGS)
+error_t __mem_alloc(allocator_t* alloc, void* set, usz n, TRACE_ARGS);
+#define mem_alloc(alloc, set, n) __mem_alloc((alloc), (set), (n), LOC_ARGS)
 
-error_t __calloc(allocator_t* alloc, usz n, void* set, TRACE_ARGS);
-#define calloc(alloc, n, set) __calloc(alloc, n, set, LOC_ARGS)
+error_t __mem_alloc_sl(allocator_t* alloc, void* set, usz el_size, usz n, TRACE_ARGS);
+#define mem_alloc_sl(alloc, sl, n) __mem_alloc_sl((alloc), ptr_meta(sl), n, LOC_ARGS)
+
+error_t __mem_calloc(allocator_t* alloc, void* set, usz n, TRACE_ARGS);
+#define mem_calloc(alloc, set, n) __mem_calloc((alloc), (set), (n), LOC_ARGS)
+
+error_t __mem_calloc_sl(allocator_t* alloc, void* set, usz el_size, usz n, TRACE_ARGS);
+#define mem_calloc_sl(alloc, sl, n) __mem_calloc_sl((alloc), ptr_meta(sl), n, LOC_ARGS)
 
 /* TODO: realloc can optimized */
-error_t __realloc(allocator_t* alloc, usz n, void* set, TRACE_ARGS);
-#define realloc(alloc, n, set) __realloc(alloc, n, set, LOC_ARGS)
+error_t __mem_realloc(allocator_t* alloc, void* set, usz n, TRACE_ARGS);
+#define mem_realloc(alloc, set, n) __mem_realloc((alloc), (set), (n), LOC_ARGS)
 
-error_t free(void* set);
+error_t mem_free(void* set);
 
-error_t __memset_sl(void* dst, usz el_size, u8 c);
-#define memset(dst, c) __memset_sl(ptr_meta((dst)), (c))
+error_t __mem_set_sl(void* dst, usz el_size, u8 c);
+#define mem_set(dst, c) __mem_set_sl(ptr_meta((dst)), (c))
 
-error_t __memcpy_sl(void* dst, void* src, usz el_size);
-#define memcpy(dst, src) __memcpy_sl(two_ptr_meta_check((dst), (src)))
+error_t __mem_cpy_sl(void* dst, void* src, usz el_size);
+#define mem_cpy(dst, src) __mem_cpy_sl(two_ptr_meta_check((dst), (src)))
 
-error_t __memswap_sl(void* lhs, void* rhs, usz el_size);
-#define memswap(lhs, rhs) __memswap_sl(two_ptr_meta_check((lhs), (rhs)))
+error_t __mem_swap_sl(void* lhs, void* rhs, usz el_size);
+#define mem_swap(lhs, rhs) __mem_swap_sl(two_ptr_meta_check((lhs), (rhs)))
 
-error_t __memmove_sl(void* dst, void* src, usz el_size);
-#define memmove(dst, src) __memmove_sl(two_ptr_meta_check((dst), (src)))
+error_t __mem_move_sl(void* dst, void* src, usz el_size);
+#define mem_move(dst, src) __mem_move_sl(two_ptr_meta_check((dst), (src)))
 
-error_t __memcmp_sl(void* lhs, void* rhs, usz el_size, bool* out);
-#define memcmp(lhs, rhs, res) __memcmp_sl(two_ptr_meta_check((lhs), (rhs)), (res))
+error_t __mem_cmp_sl(void* lhs, void* rhs, usz el_size, bool* out);
+#define mem_cmp(lhs, rhs, res) __mem_cmp_sl(two_ptr_meta_check((lhs), (rhs)), (res))
 
-error_t __memcmp_sl_min(void* lhs, void* rhs, usz el_size, bool* out);
-#define memcmp_min(lhs, rhs, res)  __memcmp_min(two_ptr_meta_check((lhs), (rhs)), (res))
+error_t __mem_cmp_sl_min(void* lhs, void* rhs, usz el_size, bool* out);
+#define mem_cmp_min(lhs, rhs, res) __mem_cmp_sl_min(two_ptr_meta_check((lhs), (rhs)), (res))
 
-error_t memset_raw(void* ptr, u8 c, usz n);
-error_t memcpy_raw(void* dst, void* src, usz n);
-error_t memswap_raw(void* lhs, void* rhs, usz n);
-error_t memmove_raw(void* dst, void* src, usz n);
-error_t memcmp_raw(void* lhs, void* rhs, usz n, bool* out);
+error_t mem_set_raw(void* ptr, u8 c, usz n);
+error_t mem_cpy_raw(void* dst, void* src, usz n);
+error_t mem_swap_raw(void* lhs, void* rhs, usz n);
+error_t mem_move_raw(void* dst, void* src, usz n);
+error_t mem_cmp_raw(void* lhs, void* rhs, usz n, bool* out);
 
-error_t zeroed_len(void* ptr, usz size);
-#define zeroed(ptr) zeroed_len((ptr), sizeof(ptr))
+error_t mem_zeroed_len(void* ptr, usz size);
+#define mem_zeroed(ptr) mem_zeroed_len((ptr), sizeof(*ptr))
 
 #ifdef __cplusplus
 }

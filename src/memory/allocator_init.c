@@ -18,10 +18,10 @@ error_t allocator_init
     if(!alloc || alloc == MMAP_FAILED) { return memory_error; }
 
     /* No needed for checking already done earlier */
-    set_slice(&sl, alloc, sizeof(allocator_t));
+    slice_set(&sl, alloc, sizeof(allocator_t));
 
     /* Zero-ed the struct so bitfields are zero now */
-    memset(&sl, 0);
+    mem_set(&sl, 0);
 
     /* This is an default allocator so we can use default functions */
     alloc->meta.alloc_pointer = allocator_alloc_pointer;
@@ -34,5 +34,6 @@ error_t allocator_init
     alloc->meta.next = 0;
 
     *set = alloc;
+
     return success;
 }

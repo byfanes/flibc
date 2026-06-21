@@ -5,11 +5,11 @@ sl_u8_t cstr_to_u8sl
 {
     /* Init variables */
     sl_u8_t sl = {0};
-    u32 len = 0;
+    usz len = 0;
 
     /* Calculate the length of cstr(null terminated) and set slice */
-    len = strlen(cstr);
-    set_slice(&sl, cstr, len);
+    len = cstr_len(cstr);
+    slice_set(&sl, cstr, len);
 
     return sl;
 }

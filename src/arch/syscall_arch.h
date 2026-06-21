@@ -5,8 +5,7 @@
 extern "C" {
 #endif
 
-#include "features.h"
-#include "stdtypes.h"
+#include "base.h"
 #include "syscall.h"
 
 #ifdef __linux__

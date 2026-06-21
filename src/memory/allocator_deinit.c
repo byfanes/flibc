@@ -28,7 +28,7 @@ error_t allocator_deinit
 
     /* Check if the allocator needs to do leak detection or not */
     if(!(alloc->meta.flags & allocator_dont_check_leaks)) {
-        set_slice(&buf_sl, buf, sizeof(buf));
+        slice_set(&buf_sl, buf, sizeof(buf));
 
         /* Check for the chunks in allocator */
         for(i = 0;i < CHUNK_MAX; ++i) {

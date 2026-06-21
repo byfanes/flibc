@@ -1,5 +1,5 @@
 #include "fs_private.h"
-#include "stdio.h"
+#include "io.h"
 #include "memory.h"
 
 error_t file_copy
@@ -21,18 +21,18 @@ error_t file_copy
 
     /* Add shadow byte to make cstr, set buffer, open file and read it */
     str_add_shadow_null(from);
-    if((res = fopen(alloc, (char*)from->items, &file, file_read))) { return res; }
-    if((res = malloc(alloc, size, &ptr))) { return res; }
-    set_slice(&buf, ptr, size);
-    if((res = fread(file, &buf, nullptr))) { return res; }
-    if((res = fclose(&file))) { return res; }
+    if((res = io_open(alloc, (char*)from->items, &file, file_read))) { return res; }
+    if((res = mem_alloc(alloc, &ptr, size))) { return res; }
+    slice_set(&buf, ptr, size);
+    if((res = io_read(file, &buf, nullptr))) { return res; }
+    if((res = io_close(&file))) { return res; }
 
     /* Add shadow byte to make cstr, read buffer, close new file and free memory*/
     str_add_shadow_null(to);
-    if((res = fopen(alloc, (char*)to->items, &file, file_write))) { return res; }
-    if((res = fwrite(file, &buf))) { return res; }
-    if((res = fclose(&file))) { return res; }
-    if((res = free(&ptr))) { return res; }
+    if((res = io_open(alloc, (char*)to->items, &file, file_write))) { return res; }
+    if((res = io_write(file, &buf))) { return res; }
+    if((res = io_close(&file))) { return res; }
+    if((res = mem_free(&ptr))) { return res; }
     
     return success;
 }

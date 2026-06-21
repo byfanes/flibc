@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "error.h"
-#include "stdtypes.h"
+#include "base.h"
 #include "memory.h"
 
 /* DA - Implementation
@@ -40,6 +40,23 @@ error_t da_deinit(void* da);
 error_t da_truncate(void* da, usz len);
 error_t da_clear(void* da);
 
+/*
+ * da_add_shadow_null_segment() is called from places such as system_run()
+ * that need to convert dynamic-array contents to a C string and therefore
+ * require a trailing null terminator
+ *
+ * When this function is used with a slice, one possible approach is to set
+ * the capacity to 0. In that case da_add_shadow_null_segment() will attempt
+ * to append a trailing (usz)0 value To avoid writing past the end of the
+ * buffer the slice must reserve an additional sizeof(usz) bytes
+ *
+ * Another option is to set capacity equal to count so that no extra element
+ * can be appended However capacity is a const field and cannot be modified
+ * without casting away constness which is unsafe and not intended for users
+ *
+ * Neither approach is completely safe so callers must ensure that the
+ * underlying buffer has enough space for the shadow null segment
+ */
 error_t __da_add_shadow_null_segment(void* da, usz el_size);
 #define da_add_shadow_null_segment(da) __da_add_shadow_null_segment(ptr_meta((da)))
 

@@ -1,15 +1,14 @@
-#ifndef __THREADS_H__
-#define __THREADS_H__
+#ifndef __FLIBC_THREADS_H__
+#define __FLIBC_THREADS_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "stdtypes.h"
-#include "features.h"
+#include "base.h"
 #include "memory.h"
 #include "atomics.h"
-#include "crt.h"
+#include "std.h"
 
 /* 2 MB */
 #define THREAD_STACK_SIZE 1024*1024*2
@@ -65,4 +64,4 @@ error_t thread_join_da(da_thread_t* threads, da_retval_t* ret_vals);
 }
 #endif
 
-#endif /* __THREADS_H__ */
+#endif /* __FLIBC_THREADS_H__ */

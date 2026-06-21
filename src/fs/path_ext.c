@@ -22,8 +22,8 @@ error_t path_ext
         if(base->items[i] == '.') {
             /* Append the extension to buffer */
             i++;
-            set_slice(&sl, &base->items[i], base->count - (usz)i);
-            return strcat_sl(out, &sl);
+            slice_set(&sl, &base->items[i], base->count - (usz)i);
+            return str_cat_sl(out, &sl);
         }
 
         /* We could not find any extersion so return cleared buffer */
