@@ -9,6 +9,9 @@ void __thread_end(thread_ctrl_t* ctrl, void* ret);
 void __thread_end
 (thread_ctrl_t* ctrl, void* ret)
 {
-    atomic_xchg_ssz(&ctrl->done, 1);
+    /* Order of the writings is important here because if we write done
+     * before the ret_val other threads may read wrong value
+     */
     atomic_xchg_ssz(&ctrl->ret_val, (ssz)(uintptr_t)ret);
+    atomic_xchg_ssz(&ctrl->done, 1);
 }

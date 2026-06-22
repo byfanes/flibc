@@ -4,13 +4,14 @@ error_t thread_spawn
 (allocator_t* alloc, da_thread_t* threads, void*(*func)(void*), void* arg)
 {
     /* Init variables */
-    thread_t t = {0};
     error_t res = success;
 
-    /* Check thread da because if we after check it we might have dangling thread */
-    if(!threads || !threads->items) { return null_pointer; }
-    /* Create a thread */
-    if((res = thread_create(alloc, &t, func, arg))) { return res; }
-    /* Push the new thread */
-    return da_push(threads, &t);
+    /* It will check for the threads and threads' items and allocated a new place for the thread */
+    if((res = da_grow_if(threads, 1))) { return res; }
+
+    /* It will check for alloc and func and create a new thread */
+    if((res = thread_create(alloc, threads->items + threads->count, func, arg))) { return res; }
+
+    /* Push the new thread - its already allocated so we just increase the count */
+    return slice_set(threads, threads->items, threads->count + 1);
 }
