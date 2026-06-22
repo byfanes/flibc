@@ -23,7 +23,7 @@ error_t __io_seek_unlocked
     ret = syscall_3_linux(syscall_lseek, (ssz)file->fd, (ssz)off, whence);
 
     /* Check return of the syscall */
-    if(ret == -1) { return io_error; }
+    if(ret < 0) { return io_error; }
     if(out) { *out = (usz)ret; }
 
     return success;
