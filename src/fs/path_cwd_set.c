@@ -10,7 +10,7 @@ error_t path_cwd_set
     str_add_shadow_null(p);
 
     /* Call syscall and check return of the syscall */
-    if(0 != syscall_1_linux(syscall_chdir, (ssz)p->items))
+    if(0 > syscall_1_linux(syscall_chdir, (ssz)p->items))
     { return fs_error; }
 
     return success;

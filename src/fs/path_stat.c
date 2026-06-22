@@ -11,7 +11,7 @@ error_t path_stat
     str_add_shadow_null(p);
 
     /* Check return of the syscall */
-    if(0 != syscall_2_linux(syscall_stat, (ssz)p->items, (ssz)out))
+    if(0 > syscall_2_linux(syscall_stat, (ssz)p->items, (ssz)out))
     { return fs_error; }
 
     return success;

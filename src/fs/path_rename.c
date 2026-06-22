@@ -13,7 +13,7 @@ error_t path_rename
     str_add_shadow_null(to);
 
     /* Call and check return of the syscall */
-    if(0 != syscall_2_linux(syscall_rename, (ssz)from->items, (ssz)to->items))
+    if(0 > syscall_2_linux(syscall_rename, (ssz)from->items, (ssz)to->items))
     { return fs_error; }
     
     return success;

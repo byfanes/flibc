@@ -8,7 +8,7 @@ error_t dir_mkdir
     
     /* Add null byte and call mkdir syscall */
     str_add_shadow_null(path);
-    if(0 != syscall_2_linux(syscall_mkdir, (ssz)path->items, 0755))
+    if(0 > syscall_2_linux(syscall_mkdir, (ssz)path->items, 0755))
     { return fs_error; }
 
     return success;

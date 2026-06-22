@@ -8,7 +8,7 @@ error_t file_remove
 
     /* Add null byte and call remove syscall */
     str_add_shadow_null(path);
-    if(0 != syscall_1_linux(syscall_unlink, (ssz)path->items))
+    if(0 > syscall_1_linux(syscall_unlink, (ssz)path->items))
     { return fs_error; }
 
     return success;
