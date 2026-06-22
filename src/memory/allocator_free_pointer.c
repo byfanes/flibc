@@ -44,7 +44,7 @@ error_t allocator_free_pointer
     alloc->headers[header->idx] = nullptr;
 
     /* If we cant free any memory just stop and return an error */
-    if(0 != syscall_2_linux(syscall_munmap, (ssz)header, (ssz)total)) {
+    if(0 > syscall_2_linux(syscall_munmap, (ssz)header, (ssz)total)) {
         alloc->headers[header->idx] = header;
         res = memory_error;
         goto end;

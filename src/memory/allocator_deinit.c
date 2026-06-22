@@ -69,7 +69,7 @@ error_t allocator_deinit
         if(!header) { continue; }
         raw = ALIGN_64(header->wanted_alloc + ADDITIONAL_HEADER_SIZE);
         /* If we cant free any memory just stop and return an error no future freeing */
-        if(0 != syscall_2_linux(syscall_munmap, (ssz)header, (ssz)raw))
+        if(0 > syscall_2_linux(syscall_munmap, (ssz)header, (ssz)raw))
         { return memory_error; }
 
         alloc->headers[i] = nullptr;
@@ -78,7 +78,7 @@ error_t allocator_deinit
     mutex_unlock(&alloc->meta.mutex);
 
     /* Give back the memory to os */
-    if(0 != syscall_2_linux(syscall_munmap, (ssz)alloc, RAW_ALLOCATION_SIZE))
+    if(0 > syscall_2_linux(syscall_munmap, (ssz)alloc, RAW_ALLOCATION_SIZE))
     { return memory_error; }
 
     *set = 0;
