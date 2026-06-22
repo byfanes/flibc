@@ -10,8 +10,8 @@ error_t socket_create
     
     if(!out || !addr) { return null_pointer; }
 
-    ret = syscall_3_linux(syscall_socket, family, type, (ssz)protocol.value);
-    if(ret == -1) { return socket_error; }
+    ret = syscall_3_linux(syscall_socket, family, type | SOCK_CLOEXEC, (ssz)protocol.value);
+    if(ret < 0) { return socket_error; }
 
     out->fd = ret;
     /* Safe to decay to u16 because AF_MAX is 45 */

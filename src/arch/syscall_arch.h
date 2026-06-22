@@ -79,7 +79,6 @@ ssz syscall_5_linux
 #define SEEK_CUR 1
 #define SEEK_END 2
 
-#define MMAP_FAILED (void*)-1
 #define MAP_PRIVATE 0x02
 #define MAP_ANONYMOUS 0x20
 
@@ -126,6 +125,8 @@ ssz syscall_5_linux
 #define S_ISFIFO(mode) (((mode) & S_IFMT) == S_IFIFO)
 #define S_ISLNK(mode)  (((mode) & S_IFMT) == S_IFLNK)
 #define S_ISSOCK(mode) (((mode) & S_IFMT) == S_IFSOCK)
+
+#define SOCK_CLOEXEC 0x80000
 
 #define FUTEX_WAIT 0
 #define FUTEX_WAKE 1
