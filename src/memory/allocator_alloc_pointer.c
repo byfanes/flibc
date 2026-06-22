@@ -45,7 +45,7 @@ static error_t alloc_big_chunk
             (PROT_READ|PROT_WRITE), (MAP_PRIVATE|MAP_ANONYMOUS), (ssz)(-1), 0);
 
             /* Error check */
-            if(!ptr || ptr == MMAP_FAILED) { return memory_error; }
+            if((ssz)ptr < 0 && (ssz)ptr > -4096) { return memory_error; }
 
             /* Set header pointer to allocator too */
             alloc->headers[header_idx] = (heap_header_t*)(uintptr_t)ptr;

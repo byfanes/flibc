@@ -15,7 +15,7 @@ error_t allocator_init
         (PROT_READ|PROT_WRITE), (MAP_PRIVATE|MAP_ANONYMOUS), (ssz)(-1), 0);
 
     /* Error check */
-    if(!alloc || alloc == MMAP_FAILED) { return memory_error; }
+    if((ssz)alloc < 0 && (ssz)alloc > -4096) { return memory_error; }
 
     /* No needed for checking already done earlier */
     slice_set(&sl, alloc, sizeof(allocator_t));
