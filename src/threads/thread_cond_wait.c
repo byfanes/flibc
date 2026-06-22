@@ -22,8 +22,6 @@ error_t thread_cond_wait
     /* Wake up again */
     if((res = mutex_lock(mutex))) { return res; }
 
-    if(ret < 0 && (ret == -EINTR || ret == -EAGAIN)) {
-        return thread_cond_error;
-    }
+    if(ret < 0) { return thread_cond_error; }
     return res;
 }

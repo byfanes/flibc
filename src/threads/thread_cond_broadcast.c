@@ -15,7 +15,7 @@ error_t thread_cond_broadcast
     /* Broadcast the seq - 0x7FFFFFFF is int max which is maxium possible thread count */
     ret = syscall_6_linux(syscall_futex, (ssize_t)&cond->seq, FUTEX_WAKE, 0x7FFFFFFF, 0, 0, 0);
 
-    if(ret < 0 && (ret == -EINTR || ret == -EAGAIN)) {
+    if(ret < 0) {
         return thread_cond_error;
     }
     

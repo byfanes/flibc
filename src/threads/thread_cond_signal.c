@@ -14,9 +14,7 @@ error_t thread_cond_signal
 
     /* Signal a thread */
     ret = syscall_6_linux(syscall_futex, (ssize_t)&cond->seq, FUTEX_WAKE, 1, 0, 0, 0);
-    if(ret < 0) {
-        return thread_cond_error;
-    }
+    if(ret < 0) { return thread_cond_error; }
 
     return success;
 }
