@@ -20,6 +20,7 @@ error_t proc_spawn_fixed
             /* Make a free slot */
             if(procs->items[i].handle == pid) {
                 da_unordered_remove(procs, i);
+                break;
             }
         }
     }
