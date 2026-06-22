@@ -288,6 +288,8 @@ bool build_yourself
     }
 
     io_printf(std.io.out, "Building script...\n");
+    io_printf(std.io.out, "This will rebuild all of the files...\n");
+    io_flush(std.io.out);
 
     /* Construct old path which 'build.old' and rename the 'build' file */
     str_dup(std.alloc, &exe_file, &old_exe);
@@ -316,7 +318,8 @@ bool build_yourself
     /* Clear and start construct the new command and append the args */
     str_clear(&cmd);
     cmd_append(&cmd, (sl_u8_t*)&exe_file);
-    for(; i < std.args.count; ++i) {
+    str_cat_cstr(&cmd, " -b");
+    for(i = 0; i < std.args.count; ++i) {
         cmd_append(&cmd, std.args.items + i);
     }
 
