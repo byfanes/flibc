@@ -55,7 +55,7 @@ error_t io_seek(file_t* file, usz off, seek_type_t type, usz* _Nullable out);
 error_t io_rewind(file_t* file);
 
 #define io_puts(file, sl) __io_write((file), ptr_meta(sl))
-error_t io_putc(file_t* file, uint8_t c);
+error_t io_putc(file_t* file, u8 c);
 
 error_t io_printf(file_t* file, const char* fmt, ...);
 error_t io_printf_sl(file_t* file, sl_u8_t fmt, ...);

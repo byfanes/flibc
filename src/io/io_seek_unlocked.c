@@ -4,7 +4,7 @@ error_t __io_seek_unlocked
 (file_t* file, usz off, seek_type_t type, usz* _Nullable out)
 {
     /* Init variables */
-    int32_t whence = 0;
+    i32 whence = 0;
     ssz ret = 0;
 
     /* Validate user inputs */

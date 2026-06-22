@@ -12,7 +12,8 @@ error_t __io_close_unlocked
 
     /* Call flush to write the remaing buffer */
     if((*file)->type != file_read) {
-        if((res = __io_flush_unlocked(*file))) { return res; }
+        /* We are ignoring the errors for this */
+        __io_flush_unlocked(*file);
     }
 
     if(!((*file)-> fd == UNIX_STDERR || (*file)-> fd == UNIX_STDIN || (*file)-> fd == UNIX_STDOUT))
