@@ -5,7 +5,7 @@ error_t socket_connect
 {
     if(!sock) { return null_pointer; }
 
-    if(-1 == syscall_3_linux(syscall_connect, sock->fd,
+    if(0 > syscall_3_linux(syscall_connect, sock->fd,
         (ssz)&sock->addr, sizeof(sock->addr)))
     { return socket_error; }
     

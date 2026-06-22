@@ -8,7 +8,7 @@ error_t socket_listen
     if(!sock) { return null_pointer; }
     
     ret = syscall_2_linux(syscall_listen, sock->fd, 128);
-    if(ret == -1) { return socket_error; }
+    if(ret < 0) { return socket_error; }
 
     return success;
 }

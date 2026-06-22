@@ -7,7 +7,7 @@ error_t socket_close
 
     if(!sock) { return null_pointer; }
     
-    if(0 != syscall_1_linux(syscall_close, sock->fd))
+    if(0 > syscall_1_linux(syscall_close, sock->fd))
     { return socket_error; }
 
     sock->fd = 0;
