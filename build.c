@@ -42,12 +42,12 @@ void build_file(path_t* full_path, path_t* out_path, packed_t *pack, bool is_crt
 /* Callback for iterating the directory list */
 void callback(sl_cstr_t* path, sl_cstr_t* name, bool is_dir, void* arg);
 void make_libs(std_t* std, packed_t* pack);
-bool build_yourself(std_t std, packed_t* pack);
-void set_flags(std_t std, packed_t* pack);
+bool build_yourself(std_t* std, packed_t* pack);
+void set_flags(std_t* std, packed_t* pack);
 void set_general(packed_t* pack);
 
 error_t main
-(std_t std)
+(std_t* std)
 {
     /* Init variables */
     path_t src = {0}, build_dir = {0};
@@ -61,7 +61,7 @@ error_t main
     pack.general = &general;
     set_general(&pack);
     set_flags(std, &pack);
-    pack.std = &std;
+    pack.std = std;
     pack.build_dir = &build_dir;
     pack.procs = &procs;
     pack.obj_files = &objs;
@@ -71,12 +71,12 @@ error_t main
 
     /* Allocate */
     /* TODO: 12 is for cpu thread */
-    da_init(std.alloc, pack.procs, 12);
-    da_init(std.alloc, &objs, 128);
-    str_init(std.alloc, &pack.full, 128);
-    str_init(std.alloc, &pack.ext, 128);
-    str_from_cstr(std.alloc, &src, "./src/");
-    str_from_cstr(std.alloc, &build_dir, "./.build/");
+    da_init(std->alloc, pack.procs, 12);
+    da_init(std->alloc, &objs, 128);
+    str_init(std->alloc, &pack.full, 128);
+    str_init(std->alloc, &pack.ext, 128);
+    str_from_cstr(std->alloc, &src, "./src/");
+    str_from_cstr(std->alloc, &build_dir, "./.build/");
 
     /* Create '.build' directory if it does not exist */
     dir_mkdir_ifnot_exists(&build_dir);
@@ -96,7 +96,7 @@ error_t main
     proc_wait(&procs);
 
     /* Make .so and .a files */
-    make_libs(&std, &pack);
+    make_libs(std, &pack);
 
     /* Wait for .so and .a files to finish */
     proc_wait(&procs);
@@ -109,7 +109,7 @@ error_t main
     str_deinit(&pack.full);
     str_deinit(&pack.ext);
 
-    io_printf(std.io.out, "Done!\n");
+    io_printf(std->io.out, "Done!\n");
     return success;
 }
 
@@ -255,7 +255,7 @@ void make_libs
 }
 
 bool build_yourself
-(std_t std, packed_t* pack)
+(std_t* std, packed_t* pack)
 {
     /* Init variables */
     path_t c_file = {0}, exe_file = {0}, old_exe = {0};
@@ -267,12 +267,12 @@ bool build_yourself
     /* Allocate memory for file paths +2 is for '.o' extension
      * not mandatory but saves as a little bit of time
      */
-    str_init(std.alloc, &c_file, std.exe.count + 2);
-    str_init(std.alloc, &exe_file, std.exe.count);
+    str_init(std->alloc, &c_file, std->exe.count + 2);
+    str_init(std->alloc, &exe_file, std->exe.count);
 
     /* Construct the paths */
-    str_cat_sl(&c_file, &std.exe);
-    str_cat_sl(&exe_file, &std.exe);
+    str_cat_sl(&c_file, &std->exe);
+    str_cat_sl(&exe_file, &std->exe);
     path_change_ext(&c_file, &pack->general->c_ext);
 
     /* Get last modification times */
@@ -281,23 +281,23 @@ bool build_yourself
 
     /* Check if its up to date and free the paths */
     if(c_time.sec <= exe_time.sec) {
-        io_printf(std.io.out, "Up to date script...\n");
+        io_printf(std->io.out, "Up to date script...\n");
         str_deinit(&c_file);
         str_deinit(&exe_file);
         return true;
     }
 
-    io_printf(std.io.out, "Building script...\n");
-    io_printf(std.io.out, "This will rebuild all of the files...\n");
-    io_flush(std.io.out);
+    io_printf(std->io.out, "Building script...\n");
+    io_printf(std->io.out, "This will rebuild all of the files...\n");
+    io_flush(std->io.out);
 
     /* Construct old path which 'build.old' and rename the 'build' file */
-    str_dup(std.alloc, &exe_file, &old_exe);
+    str_dup(std->alloc, &exe_file, &old_exe);
     path_change_ext(&old_exe, &pack->general->old_ext);
     path_rename(&exe_file, &old_exe);
 
     /* Construct the command */
-    str_init(std.alloc, &cmd, 128);
+    str_init(std->alloc, &cmd, 128);
     cmd_append(&cmd, &pack->general->cc);
     cmd_append(&cmd, &pack->general->freestanding_flags);
     /* Its safe to cast path_t* to slice_u8* */
@@ -308,25 +308,25 @@ bool build_yourself
 
     /* Print the command if program is started with verbose */
     if(pack->general->verbose) {
-        io_printf(std.io.out, "Command which will be executed is: %v\n", &cmd);
-        io_flush(std.io.out);
+        io_printf(std->io.out, "Command which will be executed is: %v\n", &cmd);
+        io_flush(std->io.out);
     }
 
     /* Run and wait the command */
-    proc_run(cmd, std.env);
+    proc_run(cmd, std->env);
 
     /* Clear and start construct the new command and append the args */
     str_clear(&cmd);
     cmd_append(&cmd, (sl_u8_t*)&exe_file);
     str_cat_cstr(&cmd, " -b");
-    for(i = 0; i < std.args.count; ++i) {
-        cmd_append(&cmd, std.args.items + i);
+    for(i = 0; i < std->args.count; ++i) {
+        cmd_append(&cmd, std->args.items + i);
     }
 
     /* Overwrite the current program and start the new build script  */
-    ret = system_run_env(cmd, std.env);
+    ret = system_run_env(cmd, std->env);
     if(ret) {
-        io_printf(std.io.out, "Could not execute the new build script...\n");
+        io_printf(std->io.out, "Could not execute the new build script...\n");
         path_rename(&old_exe, &exe_file);
     }
 
@@ -340,15 +340,15 @@ bool build_yourself
 }
 
 void set_flags
-(std_t std, packed_t* pack)
+(std_t* std, packed_t* pack)
 {
     /* Init variables */
     u32 i = 0;
     char* arg = 0;
 
     /* Iterate over the args and find given flags - arguments which are not a flag will be ignored */
-    for(; i < std.args.count; ++i) {
-        arg = (char*)std.args.items[i].items;
+    for(; i < std->args.count; ++i) {
+        arg = (char*)std->args.items[i].items;
         if(cstr_eq("-v", arg)) { pack->general->verbose = true; }
         if(cstr_eq("-b", arg)) { pack->general->always_make = true; }
     }

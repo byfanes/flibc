@@ -39,15 +39,23 @@ struct std_s {
     env_t env;
 };
 
-extern error_t main(std_t);
+#ifndef FLIBC_OLD_MAIN
+/* if user wants to use old main signature this will cause some error so this needs to be disable
+ * and if user wants to use old main they are probably use it with a glibc/musl or any other library
+ * so those libraries should start/init their internals and thats mostly done before the main
+ */
+extern error_t main(std_t* std);
+#endif /* FLIBC_OLD_MAIN */
 
 error_t env_add_var_t(env_t* env, env_var_t var);
 error_t env_add_var(allocator_t* alloc, env_t* env, sl_u8_t* key, sl_u8_t* val);
 
 error_t env_get_var(env_t* env, str_t* key, str_t* val);
 
-_Noreturn void exit(ssz code);
-_Noreturn void abort(void);
+/* This assumes envp comes after argv */
+void std_from_args(std_t* std, int argc, char** argv);
+_Noreturn void std_exit(std_t* std, ssz code);
+_Noreturn void std_abort(ssz code);
 
 #ifdef __cplusplus
 }

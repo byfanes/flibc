@@ -20,5 +20,5 @@ void __stack_chk_fail(void);
  */
 void __stack_chk_fail(void)
 {
-    exit(ssp_fail);
+    std_abort(ssp_fail);
 }
