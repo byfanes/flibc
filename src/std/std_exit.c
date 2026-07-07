@@ -3,16 +3,15 @@
 _Noreturn void std_exit
 (std_t* std, ssz code)
 {
+    /* Init variables */
     usz i = 0;
 
-    /* Free if its needed */
-    if(std->args.count > MAX_ARGS_COUNT) {
-        /* Slice pointers are constant so we cast to void* to avoid compiler errors and normaly
-         * slices should not be used for holding pointers in heap
-         */
-        if(mem_free((void*)&std->args.items))
-        { __std_early_panic("STD Exit Panic: Could not free the args slice!\n"); }
-    }
+    /* Slice pointers are constant so we cast to void* to avoid compiler errors and normaly
+    * slices should not be used for holding pointers in heap
+    */
+    /* TODO: Use malloc_sl and free_sl */
+    if(mem_free((void*)(uintptr_t)&std->args.items))
+    { __std_early_panic("STD Exit Panic: Could not free the args slice!\n"); }
 
     /* Free the env variables */
     for(i = 0; i < std->env.vars.count; ++i) {
