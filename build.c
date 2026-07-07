@@ -12,8 +12,11 @@ typedef struct general_s general_t;
 struct general_s {
     bool verbose;
     bool always_make;
+    bool is_clang;
+    bool analyze;
     sl_u8_t ar;
     sl_u8_t cc;
+    sl_u8_t ld;
     sl_u8_t c_ext;
     sl_u8_t old_ext;
     sl_u8_t obj_ext;
@@ -59,8 +62,8 @@ error_t main
 
     /* Set basics */
     pack.general = &general;
-    set_general(&pack);
     set_flags(std, &pack);
+    set_general(&pack);
     pack.std = std;
     pack.build_dir = &build_dir;
     pack.procs = &procs;
@@ -132,7 +135,9 @@ void build_file
     }
 
     /* Check if it needs to be skipped or processed */
-    if(in_time.sec <= out_time.sec && !pack->general->always_make) {
+    if (!pack->general->always_make && (in_time.sec < out_time.sec ||
+       (in_time.sec == out_time.sec && in_time.nsec <= out_time.nsec)))
+    {
         if(pack->general->verbose)
         { io_printf(pack->std->io.out,"Skipping %v its up to date\n", full_path); }
         return;
@@ -145,13 +150,14 @@ void build_file
     str_cat_sl(&cmd, &pack->general->cc);
     cmd_append(&cmd, &pack->general->freestanding_flags);
     cmd_append(&cmd, &pack->general->c_flags);
+    str_cat_cstr(&cmd, " -c -o ");
     /* Its safe to cast path_t* to slice_u8* */
     /* Dynamic arrays can decay to slices */
     cmd_append(&cmd, (sl_u8_t*)out_path);
     cmd_append(&cmd, (sl_u8_t*)full_path);
 
     /* Spawn new process within the limit which is procs capacity */
-    proc_spawn_fixed(cmd, pack->std->env, pack->procs);
+    proc_spawn_fixed(&cmd, &pack->std->env, pack->procs);
 
     /* Free the memory which is allocated */
     str_deinit(&cmd);
@@ -231,8 +237,7 @@ void make_libs
 
     /* Set .a library command and flags */
     str_init(std->alloc, &so_cmd, 2048);
-    cmd_append(&so_cmd, &pack->general->cc);
-    cmd_append(&so_cmd, &pack->general->freestanding_flags);
+    cmd_append(&so_cmd, &pack->general->ld);
     cmd_append(&so_cmd, &pack->general->so_flags);
 
     /* Iterate over the objects list and append to commands and free it */
@@ -245,9 +250,14 @@ void make_libs
         str_deinit(objs->items + i);
     }
 
+    if(pack->general->verbose) {
+        io_printf(std->io.out, "Running (SO): %v\n", &so_cmd);
+        io_printf(std->io.out, "Running (ARC): %v\n", &arc_cmd);
+    }
+
     /* Spawn both of the commands */
-    proc_spawn(so_cmd, std->env, pack->procs);
-    proc_spawn(arc_cmd, std->env, pack->procs);
+    proc_spawn(&so_cmd, &std->env, pack->procs);
+    proc_spawn(&arc_cmd, &std->env, pack->procs);
 
     /* Free commands */
     str_deinit(&so_cmd);
@@ -280,7 +290,9 @@ bool build_yourself
     path_mtime(&exe_file, &exe_time);
 
     /* Check if its up to date and free the paths */
-    if(c_time.sec <= exe_time.sec) {
+    if (c_time.sec < exe_time.sec ||
+       (c_time.sec == exe_time.sec && c_time.nsec <= exe_time.nsec))
+    {
         io_printf(std->io.out, "Up to date script...\n");
         str_deinit(&c_file);
         str_deinit(&exe_file);
@@ -304,6 +316,7 @@ bool build_yourself
     /* Dynamic arrays can decay to slices */
     cmd_append(&cmd, (sl_u8_t*)&c_file);
     cmd_append(&cmd, &pack->general->build_yourself_flags);
+    str_cat_cstr(&cmd, " -o ");
     cmd_append(&cmd, (sl_u8_t*)&exe_file);
 
     /* Print the command if program is started with verbose */
@@ -313,7 +326,7 @@ bool build_yourself
     }
 
     /* Run and wait the command */
-    proc_run(cmd, std->env);
+    proc_run(&cmd, &std->env);
 
     /* Clear and start construct the new command and append the args */
     str_clear(&cmd);
@@ -324,7 +337,7 @@ bool build_yourself
     }
 
     /* Overwrite the current program and start the new build script  */
-    ret = system_run_env(cmd, std->env);
+    ret = system_run_env(&cmd, &std->env);
     if(ret) {
         io_printf(std->io.out, "Could not execute the new build script...\n");
         path_rename(&old_exe, &exe_file);
@@ -344,15 +357,27 @@ void set_flags
 {
     /* Init variables */
     u32 i = 0;
-    char* arg = 0;
+    char *arg = 0;
+    sl_u8_t *arg_sl = {0};
 
     /* Iterate over the args and find given flags - arguments which are not a flag will be ignored */
     for(; i < std->args.count; ++i) {
         arg = (char*)std->args.items[i].items;
+        arg_sl = std->args.items + i;
         if(cstr_eq("-v", arg)) { pack->general->verbose = true; }
-        if(cstr_eq("-b", arg)) { pack->general->always_make = true; }
+        else if(cstr_eq("-b", arg)) { pack->general->always_make = true; }
+        else if(cstr_eq("-clang", arg)) { pack->general->is_clang = true; }
+        else if(cstr_eq("-a", arg)) { pack->general->analyze = true; }
+        else { io_printf(std->io.out, "Warning unknown flag: '%v' will be ignored!\n", arg_sl); }
+    }
+
+    if(pack->general->analyze && !pack->general->always_make) {
+        io_printf(std->io.out,
+        "Warning: Using '-a analyze' flag without '-b always_make' flag probably wont do anything\n");
     }
 }
+
+const sl_u8_t common_flags, gcc, gcc_flags, clang, clang_flags;
 
 void set_general
 (packed_t* pack)
@@ -362,35 +387,143 @@ void set_general
 
     /* Set basic thins */
     slice_set_cstr(&general->ar, "ar");
-    slice_set_cstr(&general->cc, "gcc");
+    if(pack->general->is_clang)
+    { mem_cpy_raw(&general->cc, &clang, sizeof(general->cc)); }
+    else
+    { mem_cpy_raw(&general->cc, &gcc, sizeof(general->cc)); }
+    slice_set_cstr(&general->ld, "ld");
     slice_set_cstr(&general->obj_ext, "o");
     slice_set_cstr(&general->crt_name, "fcrt0.s");
 
-    /* c_flags ends with -o because in program we append
-     * output name after the c_flags so its convenient
-     */
-    slice_set_cstr(&general->c_flags,
-        "-O2 -g3 -fPIC "
-        "-Wall -Wextra -Wpedantic "
-        "-Wconversion -Wsign-conversion "
-        "-Wformat -Wformat-overflow -Wformat-truncation "
-        "-Wstrict-prototypes -Wmissing-prototypes "
-        "-Wshadow -Wpointer-arith "
-        "-Wwrite-strings -Wundef "
-        "-Wfloat-equal -Wcast-align -Wno-int-conversion "
-        "-Wswitch-default -std=c89 -pedantic -Werror "
-        "-Iinclude -c -o ");
+    if(!pack->general->analyze)
+    { mem_cpy_raw(&general->c_flags, &common_flags, sizeof(general->c_flags)); }
+    else if(pack->general->is_clang)
+    { mem_cpy_raw(&general->c_flags, &clang_flags, sizeof(general->c_flags)); }
+    else
+    { mem_cpy_raw(&general->c_flags, &gcc_flags, sizeof(general->c_flags)); }
 
-    slice_set_cstr(&general->so_flags, "-shared -fPIC -o .build/flibc.so");
+    slice_set_cstr(&general->so_flags, "-nostdlib -shared -o .build/flibc.so");
     slice_set_cstr(&general->ar_flags, "rcs -o .build/flibc.a");
 
     slice_set_cstr(&general->freestanding_flags,
-        "-ffreestanding -fno-builtin -nostdinc -nostdlib -Iinclude -nostartfiles -nodefaultlibs");
+        "-nostdlib -Iinclude -nodefaultlibs");
 
     slice_set_cstr(&general->c_ext, ".c");
     slice_set_cstr(&general->old_ext, ".old");
 
     /* It ends with -o reason same as c_flags */
     slice_set_cstr(&general->build_yourself_flags,
-        "-Wl,-e,_start .build/src/arch/x86_64/fcrt0.o -L. -l:.build/flibc.so -Wl,-rpath=. -o");
+        ".build/src/arch/x86_64/fcrt0.o -L. -l:.build/flibc.so -g3 ");
 }
+
+
+const sl_u8_t common_flags = ccstr_to_u8("-Iinclude -fPIC -std=c89 -g3 ");
+
+const sl_u8_t gcc = ccstr_to_u8("gcc");
+const sl_u8_t gcc_flags = ccstr_to_u8(
+/* Core, Optimization, and Sanitizers */
+" -std=c89 -Iinclude -g3 -fPIC "
+" -fsanitize-trap=undefined -fsanitize=undefined "
+" -fanalyzer -fstrict-flex-arrays -Waggregate-return "
+" -Wall -Wextra -Werror --pedantic-errors -Wunused "
+" --param=analyzer-max-svalue-depth=2048 "
+" --param=analyzer-max-enodes-per-program-point=2048 "
+/* Allow analyzer to go even further otherwise
+ * it will stuck on formatf function a lot(probably)
+ */
+" --param=analyzer-bb-explosion-factor=50 "
+
+" -Werror=analyzer-symbol-too-complex -Wanalyzer-symbol-too-complex "
+" -Werror=analyzer-too-complex -Wanalyzer-too-complex "
+
+/* Relax analyzer complexity diagnostics because GCC's static analyzer
+ * may exceed internal complexity limits on large/complex code paths.
+ */
+" -Wno-overlength-strings "
+
+/* Analyzer Flags */
+" -Wanalyzer-deref-before-check -Wanalyzer-double-fclose "
+" -Wanalyzer-double-free -Wanalyzer-exposure-through-output-file "
+" -Wanalyzer-exposure-through-uninit-copy "
+" -Wanalyzer-fd-access-mode-mismatch "
+" -Wanalyzer-fd-double-close -Wanalyzer-fd-leak "
+" -Wanalyzer-fd-phase-mismatch -Wanalyzer-fd-type-mismatch "
+" -Wanalyzer-fd-use-after-close -Wanalyzer-fd-use-without-check "
+" -Wanalyzer-file-leak -Wanalyzer-free-of-non-heap "
+" -Wanalyzer-imprecise-fp-arithmetic -Wanalyzer-infinite-loop "
+" -Wanalyzer-infinite-recursion -Wanalyzer-jump-through-null "
+" -Wanalyzer-malloc-leak -Wanalyzer-mismatching-deallocation "
+" -Wanalyzer-null-argument -Wanalyzer-null-dereference "
+" -Wanalyzer-out-of-bounds -Wanalyzer-overlapping-buffers "
+" -Wanalyzer-possible-null-argument -Wanalyzer-possible-null-dereference "
+" -Wanalyzer-putenv-of-auto-var -Wanalyzer-shift-count-negative "
+" -Wanalyzer-shift-count-overflow -Wanalyzer-stale-setjmp-buffer "
+" -Wanalyzer-tainted-allocation-size "
+" -Wanalyzer-tainted-array-index -Wanalyzer-tainted-assertion "
+" -Wanalyzer-tainted-divisor -Wanalyzer-tainted-offset "
+" -Wanalyzer-tainted-size "
+" -Wanalyzer-undefined-behavior-strtok "
+" -Wanalyzer-unsafe-call-within-signal-handler "
+" -Wanalyzer-use-after-free -Wanalyzer-use-of-pointer-in-stale-stack-frame "
+" -Wanalyzer-use-of-uninitialized-value -Wanalyzer-va-arg-type-mismatch "
+" -Wanalyzer-va-list-exhausted -Wanalyzer-va-list-leak "
+" -Wanalyzer-va-list-use-after-va-end -Wanalyzer-write-to-const "
+" -Wanalyzer-write-to-string-literal -Wanalyzer-allocation-size "
+
+/* Strict C / Memory / Types */
+" -Warray-bounds=2 -Wbad-function-cast -Warith-conversion "
+" -Wbidi-chars -Wbuiltin-declaration-mismatch "
+" -Wbuiltin-macro-redefined -Wc90-c99-compat "
+" -Wcannot-profile -Wcast-align=strict "
+" -Wcast-qual -Wdeclaration-after-statement "
+" -Wcompare-distinct-pointer-types -Wcomplain-wrong-lang -Wconversion "
+" -Wcoverage-invalid-line-number -Wcoverage-mismatch -Wcoverage-too-many-conditions "
+" -Wdeclaration-missing-parameter-type -Wdeprecated -Wdeprecated-declarations "
+" -Wdisabled-optimization -Wdiscarded-array-qualifiers -Wdiscarded-qualifiers "
+" -Wdiv-by-zero -Wdouble-promotion -Wduplicated-branches "
+" -Wduplicated-cond -Wendif-labels "
+" -Wfloat-conversion -Wfloat-equal -Wformat-nonliteral "
+" -Wformat-security -Wformat-overflow=2 "
+" -Wformat-signedness -Wformat-truncation=2 -Wformat-y2k "
+" -Wformat=2 -Wframe-address -Wfree-nonheap-object -Whardened "
+" -Wimplicit-fallthrough=5 "
+" -Winit-self -Winline -Wcpp -Wdate-time "
+" -Wint-to-pointer-cast -Winvalid-memory-model -Winvalid-pch "
+" -Winvalid-utf8 -Wjump-misses-init -Wlogical-op "
+" -Wlto-type-mismatch -Wwrite-strings "
+" -Wmissing-declarations -Wmissing-include-dirs "
+" -Wmissing-profile -Wmissing-prototypes "
+" -Wmissing-variable-declarations -Wmultichar -Wnested-externs "
+" -Wnull-dereference -Wpointer-arith "
+" -Wold-style-definition -Woverflow -Woverlength-strings "
+" -Woverride-init-side-effects "
+" -Wpointer-compare -Wpointer-to-int-cast -Wpragmas -Wprio-ctor-dtor "
+" -Wpsabi -Wredundant-decls -Wreturn-local-addr -Wreturn-mismatch "
+" -Wscalar-storage-order -Wshadow -Wshift-count-negative "
+" -Wshift-count-overflow -Wshift-overflow=2 "
+" -Wsign-conversion -Wsizeof-array-argument "
+" -Wstrict-aliasing=3 -Walloca -Wvla "
+" -Wstrict-flex-arrays -Wstrict-overflow -Wstrict-overflow=5 "
+" -Wstrict-prototypes -Wstringop-overflow=4 -Wstringop-overread "
+" -Wstringop-truncation -Wswitch-bool -Wswitch-default "
+" -Wswitch-enum -Wswitch-outside-range -Wswitch-unreachable "
+" -Wsync-nand -Wtrampolines "
+" -Wundef -Wunicode -Wunreachable-code -Wunsafe-loop-optimizations "
+" -Wunsuffixed-float-constants -Wunused-const-variable=2 -Wunused-macros "
+" -Wunused-result -Wuse-after-free=3 -Wuseless-cast -Wvarargs "
+" -Wvector-operation-performance -Wxor-used-as-pow "
+" -Waggressive-loop-optimizations -Walloc-zero "
+
+/* Hardening & Limits */
+" -fstack-protector-strong -ftrivial-auto-var-init=zero "
+" -Wframe-larger-than=16384 -Wstack-usage=32768 -Wlarger-than=65536 "
+" -Walloc-size-larger-than=2147483647 "
+
+/* Suggestion Flags */
+" -Wsuggest-attribute=cold -Wsuggest-attribute=malloc "
+" -Wsuggest-attribute=noreturn "
+" -Wsuggest-attribute=returns_nonnull "
+);
+
+const sl_u8_t clang = ccstr_to_u8("clang");
+const sl_u8_t clang_flags = ccstr_to_u8("-Iinclude -fPIC -std=c89 -g3 ");
