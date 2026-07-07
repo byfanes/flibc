@@ -116,6 +116,9 @@ _static_assert(sizeof(time_t) == 16, time_t_must_be_16_bytes);
 
 _static_assert(sizeof(__type_test_slice) == 16, slices_are_same_with_iovecs_size_should_be_same);
 
+_static_assert(success == 0, success_must_be_zero);
+_static_assert(success == false, success_must_equal_to_false);
+
 void __flibc_struct_member_check_function(void);
 void __flibc_struct_member_check_function(void)
 {
