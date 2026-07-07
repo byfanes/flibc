@@ -6,73 +6,40 @@
 extern bool cstr_eq(const char* l, const char* r);
 extern usz cstr_len(const char* str);
 
-static void hex_format
-(u8* buf, usz* count, u64 num)
+enum base_e {
+    base_oct = 8,
+    base_dec = 10,
+    base_hex = 16
+};
+
+typedef enum base_e base_t;
+
+static void __format_uint
+(u8* buf, usz* count, u64 num, base_t base)
 {
-    /* Init variables */
-    u32 times = 0, i = 0;
-    u8 ptr[128];
-    const char hexDigits[] = "0123456789ABCDEF";
+    static const char hex[] = "0123456789ABCDEF";
+    u32 len = 0, j = 0;
+    u8 tmp[64];
+    u8 *b = nullptr;
 
-    /* Check for zero case*/
-    if(num == 0) { ptr[times++] = '0'; }
+    do {
+        tmp[len++] = (u8)hex[num % base];
+        num /= base;
+    } while(num);
 
-    /* Iterate until it becomes zero */
-    while(num) {
-	ptr[times++] = (u8)hexDigits[num % 16];
-	num /= 16;
-    };
-
-    /* Write it in reverse order to buffer if buffer exits */
-    for(;buf && i < times; ++i) { buf[i + *count] = ptr[times - i - 1]; }
-
-    *count += times;
-}
-
-static void decimal_format
-(u8* buf, usz* count, u64 num)
-{
-    /* Init variables */
-    u32 times = 0, i = 0;
-    u8 ptr[128];
-
-    /* Check for zero case*/
-    if(num == 0) { ptr[times++] = '0'; }
-
-    /* Iterate until it becomes zero */
-    while(num) {
-	ptr[times++] = (u8)('0' + (num % 10));
-	num /= 10;
-    };
-
-    /* Write it in reverse order to buffer if buffer exits */
-    for(;buf && i < times; ++i) { buf[i + *count] = ptr[times - i - 1]; }
-
-    *count += times;
-}
-
-static void octal_format
-(u8* buf, usz* count, u64 num)
-{
-    /* Init variables */
-    u32 times = 0, i = 0;
-    u8 ptr[128];
-
-    /* Check for zero case*/
-    if(num == 0) { ptr[times++] = '0'; }
-
-    /* Iterate until it becomes zero */
-    while(num) {
-	ptr[times++] = (u8)('0' + (num % 8));
-	num /= 8;
-    };
-
-    /* Write it in reverse order to buffer if buffer exits */
-    if(buf) {
-        for(;i < times; ++i) { buf[i + *count] = ptr[times - i - 1]; }
+    if(base == base_hex) {
+        tmp[len++] = '0';
+        tmp[len++] = 'x';
     }
 
-    *count += times;
+    *count += len;
+    if(!buf) { return; }
+
+    b = buf + *count - len;
+
+    for(j = 0; j < len; ++j) {
+        b[j] = tmp[len - 1 - j];
+    }
 }
 
 error_t formatf
@@ -94,7 +61,7 @@ error_t __formatf
 (sl_u8_t buf, sl_u8_t fmt, usz* out_len, va_list va)
 {
     /* Init variables */
-    usz count = 0, i = 0, len = 0;
+    usz count = 0, i = 0;
     bool long_num = false;
     u64 cur_u64 = 0;
     i64 cur_i64 = 0;
@@ -102,11 +69,10 @@ error_t __formatf
     sl_u8_t cur_vec = {0}, buf_sl = {0}, *cur_vec_ptr = 0;
     va_list ap;
 
-    /* Copy va list to make users' va_list still usable */
-    va_copy(ap, va);
-
     /* Check input */
     if(!fmt.items || !out_len) { return null_pointer; }
+
+    va_copy(ap, va);
 
     *out_len = 0;
 
@@ -125,97 +91,91 @@ error_t __formatf
         if(fmt.items[i] == 'l') { ++i; long_num = true; }
         if(fmt.items[i] == 'l') { ++i; long_num = true; }
 
-        /* Check for '%%' */
-        if(fmt.items[i] == '%') {
-            count++;
-            /* Check for wrong instruction '%ll% / '%l%' */
-            if(long_num) { return formatf_unknown_format; }
-            if(buf.items) { buf.items[count - 1] = '%'; }
-        }
+        switch(fmt.items[i]) {
+            /* Check for '%%' */
+            case '%':{
+                count++;
+                /* Check for wrong instruction '%ll% / '%l%' */
+                if(long_num) { va_end(ap); return formatf_unknown_format; }
+                if(buf.items) { buf.items[count - 1] = '%'; }
+            } break;
 
-        /* Check for '%c' */
-        else if(fmt.items[i] == 'c') {
-            count++;
-            /* Check for wrong instruction '%llc / '%lc' */
-            if(long_num) { return formatf_unknown_format; }
-            /* Char promotes to int while passing it */
-            cur_u64 = (u64)va_arg(ap, int);
-            if(buf.items) { buf.items[count - 1] = (u8)cur_u64; }
-        }
+            /* Check for '%c' */
+            case 'c': {
+                count++;
+                /* Check for wrong instruction '%llc / '%lc' */
+                if(long_num) { va_end(ap); return formatf_unknown_format; }
+                /* Char promotes to int while passing it */
+                cur_u64 = (u64)va_arg(ap, int);
+                if(buf.items) { buf.items[count - 1] = (u8)cur_u64; }
+            } break;
 
-        /* Handle %llx / %lx / %x or %llX / %llX / %X unsigned hexadecimal integer */
-	else if(fmt.items[i] == 'x' || fmt.items[i] == 'X') {
-            if(long_num) { cur_u64 = va_arg(ap, u64);}
-	    else { cur_u64 = va_arg(ap, u32);}
-            hex_format(buf.items, &count, cur_u64);
-        }
+            /* Handle %llx / %lx / %x or %llX / %llX / %X unsigned hexadecimal integer */
+	    case 'x': case 'X': {
+                if(long_num) { cur_u64 = va_arg(ap, u64);}
+	        else { cur_u64 = va_arg(ap, u32);}
+                __format_uint(buf.items, &count, cur_u64, base_hex);
+            } break;
 
-        /* Handle %lld / %ld / %d or %lli / %li / %i for signed decimal integers */
-	else if(fmt.items[i] == 'd' || fmt.items[i] == 'i') {
-	    if(long_num) { cur_i64 = va_arg(ap, i64);}
-	    else { cur_i64 = va_arg(ap, i32); }
+            /* Handle %lld / %ld / %d or %lli / %li / %i for signed decimal integers */
+	    case 'd': case 'i': {
+	        if(long_num) { cur_i64 = va_arg(ap, i64);}
+	        else { cur_i64 = va_arg(ap, i32); }
 
-            /* Check for negative */
-	    if(cur_i64 < 0) {
-                count++; cur_i64 = -cur_i64;
-                if(buf.items) { buf.items[count - 1] = '-';}
-            }
-	    decimal_format(buf.items, &count, (u64)cur_i64);
-	}
+                /* Check for negative */
+	        if(cur_i64 < 0) {
+                    count++; cur_i64 = -cur_i64;
+                    if(buf.items) { buf.items[count - 1] = '-';}
+                }
+	        __format_uint(buf.items, &count, (u64)cur_i64, base_dec);
+	    } break;
 
-        /* Handle %llu / %lu / %u for unsigned decimal integers */
-	else if(fmt.items[i] == 'u') {
-	    if(long_num) { cur_u64 = va_arg(ap, u64);}
-	    else { cur_u64 = (u32)va_arg(ap, u32); }
-	    decimal_format(buf.items, &count, cur_u64);
-	}
+            /* Handle %llu / %lu / %u for unsigned decimal integers */
+	    case 'u': {
+	        if(long_num) { cur_u64 = va_arg(ap, u64);}
+	        else { cur_u64 = va_arg(ap, u32); }
+	        __format_uint(buf.items, &count, cur_u64, base_dec);
+	    } break;
 
-        /* Handle %llo / %lo / %o for unsigned decimal integers */
-        else if(fmt.items[i] == 'o') {
-            if(long_num) { cur_u64 = va_arg(ap, u64);}
-	    else { cur_u64 = va_arg(ap, u32);}
-            octal_format(buf.items, &count, cur_u64);
-        }
+            /* Handle %llo / %lo / %o for unsigned decimal integers */
+            case 'o': {
+                if(long_num) { cur_u64 = va_arg(ap, u64);}
+	        else { cur_u64 = va_arg(ap, u32);}
+                __format_uint(buf.items, &count, cur_u64, base_oct);
+            } break;
 
-        /* Handle %p it will write as hexadecimal */
-	else if(fmt.items[i] == 'p') {
-	    cur_u64 = (u64)(uintptr_t)va_arg(ap, void*);
-            if(buf.items) {
-                buf.items[count] = '0';
-                buf.items[count + 1] = 'x';
-            }
-            count++;
-            count++;
-            hex_format(buf.items, &count, cur_u64);
-	}
+            /* Handle %p it will write as hexadecimal */
+	    case 'p': {
+	        cur_u64 = va_arg(ap, uintptr_t);
+                __format_uint(buf.items, &count, cur_u64, base_hex);
+	    } break;
 
-        /* Handle %s it will write a cstr */
-        else if(fmt.items[i] == 's') {
-            cur_cstr = va_arg(ap, char*);
-            len = cstr_len(cur_cstr);
-            slice_set(&cur_vec, cur_cstr, len);
-            if(buf.items) {
-                slice_set(&buf_sl, &buf.items[count], len);
-                mem_cpy(&buf_sl, &cur_vec);
-            }
-            count += len;
-        }
+            /* Handle %s it will write a cstr */
+            case 's': {
+                cur_cstr = va_arg(ap, char*);
+                slice_set_cstr(&cur_vec, cur_cstr);
+                if(buf.items) {
+                    slice_set(&buf_sl, &buf.items[count], cur_vec.count);
+                    mem_cpy(&buf_sl, &cur_vec);
+                }
+                count += cur_vec.count;
+            } break;
 
-        /* Handle %v it will use sl_u8_t* and it is not a structure its a pointer */
-        else if(fmt.items[i] == 'v') {
-            cur_vec_ptr = va_arg(ap, sl_u8_t*);
-            if(buf.items) {
-                slice_set(&buf_sl, &buf.items[count], buf.count - count);
-                if(mem_cpy(&buf_sl, cur_vec_ptr)) { return small_buffer; }
-            }
-            count += cur_vec_ptr->count;
-        }
+            /* Handle %v it will use sl_u8_t* and it is not a structure its a pointer */
+            case 'v': {
+                cur_vec_ptr = va_arg(ap, sl_u8_t*);
+                if(buf.items) {
+                    slice_set(&buf_sl, &buf.items[count], buf.count - count);
+                    if(mem_cpy(&buf_sl, cur_vec_ptr)) { va_end(ap); return small_buffer; }
+                }
+                count += cur_vec_ptr->count;
+            } break;
 
-        else {
-            return formatf_unknown_format;
+            default: { va_end(ap); return formatf_unknown_format; }
         }
     }
 
     *out_len = count;
+    va_end(ap);
     return success;
 }
