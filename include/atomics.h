@@ -1,5 +1,5 @@
-#ifndef __ATOMICS_H__
-#define __ATOMICS_H__
+#ifndef __FLIBC_ATOMICS_H__
+#define __FLIBC_ATOMICS_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,4 +50,4 @@ void atomic_memory_barrier(void);
 }
 #endif
 
-#endif /* __ATOMICS_H__ */
+#endif /* __FLIBC_ATOMICS_H__ */
