@@ -6,12 +6,12 @@ error_t thread_spawn
     /* Init variables */
     error_t res = success;
 
-    /* It will check for the threads and threads' items and allocated a new place for the thread */
-    if((res = da_grow_if(threads, 1))) { return res; }
-
-    /* It will check for alloc and func and create a new thread */
-    if((res = thread_create(alloc, threads->items + threads->count, func, arg))) { return res; }
-
-    /* Push the new thread - its already allocated so we just increase the count */
-    return slice_set(threads, threads->items, threads->count + 1);
+    return ((void)(
+        /* Alloc a free scape for the new thread order matters because we might have dangling thread then */
+        (res = da_grow_if(threads, 1)) ||
+        /* Create the new thread to new location */
+        (res = thread_create(alloc, threads->items + threads->count, func, arg)) ||
+        /* Update the count of dynamic array */
+        (res = slice_set(threads, threads->items, threads->count + 1)))
+    , res);
 }

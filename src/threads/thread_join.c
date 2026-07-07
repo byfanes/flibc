@@ -5,7 +5,7 @@ error_t thread_join
 {
     /* Init variables */
     error_t res = success;
-    u8* ptr = 0;
+    u8* ptr = nullptr;
 
     /* Check thread pointer */
     if(!thread) { return null_pointer; }

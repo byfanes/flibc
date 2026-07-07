@@ -4,13 +4,14 @@ error_t thread_spawn_std
 (std_t* std, da_thread_t* threads, void*(*func)(std_t*, void*), void* arg)
 {
     /* Init variables */
-    thread_t t = {0};
     error_t res = success;
 
-    /* Check thread da because if we after check it we might have dangling thread */
-    if(!threads || !threads->items) { return null_pointer; }
-    /* Create a thread with std */
-    if((res = thread_create_std(std, &t, func, arg))) { return res; }
-    /* Push the new thread */
-    return da_push(threads, &t);
+    return ((void)(
+        /* Alloc a free scape for the new thread order matters because we might have dangling thread then */
+        (res = da_grow_if(threads, 1)) ||
+        /* Create the new thread to new location */
+        (res = thread_create_std(std, threads->items + threads->count, func, arg)) ||
+        /* Update the count of dynamic array */
+        (res = slice_set(threads, threads->items, threads->count + 1))
+    ), res);
 }
