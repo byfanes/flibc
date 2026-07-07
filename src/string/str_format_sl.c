@@ -10,21 +10,18 @@ error_t str_formatf_sl
     def_da_t *def = (void*)base;
     sl_u8_t zero_sl = {0}, base_sl = {0};
 
-    if(!base || !base->items || !fmt.items || !fmt.count) { return null_pointer; }
-
-    /* Start va and format string */
-    va_start(ap, fmt);
-    if((res = __formatf(zero_sl, fmt, &wrote_count, ap))) { return res; }
-    str_grow_if(base, wrote_count);
-
-    /* Set base_sl to start position and ap is still usable because formatf copies it */
-    slice_set(&base_sl, &base->items[base->count], wrote_count);
-    /* Assume this wont give an error because previous one should have checked it */
-    __formatf(base_sl, fmt, &wrote_count, ap);
-    def->count += wrote_count;
-
-    /* End va list */
-    va_end(ap);
-
-    return res;
+    return ((void)(
+        /* Check user inputs */
+        (res = (base && base->items && fmt.items) ? success : null_pointer) ||
+        /* Start va block */
+        (va_start(ap, fmt),
+            /* Get the amount memory needed first */
+            (res = __formatf(zero_sl, fmt, &wrote_count, ap)) ||
+            /* Allocate that much of memory if needed */
+            (res = str_grow_if(base, wrote_count)) ||
+            /* Format the string */
+            (res = slice_set(&base_sl, &base->items[base->count], wrote_count)) ||
+            (res = __formatf(base_sl, fmt, &wrote_count, ap)),
+        va_end(ap), def->count += wrote_count, res)
+    ), res);
 }

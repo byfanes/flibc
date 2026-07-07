@@ -7,15 +7,14 @@ error_t str_from_cstr
     usz len = 0;
     error_t res = success;
 
-    /* Validate user input */
-    if(!alloc || !out || !cstr) { return null_pointer; }
-
-    /* Len of cstr including null byte */
-    len = cstr_len(cstr);
-
-    /* Reserve a memory */
-    if((res = str_init(alloc, out, len))) { return res; }
-
-    /* Copy and return the result */
-    return __str_copy_content(out, cstr, len);
+    return ((void)(
+        /* Validate user input */
+        (res = (alloc && out && cstr) ? success : null_pointer) ||
+        /* Get the size of current string without null byte */
+        (len = cstr_len(cstr), success) ||
+        /* Allocate new string with that size */
+        (res = str_init(alloc, out, len)) ||
+        /* Copy the contents of cstr to string */
+        (res = __str_copy_content(out, cstr, len))
+     ), res);
 }

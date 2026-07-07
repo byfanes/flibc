@@ -6,12 +6,14 @@ error_t str_cat
     /* Init variables */
     error_t res = success;
 
-    /* Validate user input */
-    if(!base || !base->items) { return null_pointer; }
-    if(!extend || !extend->items || !extend->count) { return success; }
-
-    /* Grow string memory if needed */
-    if((res = str_grow_if(base, extend->count))) { return res; }
-
-    return __str_copy_content(base, extend->items, extend->count);
+    return ((void)(
+        /* Validate user input */
+        (res = (base && base->items) ? success : null_pointer) ||
+        /* If its a null slice/pointer skip it */
+        (!extend || !extend->items || !extend->count) ||
+        /* Grow string memory if needed */
+        (res = str_grow_if(base, extend->count)) ||
+        /* Copy the elements to string */
+        (res = __str_copy_content(base, extend->items, extend->count))
+    ), res);
 }

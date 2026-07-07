@@ -5,11 +5,11 @@ error_t str_copy
 {
     def_da_t *def = (void*)base;
 
-    /* Check input */
-    if(!base || !cpy || !base->items) { return null_pointer; }
-    if(!cpy->count || !cpy->items) { return success; }
-
-    /* Clean the count and use strcat instead to start from begining*/
-    def->count = 0;
-    return str_cat(base, cpy);
+    return
+        /* Check input */
+        (!base || !cpy || !base->items) ? null_pointer :
+        /* Early return if its a null string */
+        (!cpy->count || !cpy->items) ? success :
+        /* Clean the count and use strcat instead to start from begining*/
+        (def->count = 0, str_cat(base, cpy));
 }

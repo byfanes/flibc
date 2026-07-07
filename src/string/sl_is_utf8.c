@@ -7,12 +7,6 @@ bool __sl_is_utf8
     usz count = 0;
     sl_u8_t* ssl = sl;
 
-    /* Validate user input */
-    if(!ssl || !ssl->items || !ssl->count) { return true; }
-
-    /* Call sl_utf8len it checks for valid strings */
-    if(__sl_utf8_len(sl, el_size, &count)) { return false; }
-
-    /* Return */
-    return true;
+    return (!ssl || !ssl->items || !ssl->count)
+        && !(__sl_utf8_len(sl, el_size, &count));
 }

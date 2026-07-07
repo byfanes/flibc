@@ -6,11 +6,13 @@ error_t sl_formatf
     /* Init variables */
     va_list ap;
     error_t res = success;
+    sl_u8_t fmt_sl = {0};
 
-    /* Start and end va and format string */
-    va_start(ap, fmt);
-    res = sl_vformatf_sl(buf, wrote_count, cstr_to_u8sl(fmt), ap);
-    va_end(ap);
-
-    return res;
+    return ((void)(
+        /* Start and end va and format string */
+        (va_start(ap, fmt), (void)(
+            (res = slice_set_cstr(&fmt_sl, fmt) ) ||
+            (res = sl_vformatf_sl(buf, wrote_count, fmt_sl, ap))
+        ), va_end(ap), res)
+    ), res);
 }

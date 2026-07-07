@@ -5,26 +5,16 @@ error_t str_to_cstr
 {
     /* Init variables */
     error_t res = success;
-    sl_u8_t dst = {0}, src = {0};
 
-    /* Validate user input */
-    if(!alloc || !out || !base) { return null_pointer; }
-
-    /* If string is null return a null cstr */
-    if(!base->items || !base->count) {
-        return mem_calloc(alloc, out, 1);
-    }
-
-    if((res = mem_alloc(alloc, out, base->count + 1))) { return res; }
-
-    /* Set slices for copying */
-    slice_set(&src, base->items, base->count);
-    slice_set(&dst, (*out), base->count);
-
-    /* Copy the data and set last byte to null */
-    res = mem_cpy(&dst, &src);
-    (*out)[base->count] = 0;
-
-    if(res) { mem_free(out); return res; }
-    return success;
+    return ((void)(
+        /* Validate user input */
+        (res = (alloc && out && base) ? success : null_pointer) ||
+        /* Allocate new memory for c-string */
+        (res = mem_alloc(alloc, out, base->count + 1)) ||
+        /* Copy the data and set last byte to null */
+        (res = mem_cpy_raw((*out), base->items, base->count)) ||
+        ((*out)[base->count] = 0, success)
+    ), (void)( /* Cleanup */
+        ((res) ? mem_free(out) : (0))
+    ), res);
 }

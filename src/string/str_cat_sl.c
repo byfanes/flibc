@@ -7,17 +7,17 @@ error_t __str_cat_sl
     error_t res = success;
     sl_u8_t* ssl = raw_sl;
 
-    /* Validate user input */
-    if(!el_size) { return elsize_zero; }
-    if(!base || !base->items) { return null_pointer; }
-    if(!ssl || !ssl->items || !ssl->count) { return success; }
-
-    /* Check for utf8 */
-    if(!__sl_is_utf8(raw_sl, el_size)) { return invalid_utf8; }
-
-    /* Allocate new memory if needed  */
-    if((res = str_grow_if(base, ssl->count))) { return res; }
-
-    /* Copy the data */
-    return __str_copy_content(base, ssl->items, el_size * ssl->count);
+    return ((void)(
+        /* Validate user input */
+        (res = (el_size) ? success : elsize_zero) ||
+        (res = (base && base->items) ? success : null_pointer) ||
+        /* Early return if its a null slice/pointer */
+        (!ssl || !ssl->items || !ssl->count) ||
+        /* Check for utf8 */
+        (res = (!__sl_is_utf8(raw_sl, el_size)) ? success : invalid_utf8 ) ||
+        /* Allocate new memory if needed  */
+        (res = str_grow_if(base, ssl->count)) ||
+        /* Copy the data */
+        (res = __str_copy_content(base, ssl->items, el_size * ssl->count))
+    ), res);
 }

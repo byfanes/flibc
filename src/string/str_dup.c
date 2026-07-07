@@ -6,11 +6,12 @@ error_t str_dup
     /* Init variables */
     error_t res = success;
 
-    /* Validate user input */
-    if(!alloc || !base || !out) { return null_pointer; }
-
-    /* Reserve a memory */
-    if((res = str_init(alloc, out, base->count))) { return res; }
-
-    return __str_copy_content(out, base->items, base->count);
+    return ((void)(
+        /* Validate user input */
+        (res = (alloc && base && out) ? success : null_pointer) ||
+        /* Reserve a memory */
+        (res = str_init(alloc, out, base->count)) ||
+        /* Copy the content to memory */
+        (res = __str_copy_content(out, base->items, base->count))
+    ), res);
 }

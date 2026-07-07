@@ -6,13 +6,10 @@ error_t str_utf8_len
     /* Init variables */
     sl_u8_t sl = {0};
 
-    /* Validate user input and early returns */
-    if(!out || !base) { return null_pointer; }
-    if(!base->items || !base->count) { *out = 0; return success; }
-
-    /* Set slice for length checking */
-    slice_set(&sl, base->items, base->count);
-
-    /* Use sl_utf8len function to calculate */
-    return sl_utf8_len(&sl, out);
+    return
+        /* Validate user input and early returns */
+        (!out || !base) ? null_pointer :
+        (!base->items || !base->count) ? (*out = 0, (error_t)success) :
+        /* Set slice for length checking - Use sl_utf8len function to calculate*/
+        (slice_set(&sl, base->items, base->count), sl_utf8_len(&sl, out));
 }
