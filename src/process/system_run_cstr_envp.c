@@ -5,7 +5,7 @@ error_t system_run_cstr_envp
 (const char* cmd, char** envp)
 {
     /* Init variables */
-    char* argv[4] = {0};
+    const char* argv[4] = {0};
     u32 argc = 0;
 
     /* Check input */
@@ -13,9 +13,9 @@ error_t system_run_cstr_envp
     if(!envp) { return null_pointer; }
 
     /* Construct the list */
-    argv[argc++] = (void*)"sh";
-    argv[argc++] = (void*)"-c";
-    argv[argc++] = (void*)cmd;
+    argv[argc++] = "sh";
+    argv[argc++] = "-c";
+    argv[argc++] = cmd;
     argv[argc++] = 0;
 
     /* Call execve syscall */

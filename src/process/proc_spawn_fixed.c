@@ -1,7 +1,7 @@
 #include "process_private.h"
 
 error_t proc_spawn_fixed
-(cmd_t cmd, env_t env, da_proc_t* procs)
+(cmd_t* cmd, env_t* env, da_proc_t* procs)
 {
     /* Init variables */
     ssz pid = 0;
@@ -9,7 +9,7 @@ error_t proc_spawn_fixed
     u32 i = 0;
 
     /* Check input list */
-    if(!procs) { return null_pointer;}
+    if(!procs || !cmd || !env) { return null_pointer;}
 
     /* If its full find a finished one */
     if(procs->count >= procs->capacity) {

@@ -5,16 +5,15 @@ error_t proc_wait
 {
     /* Init variables */
     u32 i = 0;
-    error_t res = success;
-    error_t out = success;
+    error_t res = success, cur_res = success;
 
     /* Check input */
     if(!procs || !procs->items)
     { return null_pointer; }
 
     for(; i < procs->count; ++i) {
-        out = waitapid(procs->items[i].handle);
-        if(!res) { res = out; }
+        cur_res = waitapid(procs->items[i].handle);
+        res = res ? res : cur_res;
     }
 
     /* Wont give an error because we already use and checked it */

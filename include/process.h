@@ -23,12 +23,12 @@ can_be_da(proc_t, da_proc_t);
 error_t system_run_cstr_envp(const char* cmd, char** envp);
 error_t system_run_cstr(const char* cmd);
 
-error_t system_run_env(cmd_t cmd, env_t env);
-error_t system_run(cmd_t cmd);
+error_t system_run_env(cmd_t* cmd, env_t* env);
+error_t system_run(cmd_t* cmd);
 
-error_t proc_run(cmd_t cmd, env_t env);
-error_t proc_spawn(cmd_t cmd, env_t env, da_proc_t* procs);
-error_t proc_spawn_fixed(cmd_t cmd, env_t env, da_proc_t* procs);
+error_t proc_run(cmd_t* cmd, env_t* env);
+error_t proc_spawn(cmd_t* cmd, env_t* env, da_proc_t* procs);
+error_t proc_spawn_fixed(cmd_t* cmd, env_t* env, da_proc_t* procs);
 error_t proc_wait(da_proc_t* procs);
 
 error_t cmd_append(cmd_t* cmd, sl_u8_t* sl);
