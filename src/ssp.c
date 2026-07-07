@@ -2,6 +2,8 @@
 #include "base.h"
 #include "std.h"
 
+extern uintptr_t __stack_chk_guard;
+
 /*
  * The "canary" value.
  * In a real OS, you would randomize this value at program startup.
@@ -13,12 +15,12 @@ uintptr_t __stack_chk_guard = 0xe2dee396;         /* 32-bit */
 uintptr_t __stack_chk_guard = 0x595e9fbd94fda766; /* 64-bit */
 #endif
 
-void __stack_chk_fail(void);
+_Noreturn void __stack_chk_fail(void);
 
 /* Todo Make it use random 16 bytes which is given by linux
  * The function GCC calls when a buffer overflow occurs.
  */
-void __stack_chk_fail(void)
+_Noreturn void __stack_chk_fail(void)
 {
     std_abort(ssp_fail);
 }
