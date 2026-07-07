@@ -5,22 +5,17 @@ error_t __da_remove
 {
     /* Init variables */
     def_da_t *def = da;
-    usz count  = 0;
-    sl_u8_t src = {0}, dst = {0};
+    error_t res = success;
 
-    /* Validate user inputs - el_size can not be 0 via sizeof but user implicitly call with it */
-    if(!def || !def->items) { return null_pointer; }
-    if(!el_size) { return elsize_zero; }
-    if(idx >= def->count) { return out_of_bounds; }
-
-    /* Set slices for the moving. Arguments are valid in here so no need to check */
-    slice_set(&src, &def->items[(idx + 1) * el_size], count);
-    slice_set(&dst, &def->items[idx * el_size], count);
-    count = (def->count - idx - 1) * el_size;
-
-    /* Decrease count */
-    def->count--;
-
-    /* Shift the memory and return the result */
-    return mem_move(&dst, &src);
+    return ((void)(
+        /* Check user inputs */
+        (res = (def && def->items) ? success : null_pointer) ||
+        (res = (el_size) ? success : elsize_zero) ||
+        (res = (idx < def->count) ? success : out_of_bounds) ||
+        /* Shift the data to left*/
+        (res = mem_move_raw(def->items + idx * el_size,
+                            def->items + (idx + 1) * el_size,
+                            (def->count - idx - 1) * el_size)) ||
+        (def->count--, success)
+    ), res);
 }

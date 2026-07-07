@@ -6,31 +6,20 @@ error_t __da_insert
     /* Init variables */
     error_t res = success;
     def_da_t *def = da;
-    u8 *p_in = in;
-    usz count = 0, i = 0;
-    sl_u8_t src = {0}, dst = {0};
 
-    /* Validate user inputs - el_size can not be 0 via sizeof but user implicitly call with it */
-    if(!def || !p_in) { return null_pointer; }
-    if(!el_size) { return elsize_zero; }
-    if(idx > def->count) { return out_of_bounds; }
-
-    /* Check if it fits allocate otherwise  */
-    if((res = __da_grow_if(def, el_size, 1))) { return res; }
-    def->count++;
-
-    /* Set slices for the moving */
-    count = (def->count - idx - 1) * el_size;
-    slice_set(&src, &def->items[idx * el_size], count);
-    slice_set(&dst, &def->items[(idx + 1) *el_size], count);
-
-    /* Shift the memory */
-    if((res = mem_move(&dst, &src))) { return res; }
-
-    /* Add the new blob */
-    for(;i < el_size; ++i) {
-        def->items[idx*el_size + i] = p_in[i];
-    }
-
-    return success;
+    return ((void)(
+        /* Validate user input */
+        (res = (def && in) ? success : null_pointer) ||
+        (res = (el_size) ? success : elsize_zero) ||
+        (res = (idx <= def->count) ? success : out_of_bounds) ||
+        /* Check if the new element fits if not allocate more and update the count*/
+        (res = __da_grow_if(def, el_size, 1)) ||
+        (def->count++, success) ||
+        /* Shift the current data block */
+        (res = mem_move_raw(def->items + (idx + 1) * el_size,
+                            def->items + idx * el_size,
+                            (def->count - idx - 1) * el_size)) ||
+        /* Insert the new data block */
+        (res = mem_cpy_raw(&def->items[idx*el_size], in, el_size))
+    ), res);
 }

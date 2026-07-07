@@ -6,10 +6,6 @@ error_t da_clear
     /* Init variables */
     def_da_t* def = da;
 
-    /* Check input */
-    if(!def) { return null_pointer; }
-
-    /* Set count to zero without modify items */
-    def->count = 0;
-    return success;
+    /* Check input if its valid set the count to zero */
+    return (def) ? (def->count = 0, success) : null_pointer;
 }

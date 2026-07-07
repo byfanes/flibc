@@ -6,11 +6,8 @@ error_t da_truncate
     /* Init variables */
     def_da_t* def = da;
 
-    /* Validate user inputs */
-    if(!def || !def->items) { return null_pointer; }
-
-    /* Check and set if its in the range */
-    if(len <= def->count) { def->count = len; }
-
-    return success;
+    /* Check user pointers are valid then trucate to that given size */
+    return (!def || !def->items) ? null_pointer
+       : ((def->count = (len <= def->count)
+           ? len : def->count), success);
 }

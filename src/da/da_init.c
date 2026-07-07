@@ -7,18 +7,12 @@ error_t __da_init
     error_t res = success;
     def_da_t *def = da;
 
-    /* Check inputs */
-    if(!el_size) { return elsize_zero; }
-    if(!alloc || !def) { return null_pointer; }
-
-    /* Allocate new memory for items */
-    if((res = mem_alloc(alloc, &def->items, amount * el_size)))
-    { return res; }
-
-    /* Set stats for the da */
-    def->count = 0;
-    def->capacity = amount;
-
-    /* Return */
-    return success;
+    return ((void)(
+        /* Validate user input */
+        (res = (el_size) ? success : elsize_zero) ||
+        (res = (alloc && def) ? success : null_pointer) ||
+        /* Get the new memory and set the count and capacity if it succeeds */
+        (res = mem_alloc(alloc, &def->items, amount * el_size)) ||
+        (def->count = 0, def->capacity = amount)
+    ), res);
 }

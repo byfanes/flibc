@@ -5,20 +5,15 @@ error_t __da_add_shadow_null_segment
 {
     /* Init variables */
     def_da_t* def = da;
-    usz* ptr = 0;
+    error_t res = success;
 
-    /* Check input */
-    if(!def || !def->items) { return null_pointer; }
-
-    /* If count is less than capacity set ptr to end of the last item
-     * and move one unit to set zero
-     * otherwise its already full and pointing to last zero byte
-     * which is set by the allocator
-     */
-    if(def->count != def->capacity) {
-        ptr = (usz*)(uintptr_t)(def->items + def->count * el_size);
-        *ptr = 0;
-    }
-
-    return success;
+    return ((void)(
+        /* Check input */
+        (res = (def && def->items) ? success : null_pointer) ||
+        /* If count and capacity is same its alread pointing to zeroed place
+         * if not we jump to that place and put zero
+         */
+        (res = (def->count == def->capacity) ? success
+             : mem_zeroed_len((def->items + def->count * el_size), sizeof(usz)))
+    ), res);
 }

@@ -6,10 +6,8 @@ error_t __da_pop_last
     /* Init variables */
     def_da_t *def = da;
 
-    /* Validate user inputs - el_size can not be 0 via sizeof
-     * but user implicitly call with it checked in __da_pop function
-     */
-    if(def->count == 0) { return out_of_bounds; }
-
-    return __da_pop(da, el_size, out, def->count - 1);
+    /* Check def because we use it before going into function */
+    return (!def) ? null_pointer
+        : (!def->count) ? out_of_bounds
+        : __da_pop(da, el_size, out, def->count - 1);
 }

@@ -6,21 +6,18 @@ error_t __da_grow
     /* Init variables */
     def_da_t* def = da;
     allocator_t* alloc = 0;
+    error_t res = success;
 
-    /* Validate user inputs
-     * n_size can not be 0 via sizeof but user implicitly call with it
-     * if amount is zero do nothing.
-     */
-    if(!def) { return null_pointer; }
-    if(!el_size) { return elsize_zero; }
-    if(!amount) { return success; }
-
-    /* Fetch and set new size */
-    def->capacity += amount;
-
-    /* Get allocator */
-    if(allocator_get_from_ptr(def->items, &alloc)) { return invalid_pointer; }
-
-    /* Get new chun of memory */
-    return mem_realloc(alloc, &def->items, def->capacity * el_size);
+    return ((void)(
+        /* Validate user input if amount is zero early return from the pipeline */
+        (res = (def) ? success : null_pointer) ||
+        (res = (el_size) ? success : elsize_zero) ||
+        /* Early return if amount is zero */
+        (!amount) ||
+        /* Get the allocator back if def->items is zero it will give an error */
+        (res = allocator_get_from_ptr(def->items, &alloc)) ||
+        /* Get new chunk of memory if its valid update the count */
+        (res = mem_realloc(alloc, &def->items, (def->capacity + amount) * el_size)) ||
+        (def->capacity += amount, success)
+    ), res);
 }

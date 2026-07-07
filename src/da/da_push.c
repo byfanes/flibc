@@ -7,6 +7,5 @@ error_t __da_push
     def_da_t* def = da;
 
     /* This is a wrapper function other checks will be done in da_insert function */
-    if(!def) { return null_pointer; }
-    return __da_insert(def, el_size, item, def->count);
+    return (!def) ? null_pointer : __da_insert(def, el_size, item, def->count);
 }
