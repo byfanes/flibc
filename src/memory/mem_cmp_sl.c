@@ -7,11 +7,9 @@ error_t __mem_cmp_sl
     /* Init variables */
     sl_u8_t *lsl = lhs, *rsl = rhs;
 
-    /* Validate user inputs - items checked in memcmp_raw */
-    if(!lsl || !rsl || !out) { return null_pointer; }
-    if(lsl->count != rsl->count) { *out = false; return success; }
-    if(!el_size) { return elsize_zero; }
-
-    /* Iterate over bases and compare them */
-    return mem_cmp_raw(lsl->items, rsl->items, lsl->count * el_size, out);
+    return
+        (!lsl || !rsl || !out) ? null_pointer :
+        (!el_size) ? elsize_zero :
+        (lsl->count != rsl->count) ? (error_t)(*out = false, success) :
+        mem_cmp_raw(lsl->items, rsl->items, lsl->count * el_size, out);
 }

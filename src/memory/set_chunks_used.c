@@ -9,6 +9,6 @@ void __set_chunks_used
         u32 byte_index = target_bit / 8;
         u32 bit_index  = target_bit % 8;
 
-        bitmap_bytes[byte_index] |= (1 << bit_index);
+        bitmap_bytes[byte_index] |= (u8)(1 << bit_index);
     }
 }

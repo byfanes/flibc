@@ -12,7 +12,7 @@ extern "C" {
 #define USE_TRACE_ARGS file_name, line
 #define LOC_ARGS __FILE__, __LINE__
 
-#define ccstr_to_u8(ccstr)  {(u8*)((ccstr)), sizeof(((ccstr))) - 1}
+#define ccstr_to_u8(ccstr)  {(void*)(uintptr_t)((ccstr)), sizeof(((ccstr))) - 1}
 
 /* Those macros are used in most slice/da functions to improve readability */
 #define ptr_meta(ptr) (ptr), sizeof((ptr)->items[0])
@@ -52,6 +52,10 @@ typedef sl_u8_t sl_cstr_t;
  * via bit so we need to shift them
  */
 
+/* TODO: We might add changable sized null segment which will align better or can be used for
+ * users' requirements
+ */
+
 /* TODO: We can add skip mutex flags and make the allocator little bit faster and
  * the usage will be for single threaded
  */
@@ -67,15 +71,14 @@ error_t allocator_init(allocator_t** set);
 error_t allocator_deinit(allocator_t** set);
 error_t allocator_get_from_ptr(void* ptr, allocator_t** set);
 
-sl_u8_t cstr_to_u8sl(const char* cstr);
-error_t slice_set(const void* sl, const void* items, usz count);
-error_t slice_set_cstr(const void* sl, const char* str);
+error_t slice_set(void* sl, const void* items, usz count);
+error_t slice_set_cstr(void* sl, const char* str);
 
 error_t __mem_alloc(allocator_t* alloc, void* set, usz n, TRACE_ARGS);
 #define mem_alloc(alloc, set, n) __mem_alloc((alloc), (set), (n), LOC_ARGS)
 
 error_t __mem_alloc_sl(allocator_t* alloc, void* set, usz el_size, usz n, TRACE_ARGS);
-#define mem_alloc_sl(alloc, sl, n) __mem_alloc_sl((alloc), ptr_meta(sl), n, LOC_ARGS)
+#define mem_alloc_sl(alloc, sl, n) check_layout(), __mem_alloc_sl((alloc), ptr_meta(sl), n, LOC_ARGS)
 
 error_t __mem_calloc(allocator_t* alloc, void* set, usz n, TRACE_ARGS);
 #define mem_calloc(alloc, set, n) __mem_calloc((alloc), (set), (n), LOC_ARGS)
@@ -105,13 +108,13 @@ error_t __mem_cmp_sl(void* lhs, void* rhs, usz el_size, bool* out);
 #define mem_cmp(lhs, rhs, res) __mem_cmp_sl(two_ptr_meta_check((lhs), (rhs)), (res))
 
 error_t __mem_cmp_sl_min(void* lhs, void* rhs, usz el_size, bool* out);
-#define mem_cmp_min(lhs, rhs, res) __mem_cmp_sl_min(two_ptr_meta_check((lhs), (rhs)), (res))
+#define mem_cmp_min(lhs, rhs, res)  __mem_cmp_sl_min(two_ptr_meta_check((lhs), (rhs)), (res))
 
 error_t mem_set_raw(void* ptr, u8 c, usz n);
-error_t mem_cpy_raw(void* dst, void* src, usz n);
+error_t mem_cpy_raw(void* dst, const void* src, usz n);
 error_t mem_swap_raw(void* lhs, void* rhs, usz n);
-error_t mem_move_raw(void* dst, void* src, usz n);
-error_t mem_cmp_raw(void* lhs, void* rhs, usz n, bool* out);
+error_t mem_move_raw(void* dst, const void* src, usz n);
+error_t mem_cmp_raw(const void* lhs, const void* rhs, usz n, bool* out);
 
 error_t mem_zeroed_len(void* ptr, usz size);
 #define mem_zeroed(ptr) mem_zeroed_len((ptr), sizeof(*ptr))

@@ -6,11 +6,10 @@ error_t __mem_calloc_sl
     void* ptr = nullptr;
     error_t res = success;
 
-    /* Check inputs */
-    if(!set) { return null_pointer; }
-    if(!el_size) { return elsize_zero; }
-
-    if((res = __mem_calloc(alloc, &ptr, el_size * n, USE_TRACE_ARGS))) { return res; }
-
-    return slice_set(set, ptr, n);
+    return ((void)(
+        (res = (set) ? success : null_pointer) ||
+        (res = (el_size) ? success : elsize_zero) ||
+        (res = __mem_calloc(alloc, &ptr, el_size * n, USE_TRACE_ARGS)) ||
+        (res = slice_set(set, ptr, n))
+    ), res);
 }

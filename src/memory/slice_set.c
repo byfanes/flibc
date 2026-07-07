@@ -1,7 +1,7 @@
 #include "memory_private.h"
 
 error_t slice_set
-(const void* sl, const void* base, usz count)
+(void* sl, const void* base, usz count)
 {
     /* slice_u8 can be assign because its defined in memory.h
      * we will convert this type to perform out actions
@@ -13,8 +13,8 @@ error_t slice_set
     if(!base && count) { return invalid_slice_assignment; }
 
     /* Set the data */
-    dummy = (void*)sl;
-    dummy->items  = (void*)base;
+    dummy = sl;
+    dummy->items = (void*)(uintptr_t)base;
     dummy->count = count;
 
     return success;

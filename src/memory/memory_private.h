@@ -6,10 +6,7 @@
 #include "syscall.h"
 #include "../helpers/helpers.h"
 
-#define ALIGN_64(n) ((n + 63) & (u64)(~63))
-
-/* Assuming a OS' page size is 4KB */
-#define PAGE_SIZE (1024*4)
+#define ALIGN_64(n) ((n + 63) & (unsigned)(~63))
 
 /* Every chunk is 64 bytes */
 #define CHUNK_SIZE 64
@@ -68,7 +65,7 @@ struct heap_header_s {
 
 /* Some typedefs to keep clean the struct definition */
 typedef error_t (*f_allocator_alloc_pointer)
-     (allocator_t* alloc, usz n, void* set, const char* file_name, u32 line);
+     (allocator_t* alloc, usz n, void* set, const char* file_name, usz line);
 
 typedef error_t (*f_allocator_free_pointer)(allocator_t* alloc, void* set);
 typedef error_t (*f_allocator_init)(allocator_t** set);
@@ -138,6 +135,8 @@ struct allocator_s {
     u8 free_bits[ALLOCATOR_NEEDED_BITS];
 };
 
+
+
 /* A temporary structure for setting the const slices
  * the items order and size should be same with the other slices
  */
@@ -151,7 +150,7 @@ struct slice_dummy_s {
  * in fuctions like malloc/calloc etc we can use custom allocators too.
  */
 error_t allocator_alloc_pointer
-(allocator_t* alloc, usz n, void* set, const char* file_name, u32 line);
+(allocator_t* alloc, usz n, void* set, const char* file_name, usz line);
 error_t allocator_free_pointer(allocator_t* alloc, void* set);
 
 void allocator_overflow(allocator_t* alloc, heap_header_t* header);

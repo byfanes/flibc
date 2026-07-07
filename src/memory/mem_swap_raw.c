@@ -10,6 +10,7 @@ error_t mem_swap_raw
 
     /* Check null case */
     if(!l || !r) { return null_pointer; }
+    if(l == r) { return success; }
 
     /* Swap memory */
     for(; i < n; ++i) {

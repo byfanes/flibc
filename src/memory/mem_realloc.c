@@ -8,7 +8,7 @@ error_t __mem_realloc
     error_t res = success;
     heap_header_t *he = 0;
     u8 *ba = 0, *n_ba = 0;
-    usz min = 0, i = 0, prev = 0;
+    usz min = 0, prev = 0;
 
     /* Validate user inputs */
     if(!set) { return null_pointer; }
@@ -26,8 +26,12 @@ error_t __mem_realloc
         /* set -> ptr(NULL) */
         return __mem_alloc(alloc, set, n, USE_TRACE_ARGS);
     }
+
     /* set -> ptr(addr) -> data */
     he = (heap_header_t*)(void*)ba - 1;
+
+    /* Check the header is valid */
+    if((res = __validate_header(he))) { return res; }
     prev = he->wanted_alloc;
 
     /* Allocate new memory and set it*/
@@ -40,10 +44,10 @@ error_t __mem_realloc
     min = (prev > n) ? n : prev;
 
     /* Copy old data */
-    for(; i < min; ++i ) { n_ba[i] = ba[i]; }
+    mem_cpy_raw(n_ba, ba, min);
 
     /* Zero-ing the new part */
-    for(; i < n; ++i ) { n_ba[i] = 0; }
+    mem_zeroed_len(n_ba + min, n - min);
 
     /* Free old part */
     return mem_free(&ba);

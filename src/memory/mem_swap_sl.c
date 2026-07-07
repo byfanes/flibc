@@ -7,10 +7,8 @@ error_t __mem_swap_sl
     /* Init variables */
     sl_u8_t *lsl = lhs, *rsl = rhs;
 
-    /* Validate user inputs - items checked in memswap_raw */
-    if(!lsl || !rsl) { return null_pointer; }
-    if(lsl->count != rsl->count) { return memswap_diffsize; }
-
-    /* Swap memory and return */
-    return mem_swap_raw(lsl->items, rsl->items, lsl->count * el_size);
+    return
+        (!lsl || !rsl) ? null_pointer :
+        (lsl->count != rsl->count) ? memswap_diffsize :
+        mem_swap_raw(lsl->items, rsl->items, lsl->count * el_size);
 }

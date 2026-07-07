@@ -5,7 +5,6 @@ error_t allocator_init
 {
     /* Init variables */
     allocator_t* alloc = 0;
-    sl_u8_t sl = {0};
 
     /* Check input */
     if(!set) { return null_pointer; }
@@ -17,11 +16,8 @@ error_t allocator_init
     /* Error check */
     if((ssz)alloc < 0 && (ssz)alloc > -4096) { return memory_error; }
 
-    /* No needed for checking already done earlier */
-    slice_set(&sl, alloc, sizeof(allocator_t));
-
     /* Zero-ed the struct so bitfields are zero now */
-    mem_set(&sl, 0);
+    mem_zeroed(alloc);
 
     /* This is an default allocator so we can use default functions */
     alloc->meta.alloc_pointer = allocator_alloc_pointer;

@@ -1,10 +1,11 @@
 #include "memory_private.h"
 
 error_t mem_move_raw
-(void* dst, void* src, usz n)
+(void* dst, const void* src, usz n)
 {
     /* Init variables */
-    u8 *d = dst, *s = src;
+    u8 *d = dst;
+    const u8 *s = src;
     usz i = 0;
     
     /* Check null case */

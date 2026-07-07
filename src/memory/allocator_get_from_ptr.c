@@ -8,20 +8,12 @@ error_t allocator_get_from_ptr
 (void* ptr, allocator_t** set)
 {
     /* Init variables */
-    heap_header_t* header = 0;
     error_t res = success;
-    
-    /* One byte is null byte so skip that*/
-    header = ((heap_header_t*)ptr - 1);
+    heap_header_t* header = ((heap_header_t*)ptr - 1);
 
-    res = __validate_header(header);
-    if(res == invalid_pointer) { return res; }
-    else if (res == heap_underflow)
-    { header->alloc->meta.underflow(header->alloc, header); }
-    else if (res == heap_overflow)
-    { header->alloc->meta.overflow(header->alloc, header); }
-
-    *set = header->alloc;
-
-    return success;
+    return ((void)(
+        (res = (ptr) ? success : null_pointer) ||
+        (res = __validate_header(header)) ||
+        (*set = header->alloc, success)
+    ), res);
 }

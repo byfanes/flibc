@@ -1,7 +1,7 @@
 #include "memory_private.h"
 
 static void set_header
-(allocator_t* alloc, void** set, void* ptr, u32 n, u16 idx, const char* file_name, u32 line)
+(allocator_t* alloc, void** set, void* ptr, u32 n, u16 idx, const char* file_name, usz line)
 {
     heap_header_t* header = 0;
     u8 i = 0;
@@ -13,7 +13,7 @@ static void set_header
     /* It is safe case a file should not have more line than
     * 4B if it has it is not my problem
     */
-    header->line = line;
+    header->line = (u32)line;
     header->wanted_alloc = n;
     header->idx = idx;
     /* Add safety to here */
@@ -21,17 +21,17 @@ static void set_header
 
     /* Compiler will unroll it */
     for(; i < sizeof(header->safety); ++i)
-    { header->safety[i] = 'A' + (u8)i; }
+    { header->safety[i] = (u8)('A' + i); }
 
     /* Last null byte */
-    *(usz*)(uintptr_t)((u8*)ptr + sizeof(heap_header_t) + n) = 0;
+    mem_zeroed_len(((u8*)ptr + sizeof(heap_header_t) + n), sizeof(usz));
 
     /* Set users pointer too */
     *set = header + 1;
 }
 
 static error_t alloc_big_chunk
-(allocator_t* alloc, u32 n, u32 chunk_count, void* set, const char* file_name, u32 line)
+(allocator_t* alloc, u32 n, u32 chunk_count, void* set, const char* file_name, usz line)
 {
     /* Header idx is 0 to 248 - 504 (depending on arch) */
     u16 header_idx = 0;
@@ -41,7 +41,7 @@ static error_t alloc_big_chunk
     for(; header_idx < ALLOCATOR_HEADER_COUNT; ++header_idx) {
         if(!alloc->headers[header_idx]) {
             /* Call syscall for new chunk memory */
-            ptr = (u8*)syscall_6_linux(syscall_mmap, 0, (ssz)(chunk_count * CHUNK_SIZE),
+            ptr = (u8*)(uintptr_t)syscall_6_linux(syscall_mmap, 0, (ssz)(chunk_count * CHUNK_SIZE),
             (PROT_READ|PROT_WRITE), (MAP_PRIVATE|MAP_ANONYMOUS), (ssz)(-1), 0);
 
             /* Error check */
@@ -72,7 +72,7 @@ static error_t alloc_big_chunk
 }
 
 static error_t alloc_small_chunk
-(allocator_t* alloc, u32 n, u32 chunk_count, void* set, const char* file_name, u32 line)
+(allocator_t* alloc, u32 n, u32 chunk_count, void* set, const char* file_name, usz line)
 {
     /* Init variables */
     u32 idx = 0;
@@ -99,7 +99,7 @@ static error_t alloc_small_chunk
     }
 
     /* Mark them as they are part of the memory */
-    __set_chunks_used(alloc->free_bits, idx, (u32)chunk_count);
+    __set_chunks_used(alloc->free_bits, idx, chunk_count);
 
     /* Get the pointer */
     ptr = ((u8*)alloc + sizeof(allocator_t) + CHUNK_SIZE * idx);
@@ -114,12 +114,12 @@ static error_t alloc_small_chunk
 }
 
 error_t allocator_alloc_pointer
-(allocator_t* alloc, usz n, void* set, const char* file_name, u32 line)
+(allocator_t* alloc, usz n, void* set, const char* file_name, usz line)
 {
     /* Init variables */
     usz needed = 0, chunk_count = 0;
     error_t res = success;
-    
+
     /* Check input */
     if(!alloc || !set) { return null_pointer; }
 
@@ -133,16 +133,16 @@ error_t allocator_alloc_pointer
     if(needed > (u32)(-1)) { return exceeding_memory_allocation; }
 
     mutex_lock(&alloc->meta.mutex);
-    
+
     /* We got a request which is greater than threshold */
     if (needed >= RAW_ALLOCATION_SIZE) {
-        res = alloc_big_chunk(alloc, (u32)n, (u32)chunk_count, set, file_name, (u32)line);
+        res = alloc_big_chunk(alloc, (u32)n, (u32)chunk_count, set, file_name, line);
         goto end;
     }
     /* We are making an allocation which is less than threshold
      * which will be (probably) easier to fit in the chunks
      */
-    res = alloc_small_chunk(alloc, (u32)n, (u32)chunk_count, set, file_name, (u32)line);
+    res = alloc_small_chunk(alloc, (u32)n, (u32)chunk_count, set, file_name, line);
 
 end:
     mutex_unlock(&alloc->meta.mutex);

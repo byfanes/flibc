@@ -6,10 +6,10 @@ error_t __mem_cpy_sl
     /* Init variables */
     sl_u8_t *dsl = dst, *ssl = src;
 
-    /* Validate user inputs - items checked in memcpy_raw */
-    if(!dsl || !ssl) { return null_pointer; }
-    if(ssl->count > dsl->count) { return small_buffer; }
-    if(!el_size) { return elsize_zero; }
-
-    return mem_cpy_raw(dsl->items, ssl->items, ssl->count * el_size);
+    return
+        /* Validate user inputs - items checked in memcpy_raw */
+        (!dsl || !ssl) ? null_pointer :
+        (ssl->count > dsl->count) ? small_buffer :
+        (!el_size) ? elsize_zero :
+        mem_cpy_raw(dsl->items, ssl->items, ssl->count * el_size);
 }

@@ -7,12 +7,8 @@ error_t __mem_set_sl
     /* Init variable */
     sl_u8_t *dsl = dst;
 
-    /* Validate user inputs - elsize can be given 0 -
-     * items checked in memset_raw
-     */
-    if(!dsl) { return null_pointer;}
-    if(!el_size) { return elsize_zero;}
-
-    /* Set the memory */
-    return mem_set_raw(dsl->items, c, el_size * dsl->count);
+    return
+        (!dsl) ? null_pointer :
+        (!el_size) ? elsize_zero :
+        mem_set_raw(dsl->items, c, el_size * dsl->count);
 }

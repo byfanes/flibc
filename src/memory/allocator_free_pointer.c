@@ -17,12 +17,7 @@ error_t allocator_free_pointer
     /* Skip to header and one for first null byte */
     header = ((heap_header_t*)(uintptr_t)ptr - 1);
 
-    res = __validate_header(header);
-    if(res == invalid_pointer) { return res; }
-    else if (res == heap_underflow)
-    { header->alloc->meta.underflow(header->alloc, header); }
-    else if (res == heap_overflow)
-    { header->alloc->meta.overflow(header->alloc, header); }
+    if((res = __validate_header(header))) { return res; }
 
     total = ALIGN_64(header->wanted_alloc + ADDITIONAL_HEADER_SIZE);
 

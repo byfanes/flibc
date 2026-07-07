@@ -7,11 +7,9 @@ error_t __mem_move_sl
     /* Init variables */
     sl_u8_t *dsl = dst, *ssl = src;
 
-    /* Validate user inputs - items checked in memmove_raw */
-    if(!dsl || !ssl) { return null_pointer; }
-    if(ssl->count > dsl->count) { return small_buffer; }
-    if(!el_size) { return elsize_zero; }
-
-    /* Move the memory */
-    return mem_move_raw(dsl->items, ssl->items, ssl->count * el_size);
+    return
+        (!dsl || !ssl) ? null_pointer :
+        (!el_size) ? elsize_zero :
+        (ssl->count > dsl->count) ? small_buffer :
+        mem_move_raw(dsl->items, ssl->items, ssl->count * el_size);
 }

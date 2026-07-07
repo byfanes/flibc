@@ -1,10 +1,10 @@
 #include "memory_private.h"
 
 error_t mem_cmp_raw
-(void* lhs, void* rhs, usz n, bool* out)
+(const void* lhs, const void* rhs, usz n, bool* out)
 {
     /* Init variables */
-    u8 *l = lhs, *r = rhs;
+    const u8 *l = lhs, *r = rhs;
     usz i = 0;
 
     /* Null case */
