@@ -6,14 +6,12 @@ error_t path_exists
     /* Init variables */
     error_t res = success;
 
-    /* Check inputs set it to false for failure case */
-    if(!out) { return null_pointer; }
-    *out = false;
-
-    /* Check if not fail set it */
-    if((res = str_add_shadow_null(p))) { return res; }
-    if(0 == syscall_2_linux(syscall_access, (ssz)p->items, F_OK))
-    { *out = true; }
-    
-    return success;
+    return ((void)(
+        /* Check out parameter if its valid set it to false(default) state */
+        (res = (!out) ? null_pointer : (*out = false, success)) ||
+        /* Convert string to c-string - p checked here */
+        (res = str_add_shadow_null(p)) ||
+        /* Give to the kernel if it exists it success */
+        (*out = (0 == syscall_2_linux(syscall_access, (ssz)p->items, F_OK)))
+    ), res);
 }

@@ -6,33 +6,20 @@ error_t file_read_all
 {
     /* Init variables */
     usz size = 0;
-    sl_u8_t buf = {0};
-    error_t res = success, res2 = success;
-    file_t *file = 0;
-    def_da_t *def = (void*)out;
+    error_t res = success;
+    file_t *file = nullptr;
 
-    /* Check inputs */
-    if(!alloc || !path || !path->items || !path->count || !out)
-    { return null_pointer; }
-
-    /* Get size of the file */
-    if((res = path_size(path, &size))) { return res; }
-    if((res = da_init(alloc, out, size))) { return res; }
-
-    /* Add shadow byte to make cstr, set buffer, open file and read it */
-    str_add_shadow_null(path);
-    if((res = io_open(alloc, (char*)path->items, &file, file_read))) { return res; }
-
-    /* This could be better when we move to slice pointers */
-    /* Set slice and read file to buffer then set count */
-    slice_set(&buf, out->items, size);
-    res = io_read(file, &buf, nullptr);
-    def->count = buf.count;
-
-    /* First close the file because other wise it will leak then check read */
-    if((res2 = io_close(&file))) { return res2; }
-    /* We expect it to read same as file size so in this case we check io_partial too */
-    if(res) { return res; }
-
-    return success;
+    /* Path checked in path_size and alloc & out checked in da_init */
+    return ((void)(
+        /* Get the file size and make an DA with that size */
+        (res = path_size(path, &size)) ||
+        (res = da_init(alloc, out, size)) ||
+        /* Open the file and read the size of the file in this case io_partial is an real error */
+        (res = io_open(alloc, (char*)path->items, &file, file_read)) ||
+        (res = slice_set(&out, out->items, size)) ||
+        (res = io_read(file, out, (void*)(uintptr_t)&out->count))
+    ), (void)( /* Cleanup */
+        io_close(&file),
+        (res ? da_deinit(out) : (0)) /* If there is an error clean the out DA too */
+    ), res);
 }

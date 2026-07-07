@@ -3,16 +3,16 @@
 error_t dir_exists
 (path_t* p, bool* out)
 {
+    /* Init variables */
     bool is_exists = false;
     error_t res = success;
 
-    /* Check inputs path checked in path_exists function */
-    if(!out) { return null_pointer; }
-    *out = false;
-
-    /* Check if exists if yes then check is it a dir */
-    if((res = path_exists(p, &is_exists))) { return res; }
-    if(is_exists) { return path_is_dir(p, out); }
-
-    return success;
+    return ((void)(
+        /* Check the input variables 'p' checked in 'path_exists' and set default of 'out' */
+        (res = (out) ? (*out = false, success) : null_pointer) ||
+        /* Check the 'p's existence depending on that check if its a directory */
+        (res = path_exists(p, &is_exists)) ||
+        (is_exists ? (res = path_is_dir(p, out))
+                   : (res = success))
+    ), res);
 }

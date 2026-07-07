@@ -10,8 +10,8 @@ error_t dir_list_dir
     ssz fd = 0, nread = 0, bpos = 0;
     error_t res = success;
     u8 buf[FLIBC_STACK_THRESHOLD] = {0};
-    char *name = 0;
-    linux_dirent64_t *d = 0;
+    char *name = nullptr;
+    linux_dirent64_t *d = nullptr;
     sl_u8_t name_sl = {0};
 
     /* Check inputs */

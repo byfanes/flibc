@@ -7,22 +7,20 @@ struct callback_pack_s {
     error_t res;
 };
 
-static void callback
+static void __dir_remove_recursive_callback
 (sl_cstr_t* path, sl_cstr_t* name, bool is_dir, void* arg)
 {
     /* Init variables */
     callback_pack_t *pack = arg;
 
-    /* Construct the full path */
-    str_clear(&pack->full);
-    str_cat_sl(&pack->full, path);
-    path_join(&pack->full, name);
-
-    if(is_dir) {
-        pack->res = dir_remove_recursive(&pack->full);
-    } else {
-        pack->res = file_remove(&pack->full);
-    }
+    /* Construct the full path and remove if its a file or iterate inside it if its a directory */
+    (void)(
+        str_clear(&pack->full) ||
+        str_cat_sl(&pack->full, path) ||
+        path_join(&pack->full, name) ||
+        (pack->res = (is_dir) ? dir_remove_recursive(&pack->full)
+                              : file_remove(&pack->full))
+    );
 }
 
 error_t dir_remove_recursive
@@ -33,24 +31,17 @@ error_t dir_remove_recursive
     allocator_t* alloc = 0;
     callback_pack_t pack = {0};
 
-    /* Check inputs and get allocator */
-    if(!path || !path->count || !path->items) { return null_pointer; }
-    if((res = allocator_get_from_ptr(path->items, &alloc))) { return res; }
-    if((res = str_init(alloc, &pack.full, 512))) { return res; }
-
-    /* If there is an error in dir_list_dir if will
-     * be skipped and dir_list_dir's error will be used
-     */
-    if(!(res = dir_list_dir(path, callback, &pack))) {
-        /* If dir_list_dir does not fail use pack's results
-         * to check if there is a file/directory which is not removed
-         */
-        res = pack.res;
-        /* If there is not an error we remove given directory too */
-        if(!res) { res = dir_remove(path); }
-    }
-
-    /* Free the memory and return */
-    str_deinit(&pack.full);
-    return res;
+    return ((void)(
+       /* Check inputs and get allocator */
+       (res = (!path || !path->count || !path->items) ? null_pointer : success) ||
+       (res = allocator_get_from_ptr(path->items, &alloc)) ||
+       /* Init a scratch string buffer to use */
+       (res = str_init(alloc, &pack.full, 512)) ||
+       /* List dir and remove files and directories */
+       (res = dir_list_dir(path, __dir_remove_recursive_callback, &pack)) ||
+       /* If there is an error we return the if not remove this directory too */
+       (res = (pack.res) ? pack.res : dir_remove(path))
+    ), (void)( /* Cleanup */
+        str_deinit(&pack.full)
+    ), res);
 }

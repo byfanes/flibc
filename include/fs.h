@@ -10,7 +10,6 @@ extern "C" {
 #include "time.h"
 #include "da.h"
 
-
 typedef str_t path_t;
 typedef struct fs_stat_s fs_stat_t;
 
@@ -67,7 +66,6 @@ error_t dir_mkdir_ifnot_exists(path_t* path);
 error_t file_remove(path_t* path);
 error_t file_exists(path_t* path, bool* out);
 
-error_t file_copy(allocator_t* alloc, path_t* from, path_t* to);
 error_t file_read_all(allocator_t* alloc, path_t* path, da_u8_t* out);
 
 error_t path_ext(path_t* base, path_t* out);
@@ -79,10 +77,9 @@ error_t dir_list_dir(path_t* path,
    void (*callback)(sl_cstr_t* path, sl_cstr_t* name, bool is_dir, void* arg), void* arg);
 error_t dir_remove_recursive(path_t* path);
 
-/* TBD
+/* TODO:
  * error_t file_read_lines(allocator_t* alloc, path_t* path, da(str_t)* out);
  * error_t path_dirname(path_t* p, path_t* out);
- *
  */
 
 #ifdef __cplusplus

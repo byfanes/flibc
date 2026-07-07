@@ -9,6 +9,14 @@ extern "C" {
 #include "../da/da_private.h"
 #include "syscall.h"
 #include "fs.h"
+#include "io.h"
+#include "memory.h"
+
+/* TODO: in future we will but __arch_* functions which will handle platform
+ * layer right now the code has lots of OS/arch depending functions and for
+ * the structure all OS/arch depending code should be in the arch/ directory
+ * and rest of all can be writable in C and its should be crossplatform
+ */
 
 /* TODO: This is not cross-platform like other functions
  * This struct has been stolen from linux kernel

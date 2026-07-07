@@ -3,16 +3,15 @@
 error_t path_stat
 (path_t* p, fs_stat_t* out)
 {
-    /* Check inputs */
-    if(!p || !out || !p->items || !p->count) { return null_pointer; }
+    /* Init variables */
+    error_t res = success;
 
-    /* Make sure its null-terminated pointer and call stat syscall */
-    /* We already handled shadow null's error in the if statement */
-    str_add_shadow_null(p);
-
-    /* Check return of the syscall */
-    if(0 > syscall_2_linux(syscall_stat, (ssz)p->items, (ssz)out))
-    { return fs_error; }
-
-    return success;
+    return ((void)(
+        /* Check users' input - p is checked in shadow null */
+        (res = (out) ? success : null_pointer) ||
+        (res = str_add_shadow_null(p)) ||
+        /* Give the path to kernel to handle the rest */
+        ((0 > syscall_2_linux(syscall_stat, (ssz)p->items, (ssz)out))
+            ? (res = fs_error) : (res = success))
+    ), res);
 }

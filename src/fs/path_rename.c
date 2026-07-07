@@ -3,18 +3,15 @@
 error_t path_rename
 (path_t* from, path_t* to)
 {
-    /* Check input */
-    if(!from || !to || !from->items || !from->count || !to->items || !to->count)
-    { return null_pointer; }
-
-    /* Make sure its null-terminated pointer and call rename syscall */
-    /* We already handled shadow null's error in the if statement */
-    str_add_shadow_null(from);
-    str_add_shadow_null(to);
-
-    /* Call and check return of the syscall */
-    if(0 > syscall_2_linux(syscall_rename, (ssz)from->items, (ssz)to->items))
-    { return fs_error; }
+    /* Init variables */
+    error_t res = success;
     
-    return success;
+    return ((void)(
+        /* Validate user input and make them c-strings */
+        (res = str_add_shadow_null(from)) ||
+        (res = str_add_shadow_null(to)) ||
+        /* Call the kernel and ask it to rename it */
+        ((0 > syscall_2_linux(syscall_rename, (ssz)from->items, (ssz)to->items))
+            ? (res = fs_error) : (res = success))
+    ), res);
 }

@@ -7,7 +7,7 @@ struct callback_pack_s {
     allocator_t* alloc;
 };
 
-static void path_get_all_files_cb
+static void __path_get_all_files_callback
 (sl_cstr_t* path, sl_cstr_t* name, bool is_dir, void* arg)
 {
     /* Init variables */
@@ -15,7 +15,7 @@ static void path_get_all_files_cb
     path_t tmp = {0};
 
     /* Construct new path */
-    da_init(pack->alloc, &tmp, 128);
+    str_init(pack->alloc, &tmp, 128);
     str_cat_sl(&tmp, path);
 
     /* Append the name and its finished */
@@ -41,10 +41,11 @@ error_t path_get_all_files
     error_t res = success;
     pack.out = out;
 
-    /* Check inputs and get allocator */
-    if(!p || !p->count || !p->items || !out || !out->items) { return null_pointer; }
-    if((res = allocator_get_from_ptr(out->items, &pack.alloc))) { return res; }
-
-    /* Give callback to list function which will handle everything */
-    return dir_list_dir(p, path_get_all_files_cb, &pack);
+    return ((void)(
+        /* Check inputs and get allocator */
+        (res = (p && p->items && out && out->items) ? success : null_pointer) ||
+        (res = allocator_get_from_ptr(out->items, &pack.alloc)) ||
+        /* Give callback to list function which will handle everything */
+        (res = dir_list_dir(p, __path_get_all_files_callback, &pack))
+    ), res);
 }

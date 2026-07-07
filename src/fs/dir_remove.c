@@ -3,13 +3,13 @@
 error_t dir_remove
 (path_t* path)
 {
-    /* Validate input */
-    if(!path || !path->items || !path->count) { return null_pointer; }
+    /* Init variables */
+    error_t res = success;
 
-    /* Add null byte and call remove syscall */
-    str_add_shadow_null(path);
-    if(0 > syscall_1_linux(syscall_rmdir, (ssz)path->items))
-    { return fs_error; }
-
-    return success;
+    return ((void)(
+        /* Add null to make it cstr and pass to kernel - checks done in shadow null function */
+        (res = str_add_shadow_null(path)) ||
+        ((0 > syscall_1_linux(syscall_rmdir, (ssz)path->items))
+            ? (res = fs_error) : (res = success))
+    ), res);
 }

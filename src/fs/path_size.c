@@ -7,11 +7,11 @@ error_t path_size
     fs_stat_t stats = {0};
     error_t res = success;
 
-    /* Call stats to get size and checking is done here */
-    if(!out) { return null_pointer; }
-    if((res = path_stat(p, &stats))) { return res; }
-    
-    *out = (usz)stats.st_size;
-
-    return success;
+    return ((void)(
+        /* Check user input and revert to default state */
+        (res = (out) ? (*out = 0, success) : null_pointer) ||
+        /* Get the stats and get size from that */
+        (res = path_stat(p, &stats)) ||
+        (*out = (usz)stats.st_size, success)
+    ), res);
 }
