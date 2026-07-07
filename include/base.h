@@ -9,8 +9,7 @@
 #define _Nullable
 #endif /* _Nullable */
 
-#define __unreachable() \
-    for(;;) __builtin_unreachable();
+#define __unreachable() __builtin_unreachable()
 
 /* 8-bit */
 typedef signed char        int8_t;
@@ -28,7 +27,7 @@ typedef unsigned short     uint16_t;
 typedef int                int32_t;
 typedef unsigned int       uint32_t;
 
-/*
+/* Extensin:
  * C89 does not provide standardized fixed-width integer types so we use
  * a few compiler and platform-specific extensions to define 64-bit types
  * This improves portability and helps ensure consistent behavior across
@@ -94,7 +93,7 @@ typedef  ssize_t ssz;
     #define __bool_true_false_are_defined 1
 #endif
 
-/* We are using _Noreturn for compilers to not yap about after
+/* Extension: We are using _Noreturn for compilers to not yap about after
  * calling function like abort/exit and for other static analyzers
  */
 #if defined(__GNUC__) || defined(__clang__)
@@ -107,7 +106,12 @@ typedef  ssize_t ssz;
 
 #define NULL 0
 #define nullptr ((void*)0)
-#define offsetof(type, member) ((ssz)&(((type *)0)->member))
+
+/* Extension: We use compiler's offset because this is usable in compiler
+ * time which allows use to check offsets of the element which is usefull
+ * for checking slice and dynamic arrays
+ */
+#define offsetof(type, member) __builtin_offsetof(type, member)
 
 #define ARRAY_LEN(x) (sizeof((x)) / sizeof((x)[0]))
 
@@ -117,9 +121,17 @@ typedef  ssize_t ssz;
 #define FLIBC_STACK_THRESHOLD 4096
 #define FLIBC_FILE_BUFFER_SIZE 4096
 
-/* We are using builtin args from the compiler because its the safe way to do
- * we can add them manually with some pointer arithmetic but it wont be safe
- * and wont be that compatiable with other architectures
+/* Note: We might add a config stage while compiling to get excat values */
+/* Most systems uses 4KiB in some systems it might different
+ * such as 16KiB in macos(apple-chips) and ios systems.
+ */
+#ifndef PAGE_SIZE
+#define PAGE_SIZE (1024*4)
+#endif /* PAGE_SIZE */
+
+/* Extension: We are using builtin args from the compiler because its the safe
+ * way to do we can add them manually with some pointer arithmetic but it
+ * wont be safe and wont be that compatiable with other architectures
  */
 typedef __builtin_va_list va_list;
 #define va_start(v,l)   __builtin_va_start(v,l)
