@@ -3,12 +3,10 @@
 error_t time_now
 (time_t* out)
 {
-    /* Init variables and check out */
-    if(!out) { return null_pointer; }
-
-    /* Call gettime and check result */
-    if(0 > syscall_2_linux(syscall_gettime, CLOCK_MONOTONIC, (ssz)out))
-    { return time_error; }
-
-    return success;
+    return
+        /* Check new variables */
+        (!out) ? null_pointer :
+        /* Call gettime and check result */
+        (0 > syscall_2_linux(syscall_gettime, CLOCK_MONOTONIC, (ssz)out))
+            ? time_error : success;
 }
