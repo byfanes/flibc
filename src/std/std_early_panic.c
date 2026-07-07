@@ -1,6 +1,6 @@
 #include "std_private.h"
 
-void __std_early_panic
+_Noreturn void __std_early_panic
 (const char* msg)
 {
     /* Ignore its failure because we will close the program after it */

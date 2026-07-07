@@ -6,10 +6,10 @@ error_t env_add_var_t
     /* Init variables */
     error_t res = success;
 
-    /* Checks done inside of them - Add variable to variable list */
-    if((res = da_push(&env->vars, &var))) { return res; }
-    if((res = da_push(&env->list, (char**)&var.continues.items))) { return res; }
-    if((res = da_add_shadow_null_segment(&env->list))) { return res; }
-
-    return success;
+    return ((void)(
+        (res = (env) ? success : null_pointer) ||
+        (res = da_push(&env->vars, &var)) ||
+        (res = da_push(&env->list, (char**)(uintptr_t)&var.continues.items)) ||
+        (res = da_add_shadow_null_segment(&env->list))
+    ), res);
 }

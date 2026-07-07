@@ -1,12 +1,20 @@
 #include "std_private.h"
 
+/* For stds which are different than __flibc_runtime_start's use heap memory */
 void std_from_args
 (std_t* std, i32 argc, char** argv)
 {
+    __std_from_args(std, argc, argv, nullptr);
+}
+
+/* args_ptr expected to be a nullptr or a valid sl_u8_t[MAX_ARGS_COUNT] */
+void __std_from_args
+(std_t* std, i32 argc, char** argv, sl_u8_t *args_ptr)
+{
+    /* Init varaibles */
     i32 i = 0;
     u32 envc = 0, eq_idx = 0;
     char **envp = nullptr, *env_cstr = nullptr;
-    sl_u8_t args[MAX_ARGS_COUNT] = {0}, *args_ptr = nullptr;
     sl_u8_t key_sl = {0}, val_sl = {0};
 
     /* Check argc and get first of them which is path to executable */
@@ -19,12 +27,11 @@ void std_from_args
     if(allocator_init(&std->alloc))
     { __std_early_panic("STD Init Panic: Allocator failed to init!\n"); }
 
+    /* TODO: Use malloc_sl and free_sl */
     /* Check for if its needed to allocate memory or not */
-    if(argc > MAX_ARGS_COUNT) {
+    if(args_ptr) {
         if(mem_alloc(std->alloc, &args_ptr, sizeof(sl_u8_t) * (u32)argc))
         { __std_early_panic("STD Init Panic: Could not allocate memory for args slice list!\n"); }
-    } else {
-        args_ptr = args;
     }
 
     /* Open standard files */
