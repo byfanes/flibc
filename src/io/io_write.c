@@ -5,11 +5,14 @@ error_t __io_write
 {
     /* Init variables */
     error_t res = success;
+    sl_u8_t *sl = raw_sl;
 
     /* Lock mutex and call internal function which will handle it */
-    mutex_lock(&file->mutex);
-    res = __io_write_unlocked(file, raw_sl, el_size);
-    mutex_unlock(&file->mutex);
-
-    return res;
+    return ((void)(
+        (res = (file && sl && sl->items) ? success : null_pointer) ||
+        (res = (el_size) ? success : elsize_zero) ||
+        (mutex_lock(&file->mutex),
+            res = __io_write_unlocked(file, sl->items, sl->count * el_size),
+        mutex_unlock(&file->mutex), res)
+    ), res);
 }

@@ -6,11 +6,13 @@ error_t io_printf
     /* Init variables */
     va_list ap;
     error_t res = success;
+    sl_u8_t fmt_sl = {0};
 
-    /* Start and end va and format string */
-    va_start(ap, fmt);
-    res = io_vprintf_sl(file, cstr_to_u8sl(fmt), ap);
-    va_end(ap);
-
-    return res;
+    return (
+        /* Start va_list block and pass to io_vprintf_sl to handle rest */
+        (va_start(ap, fmt), (void)(
+            (res = slice_set_cstr(&fmt_sl, fmt)) ||
+            (res = io_vprintf_sl(file, fmt_sl, ap))
+        ), va_end(ap))
+    , res);
 }

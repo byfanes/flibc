@@ -6,17 +6,14 @@ error_t io_close
     /* Init variables */
     error_t res = success;
 
-    /* Lock mutex and call internal function which will handle it */
-    mutex_lock(&(*file)->mutex);
-    res = __io_close_unlocked(file);
-
-    if((*file)) {
-        /* If fclose failed unlock the mutex again
-         * otherwise it will be freed so it segfaults
-         * that is reason we check
-         */
-        mutex_unlock(&(*file)->mutex);
-    }
-
-    return res;
+    return ((void)(
+        /* Check user input */
+        (res = (file) ? success : null_pointer) ||
+        /* Early return if its a nullptr */
+        (!*file) ||
+        /* Start mutex block - no end because it will be invalid pointer */
+        (mutex_lock(&(*file)->mutex),
+            (res = __io_close_unlocked(file)),
+        res)
+    ), res);
 }

@@ -17,11 +17,13 @@ struct file_s {
 /* Unlocked functions assume file->mutex is already held by the caller.
  * Calling them without holding the mutex results in undefined behavior
  * and may cause data races or corruption when accessed concurrently.
+ *
+ * Note: Those functions are internal so no checking is done here
  */
 error_t __io_flush_unlocked(file_t* file);
-error_t __io_write_unlocked(file_t* file, void* raw_sl, usz el_size);
-error_t __io_seek_unlocked(file_t* file, usz off, seek_type_t type, usz* _Nullable out);
-error_t __io_read_unlocked(file_t* file, void* buf, usz el_size, u32* _Nullable read_count);
+error_t __io_seek_unlocked(file_t* file, usz off, seek_type_t type, usz* out);
 error_t __io_close_unlocked(file_t** file);
+error_t __io_read_unlocked(file_t* file, void* buf_ptr, usz amount, usz* read_count);
+error_t __io_write_unlocked(file_t* file, void* buf, usz n);
 
 #endif /* __FLIBC_STDIO_PRIVATE_H__ */

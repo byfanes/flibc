@@ -6,41 +6,39 @@ error_t io_vprintf_sl
     /* Init variables */
     usz count = 0;
     error_t res = success;
-    u8 buf[FLIBC_STACK_THRESHOLD];
+    u8 buf[FLIBC_STACK_THRESHOLD] = {0};
     sl_u8_t buf_sl = {0};
     void* ptr = 0;
     allocator_t* alloc = 0;
+    va_list va1, va2;
 
-    /* Check file pointer fmt checked in format function */
-    if(!file) { return null_pointer; }
+    va_copy(va1, ap);
+    va_copy(va2, ap);
 
-    /* First get size of buffer */
-    if((res = __formatf(buf_sl, fmt, &count, ap))) { return res; }
+    /* Note: Allocation is a little bit tricky becayse files are allocated via
+     * an allocator and they are opaque pointers so we know they must have an
+     * header via that we can access an allocator which is same with the file's
+     * allcator and use it to access more memory
+     */
 
-    /* Allocate stack or heap */
-    if(count > FLIBC_STACK_THRESHOLD) {
-        /* A little bit trick but files are allocated via an allocator
-         * and they are opaque pointers so we know they must have an header
-         * via that we can access an allocator which is same with the file's
-         * allcator and use it to access more memory
-         */
-        if((res = allocator_get_from_ptr(file, &alloc))) { return res; }
-        if((res = mem_alloc(alloc, &ptr, count))) { return res; }
-    } else {
-        ptr = buf;
-    }
-
-    /* Set slice with the pointer and the count */
-    slice_set(&buf_sl, ptr, count);
-
-    /* Format using fmt and output to buffer */
-    if((res = __formatf(buf_sl, fmt, &count, ap))) { goto fail; }
-
-    /* Write buffer to file pointer */
-    if((res = io_write(file, &buf_sl))) { goto fail; }
-
-fail:
-    /* Free if its need */
-    if(count > FLIBC_STACK_THRESHOLD && ptr) { mem_free(&ptr); }
-    return res;
+    return ((void)(
+        /* Check file pointer fmt checked in format function */
+        (res = (file) ? success : null_pointer) ||
+        /* First get size of buffer */
+        (res = __formatf(buf_sl, fmt, &count, va1)) ||
+        /* Allocate stack or heap */
+        ((count <= FLIBC_STACK_THRESHOLD) ? (ptr = buf, success)
+            : ((res = allocator_get_from_ptr(file, &alloc)) ||
+              (res = mem_alloc(alloc, &ptr, count))), res) ||
+        /* Set slice with the pointer and the count */
+        (res = slice_set(&buf_sl, ptr, count)) ||
+        /* Format using fmt and output to buffer */
+        (res = __formatf(buf_sl, fmt, &count, va2)) ||
+        /* Write buffer to file pointer */
+        (res = io_write(file, &buf_sl))
+    ), ( /* Cleanup - If we allocate memory - no (void) because useless-cast */
+        ((count > FLIBC_STACK_THRESHOLD) ? (mem_free(&ptr)) : (0)),
+        (va_end(va1)),
+        (va_end(va2))
+    ), res);
 }

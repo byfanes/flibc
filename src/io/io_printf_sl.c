@@ -7,10 +7,10 @@ error_t io_printf_sl
     va_list ap;
     error_t res = success;
 
-    /* Start and end va and format string */
-    va_start(ap, fmt);
-    res = io_vprintf_sl(file, fmt, ap);
-    va_end(ap);
-
-    return res;
+    return (
+        /* Start va_list block and pass to io_vprintf_sl to handle rest */
+        (va_start(ap, fmt),
+             res = io_vprintf_sl(file, fmt, ap),
+         va_end(ap))
+    , res);
 }

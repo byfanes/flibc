@@ -5,11 +5,16 @@ error_t io_seek
 {
     /* Init variables */
     error_t res = success;
+    usz tmp = 0;
 
-    /* Lock mutex and call internal function which will handle it */
-    mutex_lock(&file->mutex);
-    res = __io_seek_unlocked(file, off, type, out);
-    mutex_unlock(&file->mutex);
-
-    return res;
+    return ((void)(
+        /* Check users inputs */
+        (res = (file) ? success : null_pointer) ||
+        /* Start mutex block and pass to unlocked function to
+         * handle rest and give it a valid out pointer
+         */
+        (mutex_lock(&file->mutex),
+            res = __io_seek_unlocked(file, off, type, (out) ? out : &tmp),
+        mutex_unlock(&file->mutex), res)
+    ), res);
 }
