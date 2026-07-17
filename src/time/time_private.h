@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 
-#include "syscall.h"
 #include "time.h"
+#include "../os/os_private.h"
 
 #ifdef __cplusplus
 }

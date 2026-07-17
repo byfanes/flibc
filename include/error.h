@@ -11,8 +11,7 @@ enum error_e {
 
     /* Generic Error Values */
     null_pointer,
-    heap_overflow,
-    heap_underflow,
+    not_aligned_pointer,
     invalid_pointer,
     invalid_argument,
     invalid_address,
@@ -32,7 +31,6 @@ enum error_e {
     /* System Errors */
     memory_error,
     process_error,
-    proc_child_failed,
     time_error,
     fs_error,
     socket_error,
@@ -44,8 +42,19 @@ enum error_e {
     thread_cond_error,
     connection_closed,
 
+    /* New errors table will change! */
+    unknown_error,
+    not_permitted,
+    interrupted,
+    overflow_error,
+    proc_child_stopped,
+    proc_child_signaled,
+    proc_child_failed,
+
     /* Fatal Errors */
     ssp_fail,
+    heap_overflow,
+    heap_underflow,
 
     /* This is for users to inherit the error_t
      * for example:
