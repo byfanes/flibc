@@ -9,7 +9,7 @@ error_t file_remove
     return ((void)(
         /* Input checks done in shadow_null function */
         (res = str_add_shadow_null(path)) ||
-        /* Remove the file via syscall and check the result */
-        ((0 > syscall_1_linux(syscall_unlink, (ssz)path->items)) ? (res = fs_error) : success)
+        /* Remove the file via os layer and get the result */
+        (res = __os_file_remove(path->items))
     ), res);
 }

@@ -15,9 +15,9 @@ error_t file_read_all
         (res = path_size(path, &size)) ||
         (res = da_init(alloc, out, size)) ||
         /* Open the file and read the size of the file in this case io_partial is an real error */
-        (res = io_open(alloc, (char*)path->items, &file, file_read)) ||
-        (res = slice_set(&out, out->items, size)) ||
-        (res = io_read(file, out, (void*)(uintptr_t)&out->count))
+        (res = io_open(alloc, (char *)path->items, &file, file_read)) ||
+        (res = slice_set((void *)&out, out->items, size)) ||
+        (res = io_read(file, out, (void *)(uintptr_t)&out->count))
     ), (void)( /* Cleanup */
         io_close(&file),
         (res ? da_deinit(out) : (0)) /* If there is an error clean the out DA too */

@@ -7,7 +7,7 @@ struct callback_pack_s {
     error_t res;
 };
 
-static void __dir_remove_recursive_callback
+static void dir_remove_recursive_callback
 (sl_cstr_t* path, sl_cstr_t* name, bool is_dir, void* arg)
 {
     /* Init variables */
@@ -38,7 +38,7 @@ error_t dir_remove_recursive
        /* Init a scratch string buffer to use */
        (res = str_init(alloc, &pack.full, 512)) ||
        /* List dir and remove files and directories */
-       (res = dir_list_dir(path, __dir_remove_recursive_callback, &pack)) ||
+       (res = dir_list_dir(path, dir_remove_recursive_callback, &pack)) ||
        /* If there is an error we return the if not remove this directory too */
        (res = (pack.res) ? pack.res : dir_remove(path))
     ), (void)( /* Cleanup */

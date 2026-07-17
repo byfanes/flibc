@@ -7,7 +7,7 @@ struct callback_pack_s {
     allocator_t* alloc;
 };
 
-static void __path_get_all_files_callback
+static void path_get_all_files_callback
 (sl_cstr_t* path, sl_cstr_t* name, bool is_dir, void* arg)
 {
     /* Init variables */
@@ -46,6 +46,6 @@ error_t path_get_all_files
         (res = (p && p->items && out && out->items) ? success : null_pointer) ||
         (res = allocator_get_from_ptr(out->items, &pack.alloc)) ||
         /* Give callback to list function which will handle everything */
-        (res = dir_list_dir(p, __path_get_all_files_callback, &pack))
+        (res = dir_list_dir(p, path_get_all_files_callback, &pack))
     ), res);
 }

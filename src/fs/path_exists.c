@@ -7,11 +7,11 @@ error_t path_exists
     error_t res = success;
 
     return ((void)(
-        /* Check out parameter if its valid set it to false(default) state */
-        (res = (!out) ? null_pointer : (*out = false, success)) ||
+        /* Check out parameter - defualt value set in os layer */
+        (res = (!out) ? null_pointer : success) ||
         /* Convert string to c-string - p checked here */
         (res = str_add_shadow_null(p)) ||
-        /* Give to the kernel if it exists it success */
-        (*out = (0 == syscall_2_linux(syscall_access, (ssz)p->items, F_OK)))
+        /* Ask os layer to check the path */
+        (res = __os_path_exists(p->items, out))
     ), res);
 }

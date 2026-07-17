@@ -10,8 +10,7 @@ error_t path_rename
         /* Validate user input and make them c-strings */
         (res = str_add_shadow_null(from)) ||
         (res = str_add_shadow_null(to)) ||
-        /* Call the kernel and ask it to rename it */
-        ((0 > syscall_2_linux(syscall_rename, (ssz)from->items, (ssz)to->items))
-            ? (res = fs_error) : (res = success))
+        /* Ask the os layer to rename it */
+        (res = __os_path_rename(from->items, to->items))
     ), res);
 }

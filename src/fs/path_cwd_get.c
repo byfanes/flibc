@@ -1,11 +1,11 @@
 #include "fs_private.h"
 
 error_t path_cwd_get
-(allocator_t* alloc, path_t* p)
+(allocator_t *alloc, path_t *p)
 {
     /* Init variables */
     error_t res = success;
-    ssz ret = 0;
+    def_da_t *def = (void *)p;
 
     return ((void)(
         /* Init a string with maxium capacity - alloc and p checked here */
@@ -13,8 +13,7 @@ error_t path_cwd_get
         /* Call kernel to give the current working directory
          * ret is the error code and the length of the string including null byte
          */
-        (res = (0 > (ret = syscall_2_linux(syscall_getcwd, (ssz)p->items, (ssz)p->capacity)))
-            ? fs_error : (slice_set(p, p->items, (usz)ret - 1), success))
+        (res = __os_cwd_get(def->items, def->capacity, &def->count))
     ), (void)( /* Cleanup - if something fails deinit the string */
         (res ? str_deinit(p) : (0))
     ), res);
