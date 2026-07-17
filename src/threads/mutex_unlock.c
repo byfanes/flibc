@@ -9,7 +9,7 @@ error_t mutex_unlock(mutex_t* mutex)
     }
 
     mutex->state = 0;
-    syscall_6_linux(syscall_futex, (ssz)&mutex->state, FUTEX_WAKE, 1, 0, 0, 0);
+    __os_addr_wake_i32(&mutex->state);
 
     return success;
 }

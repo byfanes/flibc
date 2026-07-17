@@ -12,7 +12,6 @@ error_t thread_cond_broadcast
         /* Add to the seq */
         (atomic_fetch_add_u32(&cond->seq, 1), success) ||
         /* Broadcast the seq - 0x7FFFFFFF is int max which is maxium possible thread count */
-        (res = (0 > syscall_6_linux(syscall_futex, (ssize_t)&cond->seq, FUTEX_WAKE, 0x7FFFFFFF, 0, 0, 0))
-             ? thread_cond_error : success)
+        (__os_addr_wake_all_u32(&cond->seq))
     ), res);
 }

@@ -1,7 +1,7 @@
 #include "threads_private.h"
 
 error_t thread_spawn_std
-(std_t* std, da_thread_t* threads, void*(*func)(std_t*, void*), void* arg)
+(da_thread_t *threads, void *(*func)(std_t *, void *), std_t *std, void *arg)
 {
     /* Init variables */
     error_t res = success;
@@ -10,7 +10,7 @@ error_t thread_spawn_std
         /* Alloc a free scape for the new thread order matters because we might have dangling thread then */
         (res = da_grow_if(threads, 1)) ||
         /* Create the new thread to new location */
-        (res = thread_create_std(std, threads->items + threads->count, func, arg)) ||
+        (res = thread_create_std(threads->items + threads->count, func, std, arg)) ||
         /* Update the count of dynamic array */
         (res = slice_set(threads, threads->items, threads->count + 1))
     ), res);

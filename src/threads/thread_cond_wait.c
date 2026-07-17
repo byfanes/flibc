@@ -15,9 +15,7 @@ error_t thread_cond_wait
         /* Allow other threads to work */
         (mutex_unlock(mutex),
             /* Goto thread sleep */
-            (res = (0 > syscall_6_linux(syscall_futex, (ssize_t)&cond->seq,
-                                        FUTEX_WAIT, current_seq, 0, 0, 0))
-                 ? thread_cond_error : success),
+            (__os_addr_wait_u32(&cond->seq, current_seq)),
         /* Wake up again */
         mutex_lock(mutex), res)
     ), res);

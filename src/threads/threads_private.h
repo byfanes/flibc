@@ -6,10 +6,7 @@ extern "C" {
 #endif
 
 #include "threads.h"
-#include "syscall.h"
-
-error_t __thread_new
-(u8* stack_ptr, thread_t* thread, void*(*func)(std_t*, void*), std_t* std, void* arg);
+#include "../os/os_private.h"
 
 #ifdef __cplusplus
 }
