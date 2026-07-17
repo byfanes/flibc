@@ -123,11 +123,13 @@ error_t __formatf
 	        else { cur_i64 = va_arg(ap, i32); }
 
                 /* Check for negative */
-	        if(cur_i64 < 0) {
-                    count++; cur_i64 = -cur_i64;
-                    if(buf.items) { buf.items[count - 1] = '-';}
-                }
-	        __format_uint(buf.items, &count, (u64)cur_i64, base_dec);
+                if (cur_i64 < 0) {
+                    if (buf.items) { buf.items[count] = '-'; }
+                    count++;
+                    cur_u64 = (u64)(-(cur_i64 + 1)) + 1;
+                } else { cur_u64 = (u64)cur_i64; }
+
+	        __format_uint(buf.items, &count, cur_u64, base_dec);
 	    } break;
 
             /* Handle %llu / %lu / %u for unsigned decimal integers */
