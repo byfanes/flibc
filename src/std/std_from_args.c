@@ -25,22 +25,22 @@ void __std_from_args
 
     /* Set default allocator */
     if(allocator_init(&std->alloc))
-    { __std_early_panic("STD Init Panic: Allocator failed to init!\n"); }
+    { __panic("STD Init Panic: Allocator failed to init!\n"); }
 
     /* TODO: Use malloc_sl and free_sl */
     /* Check for if its needed to allocate memory or not */
     if(args_ptr) {
         if(mem_alloc(std->alloc, &args_ptr, sizeof(sl_u8_t) * (u32)argc))
-        { __std_early_panic("STD Init Panic: Could not allocate memory for args slice list!\n"); }
+        { __panic("STD Init Panic: Could not allocate memory for args slice list!\n"); }
     }
 
     /* Open standard files */
     if(io_open_stdin(std->alloc, &std->io.in))
-    { __std_early_panic("STD Init Panic: Could not open standard input file!\n"); }
+    { __panic("STD Init Panic: Could not open standard input file!\n"); }
     if(io_open_stdout(std->alloc, &std->io.out))
-    { __std_early_panic("STD Init Panic: Could not open standard output file!\n"); }
+    { __panic("STD Init Panic: Could not open standard output file!\n"); }
     if(io_open_stderr(std->alloc, &std->io.err))
-    { __std_early_panic("STD Init Panic: Could not open standard error file!\n"); }
+    { __panic("STD Init Panic: Could not open standard error file!\n"); }
 
     /* Set slice for _args to parse now */
     slice_set(&std->args, args_ptr, (u32)argc);
@@ -56,11 +56,11 @@ void __std_from_args
 
     /* Init environment variables da with known size */
     if(da_init(std->alloc, &std->env.vars, envc))
-    { __std_early_panic("STD Init Panic: Could not initialize environment variable dynamic array!\n"); }
+    { __panic("STD Init Panic: Could not initialize environment variable dynamic array!\n"); }
 
     /* Init environment variable list which is like envp pointer which comes after stack */
     if(da_init(std->alloc, &std->env.list, envc))
-    { __std_early_panic("STD Init Panic: Could not initialize environment variable list!\n"); }
+    { __panic("STD Init Panic: Could not initialize environment variable list!\n"); }
 
     /* Start iterating over 1 for skiping argv's last null */
     envp = (argv + 1 + argc);
@@ -78,7 +78,7 @@ void __std_from_args
 
         /* Add the new variable */
         if(env_add_var(std->alloc, &std->env, &key_sl, &val_sl)) {
-            __std_early_panic(
+            __panic(
                 "STD Init Panic: Could not append an environment variable to dynamic array!\n"
             );
         }

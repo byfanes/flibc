@@ -5,11 +5,13 @@ error_t env_add_var_t
 {
     /* Init variables */
     error_t res = success;
+    /* TODO: Fix this */
+    const char **ptr = (void *)(uintptr_t)&var.continues.items;
 
     return ((void)(
         (res = (env) ? success : null_pointer) ||
         (res = da_push(&env->vars, &var)) ||
-        (res = da_push(&env->list, (char**)(uintptr_t)&var.continues.items)) ||
+        (res = da_push(&env->list, ptr)) ||
         (res = da_add_shadow_null_segment(&env->list))
     ), res);
 }

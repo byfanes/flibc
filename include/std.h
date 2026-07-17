@@ -17,7 +17,7 @@ typedef struct env_var_s env_var_t;
 
 can_be_da(env_var_t, da_env_var_t);
 can_be_slice(sl_cstr_t, sl_cstrs_t);
-can_be_da(char*, da_cstr_t);
+can_be_da(const char *, da_ccstr_t);
 
 struct env_var_s {
     str_t continues;
@@ -28,7 +28,7 @@ struct env_var_s {
 struct env_s {
     da_env_var_t vars;
     /* Should end with a null */
-    da_cstr_t list;
+    da_ccstr_t list;
 };
 
 struct std_s {
@@ -54,8 +54,8 @@ error_t env_get_var(env_t* env, str_t* key, str_t* val);
 
 /* This assumes envp comes after argv */
 void std_from_args(std_t* std, int argc, char** argv);
-_Noreturn void std_exit(std_t* std, ssz code);
-_Noreturn void std_abort(ssz code);
+noreturn std_exit(std_t* std, ssz code);
+noreturn std_abort(ssz code);
 
 #ifdef __cplusplus
 }
