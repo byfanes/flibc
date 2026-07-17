@@ -29,7 +29,7 @@ can_be_da(u64, da_u64_t);
 can_be_da(i8, da_i8_t);
 can_be_da(i16, da_i16_t);
 can_be_da(i32, da_i32_t);
-can_be_da(i64, da_i64);
+can_be_da(i64, da_i64_t);
 can_be_da(ssz, da_ssz_t);
 can_be_da(usz, da_usz_t);
 
@@ -71,6 +71,9 @@ error_t __da_grow_if(void* da, usz el_size, usz amount);
 
 error_t __da_unordered_remove(void* da, usz el_size, usz idx);
 #define da_unordered_remove(da, idx)  __da_unordered_remove(ptr_meta((da)), (idx))
+
+error_t __da_unordered_remove_on_ptr(void* da, usz el_size, void *ptr);
+#define da_unordered_remove_on_ptr(da, ptr)  __da_unordered_remove_on_ptr(ptr_meta_check((da), (ptr)), (ptr))
 
 error_t __da_swap(void* da, usz el_size, usz lhs, usz rhs);
 #define da_swap(da, lhs, rhs) __da_swap(ptr_meta((da)), (lhs), (rhs))
