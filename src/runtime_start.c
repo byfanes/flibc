@@ -5,8 +5,8 @@
 #include "std/std_private.h"
 
 /* This function will be called from assembly */
-_Noreturn void __flibc_runtime_start(i32 argc, char** argv);
-_Noreturn void __flibc_runtime_start
+noreturn __flibc_runtime_start(i32 argc, char** argv);
+noreturn __flibc_runtime_start
 (i32 argc, char** argv)
 {
     /* Init variables */

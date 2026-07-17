@@ -3,6 +3,7 @@
 #include "da/da_private.h"
 #include "fs/fs_private.h"
 #include "socket/socket_private.h"
+#include "os/os_private.h"
 
 /* This file acts as a centralized validation suite for compile-time structural checks.
  * It verifies type sizes, ensures offset compatibility between interchangeable structs
@@ -78,9 +79,10 @@ _static_assert(sizeof(u16) == 2, u16_must_be_2bytes);
 _static_assert(sizeof(u32) == 4, u32_must_be_4bytes);
 _static_assert(sizeof(u64) == 8, u64_must_be_8bytes);
 
-#ifdef SIZE_IS_64BITS
+#if SYS_ARCH == SYS_ARCH_X86_64
 _static_assert(sizeof(void*) == 8, pointer_size_must_be_8bytes);
 #else
+/* This will be wrong in a lot of cases */
 _static_assert(sizeof(void*) == 4, pointer_size_must_be_4bytes);
 #endif
 _static_assert(sizeof(usz) == sizeof(void*), usize_must_match_pointer_size);
@@ -118,6 +120,18 @@ _static_assert(sizeof(__type_test_slice) == 16, slices_are_same_with_iovecs_size
 
 _static_assert(success == 0, success_must_be_zero);
 _static_assert(success == false, success_must_equal_to_false);
+
+/* Enum casted to ssz to avoid warnings */
+_static_assert((ssz)file_read == (ssz)os_file_read, file_read_mismatch);
+_static_assert((ssz)file_write == (ssz)os_file_write, file_write_mismatch);
+_static_assert((ssz)file_append == (ssz)os_file_append, file_append_mismatch);
+_static_assert((ssz)file_read_plus == (ssz)os_file_read_plus, file_read_plus_mismatch);
+_static_assert((ssz)file_write_plus == (ssz)os_file_write_plus, file_write_plus_mismatch);
+_static_assert((ssz)file_append_plus == (ssz)os_file_append_plus, file_append_plus_mismatch);
+
+_static_assert((ssz)seek_set == (ssz)os_seek_set, seek_set_mismatch);
+_static_assert((ssz)seek_cur == (ssz)os_seek_cur, seek_cur_mismatch);
+_static_assert((ssz)seek_end == (ssz)os_seek_end, seek_end_mismatch);
 
 void __flibc_struct_member_check_function(void);
 void __flibc_struct_member_check_function(void)
