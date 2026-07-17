@@ -12,14 +12,18 @@ static void __print_leak
     u8 buf[8192] = {0};
     sl_u8_t buf_sl = {0};
     usz len = 0;
-    const sl_u8_t msg = ccstr_to_u8("Memory Leak: %u bytes from %s:%d is not freed\n");
+    os_fid_t handle = OS_INVALID_FILE_HANDLE;
+    const sl_u8_t msg = ccstr_to_u8(
+    "Warning in allocator %p:\n"
+    "Memory Leak: Allocation in %s:%d for %u bytes has been leaked!\n");
 
     slice_set(&buf_sl, buf, sizeof(buf));
-    formatf(buf_sl, msg, &len, header->wanted_alloc, header->file_name, header->line);
+    formatf(buf_sl, msg, &len, header->alloc, header->file_name, header->line, header->wanted_alloc);
 
+    __os_file_get_std(&handle, os_file_stderr);
     /* Write directly to standard error */
     /* Ignore its fail state because it is not deinit's main goal */
-    syscall_3_linux(syscall_write, UNIX_STDERR, (ssz)buf_sl.items, (ssz)len);
+    __os_file_write(handle, buf_sl.items, len);
 }
 
 error_t allocator_deinit
@@ -71,10 +75,7 @@ error_t allocator_deinit
         print_leak(header);
 
         /* If we cant free any memory just stop and return an error no future freeing */
-        if(0 > syscall_2_linux(syscall_munmap, (ssz)header, (ssz)raw))
-        { return memory_error; }
-
-        alloc->headers[i] = nullptr;
+        if((res = __os_memory_free(alloc->headers + i, (ssz)raw))) { return res; }
     }
 
     /* If there is another allocator deinit it too */
@@ -85,9 +86,5 @@ error_t allocator_deinit
     mutex_unlock(&alloc->meta.mutex);
 
     /* Give back the memory to os */
-    if(0 > syscall_2_linux(syscall_munmap, (ssz)alloc, RAW_ALLOCATION_SIZE))
-    { return memory_error; }
-
-    *set = 0;
-    return success;
+    return __os_memory_free(set, RAW_ALLOCATION_SIZE);
 }

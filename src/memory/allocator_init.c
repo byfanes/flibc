@@ -5,16 +5,13 @@ error_t allocator_init
 {
     /* Init variables */
     allocator_t* alloc = 0;
+    error_t res = success;
 
     /* Check input */
     if(!set) { return null_pointer; }
 
-    /* Syscall for memory allocation */
-    alloc = (allocator_t*)(uintptr_t) syscall_6_linux(syscall_mmap, 0, RAW_ALLOCATION_SIZE,
-        (PROT_READ|PROT_WRITE), (MAP_PRIVATE|MAP_ANONYMOUS), (ssz)(-1), 0);
-
-    /* Error check */
-    if((ssz)alloc < 0 && (ssz)alloc > -4096) { return memory_error; }
+    res = __os_memory_alloc(&alloc, RAW_ALLOCATION_SIZE);
+    if(res) { return res; }
 
     /* Zero-ed the struct so bitfields are zero now */
     mem_zeroed(alloc);

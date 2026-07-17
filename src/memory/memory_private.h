@@ -5,6 +5,7 @@
 #include "threads.h"
 #include "syscall.h"
 #include "../helpers/helpers.h"
+#include "../os/os_private.h"
 
 #define ALIGN_64(n) ((n + 63) & (unsigned)(~63))
 
@@ -71,8 +72,8 @@ typedef error_t (*f_allocator_free_pointer)(allocator_t* alloc, void* set);
 typedef error_t (*f_allocator_init)(allocator_t** set);
 typedef error_t (*f_allocator_deinit)(allocator_t** set);
 
-typedef void (*f_allocator_detect_underflow)(allocator_t* alloc, heap_header_t* header);
-typedef void (*f_allocator_detect_overflow)(allocator_t* alloc, heap_header_t* header);
+typedef noreturn (*f_allocator_detect_underflow)(allocator_t* alloc, heap_header_t* header);
+typedef noreturn (*f_allocator_detect_overflow)(allocator_t* alloc, heap_header_t* header);
 
 /* TODO: We can make allocator faster via using allocated elements' headers
  * Every header has wanted_alloc which we can use to calculate chunk count allocated
@@ -135,8 +136,6 @@ struct allocator_s {
     u8 free_bits[ALLOCATOR_NEEDED_BITS];
 };
 
-
-
 /* A temporary structure for setting the const slices
  * the items order and size should be same with the other slices
  */
@@ -153,8 +152,8 @@ error_t allocator_alloc_pointer
 (allocator_t* alloc, usz n, void* set, const char* file_name, usz line);
 error_t allocator_free_pointer(allocator_t* alloc, void* set);
 
-void allocator_overflow(allocator_t* alloc, heap_header_t* header);
-void allocator_underflow(allocator_t* alloc, heap_header_t* header);
+noreturn allocator_overflow(allocator_t* alloc, heap_header_t* header);
+noreturn allocator_underflow(allocator_t* alloc, heap_header_t* header);
 
 void __set_chunks_free(u8* bitmap_bytes, u32 start_bit, u32 n);
 void __set_chunks_used(u8* bitmap_bytes, u32 start_bit, u32 n);

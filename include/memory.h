@@ -12,7 +12,7 @@ extern "C" {
 #define USE_TRACE_ARGS file_name, line
 #define LOC_ARGS __FILE__, __LINE__
 
-#define ccstr_to_u8(ccstr)  {(void*)(uintptr_t)((ccstr)), sizeof(((ccstr))) - 1}
+#define ccstr_to_u8(ccstr) {(void*)(uintptr_t)((ccstr)), sizeof(((ccstr))) - 1}
 
 /* Those macros are used in most slice/da functions to improve readability */
 #define ptr_meta(ptr) (ptr), sizeof((ptr)->items[0])
@@ -37,9 +37,18 @@ can_be_slice(i64, sl_i64_t);
 can_be_slice(ssz, sl_ssz_t);
 can_be_slice(usz, sl_usz_t);
 
-/* This type is same as sl_u8_t only difference
+/* sl_cstr_t type is same as sl_u8_t only difference
  * is items pointer is a null-terminated C string
+ *
+ * sl_ccstr_t is a constant version of sl_cstr_t used
+ * string initzilation
  */
+struct sl_ccstr_s {
+    const u8 *const items;
+    const usz count;
+};
+
+typedef struct sl_ccstr_s sl_ccstr_t;
 typedef sl_u8_t sl_cstr_t;
 
 /* TODO: Right now a lot of functions dont free the memory (when they failed) which they allocated
@@ -78,7 +87,7 @@ error_t __mem_alloc(allocator_t* alloc, void* set, usz n, TRACE_ARGS);
 #define mem_alloc(alloc, set, n) __mem_alloc((alloc), (set), (n), LOC_ARGS)
 
 error_t __mem_alloc_sl(allocator_t* alloc, void* set, usz el_size, usz n, TRACE_ARGS);
-#define mem_alloc_sl(alloc, sl, n) check_layout(), __mem_alloc_sl((alloc), ptr_meta(sl), n, LOC_ARGS)
+#define mem_alloc_sl(alloc, sl, n) __mem_alloc_sl((alloc), ptr_meta(sl), n, LOC_ARGS)
 
 error_t __mem_calloc(allocator_t* alloc, void* set, usz n, TRACE_ARGS);
 #define mem_calloc(alloc, set, n) __mem_calloc((alloc), (set), (n), LOC_ARGS)

@@ -4,8 +4,8 @@ error_t allocator_free_pointer
 (allocator_t* alloc, void* set)
 {
     /* Init variables */
-    u8* ptr = 0;
-    heap_header_t* header = 0;
+    u8* ptr = nullptr;
+    heap_header_t* header = nullptr;
     u32 total = 0;
     error_t res = success;
 
@@ -17,37 +17,24 @@ error_t allocator_free_pointer
     /* Skip to header and one for first null byte */
     header = ((heap_header_t*)(uintptr_t)ptr - 1);
 
+    /* Check the header is valid */
     if((res = __validate_header(header))) { return res; }
 
+    /* Get the total amount of allocation */
     total = ALIGN_64(header->wanted_alloc + ADDITIONAL_HEADER_SIZE);
 
+    /* Start freeing logic after this part users' pointer is zeroed */
     mutex_lock(&alloc->meta.mutex);
+    *(void**)set = nullptr;
 
     if(total < RAW_ALLOCATION_THRESHOLD) {
         /* Set free small chunk to zero*/
         __set_chunks_free(alloc->free_bits, header->idx, total / CHUNK_SIZE);
-
-        /* Zero the user's pointer */
-        *(void**)set = 0;
-        /* Result is already success but we reassign it for
-         * safety in case the logic changes later
-         */
-        res = success;
-        goto end;
+    } else {
+        /* Free the allocated memory and zero the node in the array */
+        res =  __os_memory_free(alloc->headers + header->idx, total);
     }
 
-    alloc->headers[header->idx] = nullptr;
-
-    /* If we cant free any memory just stop and return an error */
-    if(0 > syscall_2_linux(syscall_munmap, (ssz)header, (ssz)total)) {
-        alloc->headers[header->idx] = header;
-        res = memory_error;
-        goto end;
-    }
-
-    /* Zero the user's pointer */
-    *(void**)set = 0;
-end:
     mutex_unlock(&alloc->meta.mutex);
     return res;
 }

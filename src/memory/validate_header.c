@@ -19,11 +19,13 @@ error_t __validate_header
     {
         if(header->safety[i] != 'A' + i) {
             header->alloc->meta.overflow(header->alloc, header);
+            /* should be dead end */
             return heap_underflow;
         }
     }
     if(header->first_null != 0) {
         header->alloc->meta.underflow(header->alloc, header);
+        /* should be dead end */
         return heap_underflow;
     }
 
