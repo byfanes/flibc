@@ -3,12 +3,6 @@
 error_t socket_listen
 (socket_t* sock)
 {
-    ssz ret = 0;
-
-    if(!sock) { return null_pointer; }
-    
-    ret = syscall_2_linux(syscall_listen, sock->fd, 128);
-    if(ret < 0) { return socket_error; }
-
-    return success;
+    /* Check the pointer is valid and pass it to os layer */
+    return (!sock) ? null_pointer : __os_socket_listen(sock->fd, 128);
 }

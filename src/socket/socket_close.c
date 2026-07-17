@@ -3,17 +3,14 @@
 error_t socket_close
 (socket_t* sock)
 {
-    usz i = 0;
+    /* Init variables */
+    error_t res = success;
 
-    if(!sock) { return null_pointer; }
-    
-    if(0 > syscall_1_linux(syscall_close, sock->fd))
-    { return socket_error; }
-
-    sock->fd = 0;
-    sock->addr.family = 0;
-    for(i = 0; i < sizeof(sock->addr.data); ++i)
-    { sock->addr.data[i] = 0; }
-    
-    return success;
+    return ((void)(
+        /* Check the pointer and pass it to os layer */
+        (res = (sock) ? success : null_pointer) ||
+        (res = __os_socket_close(&sock->fd))
+    ), (void)( /* Cleanup it safe to use nullpointer */
+        mem_zeroed(sock)
+    ), res);
 }

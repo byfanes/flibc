@@ -3,14 +3,14 @@
 error_t __socket_write
 (socket_t* sock, void* buf, usz el_size)
 {
-    ssz ret = 0;
+    /* Init variables */
     sl_u8_t* sl = buf;
-    
-    if(!sl || !sock || !sl->items) { return null_pointer; }
-    if(!el_size) { return elsize_zero; }
-    
-    ret = syscall_3_linux(syscall_write, sock->fd, (ssz)sl->items, (ssz)(sl->count * el_size));
-    if(ret < 0) { return io_error; }
-    if(ret == 0) { return connection_closed; }
-    return success;
+    error_t res = success;
+
+    return ((void)(
+        /* Check user inputs and pass the paramters to os layer */
+        (res = (sl && sock && sl->items) ? success : null_pointer) ||
+        (res = (el_size) ? success : elsize_zero) ||
+        (res = __os_socket_write(sock->fd, sl->items, sl->count * el_size))
+    ), res);
 }
