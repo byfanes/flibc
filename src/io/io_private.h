@@ -2,7 +2,6 @@
 #define __FLIBC_STDIO_PRIVATE_H__
 
 #include "io.h"
-#include "syscall.h"
 #include "threads.h"
 #include "../helpers/helpers.h"
 #include "../os/os_private.h"

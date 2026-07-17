@@ -2,7 +2,6 @@
 #define __FLIBC_STD_PRIVATE_H__
 
 #include "std.h"
-#include "syscall.h"
 #include "../os/os_private.h"
 #include "../helpers/helpers.h"
 

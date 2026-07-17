@@ -1,6 +1,4 @@
 #include "memory_private.h"
-#include "error.h"
-#include "syscall.h"
 
 error_t __mem_alloc
 (allocator_t* alloc, void* set, usz size, TRACE_ARGS)

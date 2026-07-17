@@ -3,7 +3,6 @@
 
 #include "memory.h"
 #include "threads.h"
-#include "syscall.h"
 #include "../helpers/helpers.h"
 #include "../os/os_private.h"
 

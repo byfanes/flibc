@@ -2,7 +2,6 @@
 #define __FLIBC_PROCESS_PRIVATE_H__
 
 #include "process.h"
-#include "syscall.h"
 #include "std.h"
 #include "../os/os_private.h"
 

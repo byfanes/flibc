@@ -18,7 +18,6 @@
  
 #include "error.h"
 #include "base.h"
-#include "syscall.h"
 
 #define MAX_TRY_COUNT 16
 

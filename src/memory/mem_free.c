@@ -1,6 +1,4 @@
 #include "memory_private.h"
-#include "error.h"
-#include "syscall.h"
 
 error_t mem_free
 (void* set)
