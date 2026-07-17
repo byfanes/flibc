@@ -73,20 +73,32 @@ extern ssz syscall_6_linux
 
 #define EWOULDBLOCK EAGAIN
 
+
 /* Syscall list */
 #define syscall_read          0
 #define syscall_write         1
 #define syscall_open          2
 #define syscall_close         3
+#define syscall_stat          4
 #define syscall_lseek         8
 #define syscall_mmap          9
 #define syscall_munmap       11
 
+#define syscall_access       21
 #define syscall_sched_yield  24
 #define syscall_nanosleep    35
+#define syscall_socket       41
+#define syscall_connect      42
+#define syscall_accept       43
+#define syscall_bind         49
+#define syscall_listen       50
 
+#define syscall_fork         57
+#define syscall_execve       59
 #define syscall_exit         60
+#define syscall_wait4        61
 #define syscall_getcwd       79
+#define syscall_chdir        80
 #define syscall_rename       82
 #define syscall_mkdir        83
 #define syscall_rmdir        84
@@ -139,6 +151,9 @@ extern ssz syscall_6_linux
 #define O_CLOEXEC   (1 << 19)
 #define O_DIRECTORY (1 << 16)
 
+/* socket flags */
+#define SOCK_CLOEXEC 0x80000
+
 /* macros for pid returns */
 #define WEXITSTATUS(s) (((s) & 0xff00) >> 8)
 #define WTERMSIG(s) ((s) & 0x7f)
@@ -146,6 +161,36 @@ extern ssz syscall_6_linux
 #define WIFEXITED(s) (!WTERMSIG(s))
 #define WIFSTOPPED(s) ((short)((((s)&0xffff)*0x10001U)>>8) > 0x7f00)
 #define WIFSIGNALED(s) (((s)&0xffff)-1U < 0xffu)
+
+#define S_IRUSR (1 << 8)
+#define S_IWUSR (1 << 7)
+#define S_IRGRP (1 << 5)
+#define S_IWGRP (1 << 4)
+#define S_IROTH (1 << 2)
+#define S_IWOTH (1 << 1)
+
+#define S_IFMT  0170000
+
+#define S_IFDIR 0040000
+#define S_IFCHR 0020000
+#define S_IFBLK 0060000
+#define S_IFREG 0100000
+#define S_IFIFO 0010000
+#define S_IFLNK 0120000
+#define S_IFSOCK 0140000
+
+#define S_TYPEISMQ(buf)  0
+#define S_TYPEISSEM(buf) 0
+#define S_TYPEISSHM(buf) 0
+#define S_TYPEISTMO(buf) 0
+
+#define S_ISDIR(mode)  (((mode) & S_IFMT) == S_IFDIR)
+#define S_ISCHR(mode)  (((mode) & S_IFMT) == S_IFCHR)
+#define S_ISBLK(mode)  (((mode) & S_IFMT) == S_IFBLK)
+#define S_ISREG(mode)  (((mode) & S_IFMT) == S_IFREG)
+#define S_ISFIFO(mode) (((mode) & S_IFMT) == S_IFIFO)
+#define S_ISLNK(mode)  (((mode) & S_IFMT) == S_IFLNK)
+#define S_ISSOCK(mode) (((mode) & S_IFMT) == S_IFSOCK)
 
 /* Struct definitions */
 typedef struct linux_dirent64_s linux_dirent64_t;

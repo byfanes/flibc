@@ -1,8 +1,8 @@
 .intel_syntax noprefix
 .text
-.global thread_clone_linux
+.global __thread_clone_linux
 
-thread_clone_linux:
+__thread_clone_linux:
         mov rax, rsi
         sub rsi, 32
 
