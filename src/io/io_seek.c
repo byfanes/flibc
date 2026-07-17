@@ -10,11 +10,12 @@ error_t io_seek
     return ((void)(
         /* Check users inputs */
         (res = (file) ? success : null_pointer) ||
-        /* Start mutex block and pass to unlocked function to
+        /* Start mutex block and pass to os function to
          * handle rest and give it a valid out pointer
+         * case type to int because of enums which are same
          */
         (mutex_lock(&file->mutex),
-            res = __io_seek_unlocked(file, off, type, (out) ? out : &tmp),
+            res = __os_file_seek(file->fd, off, (int)type, (out) ? out : &tmp),
         mutex_unlock(&file->mutex), res)
     ), res);
 }

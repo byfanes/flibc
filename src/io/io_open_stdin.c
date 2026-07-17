@@ -5,14 +5,17 @@ error_t io_open_stdin
 {
     /* Init variables */
     error_t res = success;
+    os_fid_t handle;
 
     return ((void)(
         /* Validate user inputs */
         (res = (alloc && out) ? success : null_pointer) ||
+        /* Try getting the std handle/descriptor first to avoid memory allocation on error */
+        (res = __os_file_get_std(&handle, os_file_stdin)) ||
         /* Allocate new memory for the struct */
         (res = mem_alloc(alloc, out, sizeof(file_t))) ||
         /* Set variables */
-        ((*out)->fd = UNIX_STDIN,
+        ((*out)->fd = handle,
          (*out)->count = 0,
          (*out)->type = file_read,
          (*out)->mutex.state = 0, success)

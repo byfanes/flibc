@@ -15,35 +15,6 @@ typedef struct fs_stat_s fs_stat_t;
 
 can_be_da(path_t, da_path_t);
 
-struct fs_stat_common_s {
-    /* Identity */
-    usz device;
-    usz inode;
-    usz hard_links;
-
-    /* Type and permissions */
-    u32 mode;
-    u32 uid;
-    u32 gid;
-
-    /* Size */
-    ssz size;
-    ssz block_size;
-    ssz blocks;
-
-    /* Timestamps (nanoseconds since Unix epoch) */
-    i64 access_time;
-    i64 modify_time;
-    i64 change_time;
-    /* Windows supports this, Linux sometimes does */
-    i64 birth_time;
-
-#if 0    
-    /* Optional filesystem-specific data */
-    usz flags;
-#endif
-};
-
 /* TODO: This is not cross-platform like other functions
  * This struct has been stolen from linux kernel
  */

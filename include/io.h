@@ -19,9 +19,9 @@ enum file_type_e {
 };
 
 enum seek_type_e {
-    seek_set,
-    seek_cur,
-    seek_end
+    seek_set = 0,
+    seek_cur = 1,
+    seek_end = 2
 };
 
 typedef enum seek_type_e seek_type_t;
@@ -42,7 +42,7 @@ error_t io_open_stdout(allocator_t* alloc, file_t** out);
 error_t io_open_stdin(allocator_t* alloc, file_t** out);
 
 error_t io_flush(file_t* _Nullable file);
-error_t __io_write(file_t* file, void* sl, usz el_size);
+error_t __io_write(file_t* file, const void* sl, usz el_size);
 #define io_write(file, sl) __io_write((file), ptr_meta(sl))
 error_t __io_read(file_t* file, void* buf, usz el_size, usz* _Nullable read_count);
 #define io_read(file, buf, read_count) __io_read((file), ptr_meta(buf), (read_count))
