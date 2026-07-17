@@ -1,30 +1,34 @@
 #include "process_private.h"
 
 error_t proc_spawn_fixed
-(cmd_t* cmd, env_t* env, da_proc_t* procs)
+(cmd_t* cmd, env_t* env, da_proc_t* procs, ssz _Nullable *code)
 {
     /* Init variables */
-    ssz pid = 0;
-    ssz status = 0;
-    u32 i = 0;
+    os_pid_t *pid_loc = nullptr;
+    error_t res = success;
+    ssz tmp = 0;
 
-    /* Check input list */
-    if(!procs || !cmd || !env) { return null_pointer;}
-
-    /* If its full find a finished one */
-    if(procs->count >= procs->capacity) {
-        /* Find a process which is finished */
-        pid = syscall_4_linux(syscall_wait4, -1, (ssz)&status, 0, 0);
-        if(pid < 0) { return process_error; }
-        for(i = 0; i < procs->count; ++i) {
-            /* Make a free slot */
-            if(procs->items[i].handle == pid) {
-                da_unordered_remove(procs, i);
-                break;
-            }
-        }
-    }
-
-    /* cmd and env checks done here */
-    return proc_spawn(cmd, env, procs);
+    return ((void)(
+        /* Check user inputs */
+        (res = (procs && env && env->list.items) ? success : null_pointer) ||
+        /* Make cmd a c-str */
+        (res = str_add_shadow_null(cmd)) ||
+        /* Use valid code pointer */
+        ((code = (code) ? (*code = 0, code) : &tmp), success) ||
+        /* If full wait for a pid to end if there is empty space use that */
+        ((procs->count >= procs->capacity)
+            ? (res = __os_process_wait_any_on_list(
+                (const os_pid_t *)procs->items, procs->count,
+                (const os_pid_t **)(uintptr_t)&pid_loc, code))
+            : (res = (pid_loc = (os_pid_t *)(procs->items + procs->count), success))) ||
+        /* Create new process */
+        (res = __os_process_spawn((const char *) cmd->items, env->list.items, pid_loc))
+    ), (void)( /* Clean up */
+        /* Update if it used empty slot and not failed */
+        ((!res && procs->count < procs->capacity)
+             ? (slice_set(procs, procs->items, procs->count + 1)) : (success)),
+        /* If failed and waited remove the empty slot to prevent usage again */
+        ((res && procs->count >= procs->capacity)
+             ? (da_unordered_remove_on_ptr(procs, (proc_t *)pid_loc)) : (success))
+    ), res);
 }

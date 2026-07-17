@@ -5,14 +5,13 @@ error_t proc_spawn
 {
     /* Init variables */
     error_t res = success;
-    ssz pid = 0;
-    proc_t proc = {0};
 
     return ((void)(
-        (res = (cmd && env && cmd->items && env->list.items
-               && procs && procs->items) ? success : null_pointer) ||
-        (res = ((pid = syscall_0_linux(syscall_fork)) < 0) ? process_error : success) ||
-        ((pid != 0) ? (proc.handle = pid, res = da_push(procs, &proc))
-                    : (system_run_env(cmd, env), syscall_1_linux(syscall_exit, 1)))
+        (res = (env && env->list.items) ? success : null_pointer) ||
+        (res = str_add_shadow_null(cmd)) ||
+        (res = da_grow_if(procs, 1)) ||
+        (res = __os_process_spawn(
+            (const char *)cmd->items, env->list.items, (os_pid_t *)(procs->items + procs->count))) ||
+        (res = slice_set(procs, procs->items, procs->count + 1))
      ), res);
 }

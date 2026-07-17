@@ -4,7 +4,6 @@
 #include "process.h"
 #include "syscall.h"
 #include "std.h"
-
-error_t waitapid(ssz pid);
+#include "../os/os_private.h"
 
 #endif /* __FLIBC_PROCESS_PRIVATE_H__ */

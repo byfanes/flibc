@@ -5,8 +5,8 @@ error_t system_run_env
 {
     /* Init variables */
     error_t res = success;
-    char* null_envp[] = {0};
-    char** envp = (env && env->list.items) ? env->list.items : null_envp;
+    const char* null_envp[] = {nullptr};
+    const char** envp = (env && env->list.items) ? env->list.items : null_envp;
 
     return ((void)(
         (res = str_add_shadow_null(cmd)) ||

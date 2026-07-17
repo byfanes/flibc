@@ -2,25 +2,8 @@
 
 /* This function expects null terminated string */
 error_t system_run_cstr_envp
-(const char* cmd, char** envp)
+(const char* cmd, const char** envp)
 {
-    /* Init variables */
-    const char* argv[4] = {0};
-    u32 argc = 0;
-
-    /* Check input */
-    if(!cmd) { return null_pointer; }
-    if(!envp) { return null_pointer; }
-
-    /* Construct the list */
-    argv[argc++] = "sh";
-    argv[argc++] = "-c";
-    argv[argc++] = cmd;
-    argv[argc++] = 0;
-
-    /* Call execve syscall */
-    syscall_3_linux(syscall_execve, (ssz)"/usr/bin/sh", (ssz)argv, (ssz)envp);
-
-    /* Execve syscall wont return in success other wise its failed */
-    return process_error;
+    /* Check input and pass to os layer */
+    return (!cmd || !envp) ? null_pointer : __os_system_exec(cmd, envp);
 }

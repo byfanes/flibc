@@ -1,17 +1,15 @@
 #include "process_private.h"
 
 error_t proc_run
-(cmd_t* cmd, env_t* env)
+(cmd_t *cmd, env_t *env, ssz *exit_code)
 {
     /* Init variables */
-    ssz pid = 0;
+    ssz tmp = 0;
     error_t res = success;
 
     return ((void)(
-        (res = (cmd && env && env->vars.items && env->list.items && cmd->items)
-             ? success : null_pointer) ||
-        (res = ((pid = syscall_0_linux(syscall_fork)) < 0) ? process_error : success) ||
-        ((pid != 0) ? (res = waitapid(pid))
-                    : (system_run_env(cmd, env), syscall_1_linux(syscall_exit, 1)))
+        (res = (env && env->vars.items && env->list.items) ? success : null_pointer) ||
+        (res = str_add_shadow_null(cmd)) ||
+        (res = __os_process_run((const char *)cmd->items, env->list.items, (exit_code) ? exit_code : &tmp))
     ), res);
 }
