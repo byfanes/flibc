@@ -3,7 +3,7 @@
 #if SYS_OS == SYS_OS_LINUX
 
 error_t __os_cwd_get
-(void *path, usz size, usz *wrote)
+(os_outcstr_t path, usz size, usz *wrote)
 {
     /* Init variables */
     ssz ret = 0;

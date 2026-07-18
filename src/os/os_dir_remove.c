@@ -3,7 +3,7 @@
 #if SYS_OS == SYS_OS_LINUX
 
 error_t __os_dir_remove
-(const void *path)
+(os_cstr_t path)
 {
     /* Init variables */
     ssz ret = 0;

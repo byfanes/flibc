@@ -9,13 +9,13 @@ error_t socket_create
 
     if(!out || !addr) { return null_pointer; }
 
-    __os_socket_create(&out->fd, family, type, protocol.value);
+    __os_socket_create(&out->sid, family, type, protocol.value);
 
     /* Safe to decay to u16 because AF_MAX is 45 */
     out->addr.family = (u16)family;
 
     if(family == AF_INET || family == AF_INET6) {
-        in = (sock_addr_in_t*)(uintptr_t)&out->addr;
+        in = (sock_addr_in_t *)(uintptr_t)&out->addr;
         if((res = inet_pton(AF_INET, addr, &in->addr))) { return res; }
         in->port = htons(port);
     }

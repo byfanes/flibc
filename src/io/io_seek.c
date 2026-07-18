@@ -15,7 +15,7 @@ error_t io_seek
          * case type to int because of enums which are same
          */
         (mutex_lock(&file->mutex),
-            res = __os_file_seek(file->fd, off, (int)type, (out) ? out : &tmp),
+        res = __os_file_seek(file->fid, off, (int)type, (out) ? out : &tmp),
         mutex_unlock(&file->mutex), res)
     ), res);
 }

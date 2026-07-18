@@ -7,12 +7,9 @@ extern "C" {
 
 #include "base.h"
 #include "error.h"
+#include "os.h"
 
 typedef struct time_s time_t;
-struct time_s {
-    u64 sec;
-    u64 nsec;
-};
 
 error_t time_now(time_t* out);
 error_t time_sleep_ms(u64 ms);

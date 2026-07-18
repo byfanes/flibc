@@ -6,26 +6,26 @@ extern error_t slice_set_cstr(void* sl, const char* str);
 extern bool cstr_eq(const char* l, const char* r);
 
 error_t __os_dir_list_dir
-(os_slu8_t *path,
- void (*callback)(os_slu8_t *path, os_slu8_t *name, bool is_dir, void* arg),
+(os_slcstr_t *path,
+ void (*callback)(os_slcstr_t *path, os_slcstr_t *name, bool is_dir, void* arg),
  void* arg)
 {
-    ssz fd = 0, nread = 0, bpos = 0;
+    ssz dd = 0, nread = 0, bpos = 0;
     u8 buf[MAX_PATH] = {0};
     linux_dirent64_t *d = nullptr;
     error_t res = success;
     char *name = nullptr;
-    os_slu8_t name_sl = {0};
+    os_slcstr_t name_sl = {0};
     
     /* Open directory via syscall */
-    fd = syscall_4_linux(syscall_openat, AT_FDCWD, (ssz)path->items, O_RDONLY | O_DIRECTORY, 0);
+    dd = syscall_4_linux(syscall_openat, AT_FDCWD, (ssz)path->items, O_RDONLY | O_DIRECTORY, 0);
 
     /* Check the return */
-    if(0 > fd && fd >= -MAX_ERRNO) { return __os_error_map(fd); }
+    if(0 > dd && dd >= -MAX_ERRNO) { return __os_error_map(dd); }
 
     for(;;) {
         /* Get information from the syscall */
-        nread = syscall_3_linux(syscall_getdents64, fd, (ssz)buf, sizeof(buf));
+        nread = syscall_3_linux(syscall_getdents64, dd, (ssz)buf, sizeof(buf));
 
         /* Check for error and end */
         if(nread == 0) { res = success; goto end; }
@@ -60,7 +60,7 @@ error_t __os_dir_list_dir
 
 end:
     /* Close the directory and finish */
-    syscall_1_linux(syscall_close, fd);
+    syscall_1_linux(syscall_close, dd);
     return res;
 }
 

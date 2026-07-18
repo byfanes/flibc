@@ -7,7 +7,7 @@
 #include "../os/os_private.h"
 
 struct file_s {
-    os_fid_t fd;
+    os_fid_t fid;
     usz count;
     file_type_t type;
     mutex_t mutex;

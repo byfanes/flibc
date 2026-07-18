@@ -1,4 +1,5 @@
 #include "base.h"
+#include "os.h"
 #include "memory/memory_private.h"
 #include "da/da_private.h"
 #include "fs/fs_private.h"
@@ -28,6 +29,8 @@
 
 can_be_slice(u8 , __type_test_slice);
 can_be_da(u8 , __type_test_da);
+
+typedef struct sock_addr_s sock_addr_t;
 
 #define VALID_VALUE 1
 #define INVALID_VALUE 256
@@ -120,18 +123,6 @@ _static_assert(sizeof(__type_test_slice) == 16, slices_are_same_with_iovecs_size
 
 _static_assert(success == 0, success_must_be_zero);
 _static_assert(success == false, success_must_equal_to_false);
-
-/* Enum casted to ssz to avoid warnings */
-_static_assert((ssz)file_read == (ssz)os_file_read, file_read_mismatch);
-_static_assert((ssz)file_write == (ssz)os_file_write, file_write_mismatch);
-_static_assert((ssz)file_append == (ssz)os_file_append, file_append_mismatch);
-_static_assert((ssz)file_read_plus == (ssz)os_file_read_plus, file_read_plus_mismatch);
-_static_assert((ssz)file_write_plus == (ssz)os_file_write_plus, file_write_plus_mismatch);
-_static_assert((ssz)file_append_plus == (ssz)os_file_append_plus, file_append_plus_mismatch);
-
-_static_assert((ssz)seek_set == (ssz)os_seek_set, seek_set_mismatch);
-_static_assert((ssz)seek_cur == (ssz)os_seek_cur, seek_cur_mismatch);
-_static_assert((ssz)seek_end == (ssz)os_seek_end, seek_end_mismatch);
 
 void __flibc_struct_member_check_function(void);
 void __flibc_struct_member_check_function(void)

@@ -3,7 +3,7 @@
 #if SYS_OS == SYS_OS_LINUX
 
 error_t __os_process_run
-(const char *cmd, const char **env, ssz *exit_code)
+(os_cstr_t cmd, os_cstr_t *env, ssz *exit_code)
 {
     /* Init variables */
     ssz ret = 0;

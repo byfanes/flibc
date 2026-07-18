@@ -3,11 +3,11 @@
 #if SYS_OS == SYS_OS_LINUX
 
 error_t __os_system_exec
-(const char *cmd, const char **envp)
+(os_cstr_t cmd, os_cstr_t *envp)
 {
     /* Init variables */
     ssz ret = 0;
-    const char* args[4] = {"sh", "-c", nullptr, nullptr};
+    os_cstr_t args[4] = {(ccstr_t)"sh", (ccstr_t)"-c", nullptr, nullptr};
 
     args[2] = cmd;
 

@@ -8,21 +8,7 @@ extern "C" {
 #include "error.h"
 #include "base.h"
 #include "memory.h"
-
-enum file_type_e {
-    file_read,
-    file_write,
-    file_append,
-    file_read_plus,
-    file_write_plus,
-    file_append_plus
-};
-
-enum seek_type_e {
-    seek_set = 0,
-    seek_cur = 1,
-    seek_end = 2
-};
+#include "os.h"
 
 typedef enum seek_type_e seek_type_t;
 typedef enum file_type_e file_type_t;

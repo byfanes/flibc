@@ -8,16 +8,12 @@ extern "C" {
 #include "da.h"
 #include "fs.h"
 #include "std.h"
+#include "os.h"
 
 typedef str_t cmd_t;
-typedef struct proc_s proc_t;
+typedef os_pid_t proc_t;
 
-/* We might need to add new things here so making it a struct is better */
-struct proc_s {
-    ssz handle;
-};
-
-can_be_da(proc_t, da_proc_t);
+can_be_da(os_pid_t, da_proc_t);
 
 /* Those functions expect null terminated string */
 error_t system_run_cstr_envp(const char* cmd, const char** envp);

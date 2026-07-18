@@ -20,18 +20,6 @@ typedef struct mutex_s mutex_t;
 can_be_da(thread_t, da_thread_t);
 can_be_da(void*, da_retval_t);
 
-struct thread_s {
-    void *opaque;
-};
-
-struct mutex_s {
-    volatile i32 state;
-};
-
-struct thread_cond_s {
-    volatile u32 seq;
-};
-
 error_t thread_cond_wait(thread_cond_t* cond, mutex_t* mutex);
 error_t thread_cond_signal(thread_cond_t* cond);
 error_t thread_cond_broadcast(thread_cond_t* cond);

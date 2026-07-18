@@ -11,7 +11,7 @@ error_t proc_spawn
         (res = str_add_shadow_null(cmd)) ||
         (res = da_grow_if(procs, 1)) ||
         (res = __os_process_spawn(
-            (const char *)cmd->items, env->list.items, (os_pid_t *)(procs->items + procs->count))) ||
+            cmd->items, env->list.items, &procs->items[procs->count])) ||
         (res = slice_set(procs, procs->items, procs->count + 1))
      ), res);
 }

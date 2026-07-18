@@ -18,17 +18,17 @@ error_t proc_spawn_fixed
         /* If full wait for a pid to end if there is empty space use that */
         ((procs->count >= procs->capacity)
             ? (res = __os_process_wait_any_on_list(
-                (const os_pid_t *)procs->items, procs->count,
-                (const os_pid_t **)(uintptr_t)&pid_loc, code))
-            : (res = (pid_loc = (os_pid_t *)(procs->items + procs->count), success))) ||
+                procs->items, procs->count,
+                (const os_pid_t **)&pid_loc, code))
+            : (res = (pid_loc = procs->items + procs->count, success))) ||
         /* Create new process */
-        (res = __os_process_spawn((const char *) cmd->items, env->list.items, pid_loc))
+        (res = __os_process_spawn(cmd->items, env->list.items, pid_loc))
     ), (void)( /* Clean up */
         /* Update if it used empty slot and not failed */
         ((!res && procs->count < procs->capacity)
              ? (slice_set(procs, procs->items, procs->count + 1)) : (success)),
         /* If failed and waited remove the empty slot to prevent usage again */
         ((res && procs->count >= procs->capacity)
-             ? (da_unordered_remove_on_ptr(procs, (proc_t *)pid_loc)) : (success))
+             ? (da_unordered_remove_on_ptr(procs, pid_loc)) : (success))
     ), res);
 }

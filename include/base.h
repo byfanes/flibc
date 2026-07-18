@@ -79,6 +79,10 @@ typedef  int64_t i64;
 typedef  usize_t usz;
 typedef  ssize_t ssz;
 
+/* This types helps developers to know what is expected from the pointer */
+typedef u8*        cstr_t;
+typedef const u8* ccstr_t;
+
 /* Booleans */
 #if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
     typedef u8 bool;

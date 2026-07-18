@@ -3,7 +3,7 @@
 #if SYS_OS == SYS_OS_LINUX
 
 error_t __os_path_rename
-(const void *from, const void *to)
+(os_cstr_t from, os_cstr_t to)
 {
     /* Init variables */
     ssz ret = 0;

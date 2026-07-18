@@ -88,7 +88,6 @@ typedef enum sock_type_e sock_type_t;
 typedef enum sock_family_e sock_family_t;
 
 typedef struct socket_s socket_t;
-typedef struct sock_addr_s sock_addr_t;
 typedef struct socket_info_s socket_info_t;
 typedef struct sock_protocol_s sock_protocol_t;
 
@@ -98,19 +97,6 @@ can_be_da(socket_t, da_socket_t);
 struct sock_protocol_s {
     sock_proto_domain_t domain;
     u32 value;
-};
-
-struct sock_addr_s {
-    /* family is sock_family_t but because of the alignment we use u16 here */
-    u16 family;
-    u8 data[14];
-};
-
-struct socket_s {
-    ssz fd;
-    sock_addr_t addr;
-    /* For 16 byte alignment */
-    u32 __padding;
 };
 
 /* If socket's family is different than AF_INIT or AF_INIT6 port is ignored */

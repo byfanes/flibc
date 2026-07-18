@@ -6,7 +6,7 @@ error_t env_add_var_t
     /* Init variables */
     error_t res = success;
     /* TODO: Fix this */
-    const char **ptr = (void *)(uintptr_t)&var.continues.items;
+    const u8 **ptr = (void *)(uintptr_t)&var.continues.items;
 
     return ((void)(
         (res = (env) ? success : null_pointer) ||

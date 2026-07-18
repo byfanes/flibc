@@ -12,7 +12,7 @@ error_t __socket_read
         /* Check user inputs and pass parameters to os layer */
         (res = (sl && sock && sl->items) ? success : null_pointer) ||
         (res = (el_size) ? success : elsize_zero) ||
-        (res = __os_socket_read(sock->fd, sl->items,
+        (res = __os_socket_read(sock->sid, sl->items,
             sl->count * el_size, (read_count) ? read_count : &tmp))
     ), res);
 }

@@ -3,7 +3,7 @@
 #if SYS_OS == SYS_OS_LINUX
 
 error_t __os_file_open
-(os_fid_t *set, const char *path, os_file_type_t type)
+(os_fid_t *set, os_cstr_t path, os_file_type_t type)
 {
     /* Init variables */
     ssz ret = 0, flags = O_CLOEXEC;
@@ -15,12 +15,12 @@ error_t __os_file_open
 
     switch(type)
     {
-        case os_file_read: { flags |= O_RDONLY; } break;
-        case os_file_write: { flags |= O_WRONLY | O_CREAT | O_TRUNC; } break;
-        case os_file_append: { flags |= O_WRONLY | O_CREAT | O_APPEND; } break;
-        case os_file_read_plus: { flags |= O_RDWR; } break;
-        case os_file_write_plus: { flags |= O_RDWR | O_CREAT | O_TRUNC; } break;
-        case os_file_append_plus: { flags |= O_RDWR | O_CREAT | O_APPEND; } break;
+        case file_read: { flags |= O_RDONLY; } break;
+        case file_write: { flags |= O_WRONLY | O_CREAT | O_TRUNC; } break;
+        case file_append: { flags |= O_WRONLY | O_CREAT | O_APPEND; } break;
+        case file_read_plus: { flags |= O_RDWR; } break;
+        case file_write_plus: { flags |= O_RDWR | O_CREAT | O_TRUNC; } break;
+        case file_append_plus: { flags |= O_RDWR | O_CREAT | O_APPEND; } break;
         default: { res = invalid_argument; } break;
     }
 

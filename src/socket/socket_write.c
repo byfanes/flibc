@@ -11,6 +11,6 @@ error_t __socket_write
         /* Check user inputs and pass the paramters to os layer */
         (res = (sl && sock && sl->items) ? success : null_pointer) ||
         (res = (el_size) ? success : elsize_zero) ||
-        (res = __os_socket_write(sock->fd, sl->items, sl->count * el_size))
+        (res = __os_socket_write(sock->sid, sl->items, sl->count * el_size))
     ), res);
 }

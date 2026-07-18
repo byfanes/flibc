@@ -14,12 +14,12 @@ error_t proc_wait
 
     if(codes && codes->items) {
         for(; i < procs->count; ++i) {
-            cur_res = __os_process_wait(procs->items[i].handle, codes->items + i);
+            cur_res = __os_process_wait(procs->items[i], codes->items + i);
             res = res ? res : cur_res;
         }
     } else {
         for(; i < procs->count; ++i) {
-            cur_res = __os_process_wait(procs->items[i].handle, &tmp);
+            cur_res = __os_process_wait(procs->items[i], &tmp);
             res = res ? res : cur_res;
         }
     }

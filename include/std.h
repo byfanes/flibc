@@ -17,7 +17,7 @@ typedef struct env_var_s env_var_t;
 
 can_be_da(env_var_t, da_env_var_t);
 can_be_slice(sl_cstr_t, sl_cstrs_t);
-can_be_da(const char *, da_ccstr_t);
+can_be_da(const u8 *, da_ccstr_t);
 
 struct env_var_s {
     str_t continues;

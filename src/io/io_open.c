@@ -14,7 +14,7 @@ error_t io_open
         /* Call open and get the fd - file_type_t check done inside it
          * int cast is for changing enum which should be same and checked before
          */
-        (res = __os_file_open(&(*out)->fd, name, (int)type)) ||
+        (res = __os_file_open(&(*out)->fid, (cstr_t)name, (int)type)) ||
         /* Set variables */
         ((*out)->count = 0,
          (*out)->type = type,

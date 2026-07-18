@@ -30,7 +30,11 @@ error_t __validate_header
     }
 
     mem_cmp_raw(((u8*)(header + 1) + header->wanted_alloc), &null, sizeof(null), &is_null);
-    if(!is_null) { return heap_overflow; }
+    if(!is_null) {
+        header->alloc->meta.overflow(header->alloc, header);
+        /* should be dead end */
+        return heap_underflow;
+    }
 
     return success;
 }

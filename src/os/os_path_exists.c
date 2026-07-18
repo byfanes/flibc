@@ -3,7 +3,7 @@
 #if SYS_OS == SYS_OS_LINUX
 
 error_t __os_path_exists
-(const void *path, bool *out)
+(os_cstr_t path, bool *out)
 {
     /* Set default values */
     *out = false;

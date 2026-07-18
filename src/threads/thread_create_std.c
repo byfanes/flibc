@@ -10,6 +10,6 @@ error_t thread_create_std
         /* Check inputs */
         (res = (thread && std && func) ? success : null_pointer) ||
         /* Call thread new to handle rest of the execution */
-        (res = __os_thread_new(&thread->opaque, func, std, arg))
+        (res = __os_thread_new(&thread->tid, func, std, arg))
     ), res);
 }

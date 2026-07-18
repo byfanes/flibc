@@ -10,6 +10,6 @@ error_t proc_run
     return ((void)(
         (res = (env && env->vars.items && env->list.items) ? success : null_pointer) ||
         (res = str_add_shadow_null(cmd)) ||
-        (res = __os_process_run((const char *)cmd->items, env->list.items, (exit_code) ? exit_code : &tmp))
+        (res = __os_process_run(cmd->items, env->list.items, (exit_code) ? exit_code : &tmp))
     ), res);
 }

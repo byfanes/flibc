@@ -8,6 +8,6 @@ error_t system_run
 
     return ((void)(
         (res = str_add_shadow_null(cmd)) ||
-        (res = system_run_cstr((char*)cmd->items))
+        (res = system_run_cstr((char *)cmd->items))
     ), res);
 }

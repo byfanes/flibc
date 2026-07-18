@@ -208,7 +208,7 @@ struct thread_s;
 
 /* For threads and this needs to be implemented in assembly */
 extern ssz __thread_clone_linux
-(ssz flags, void *child_stack, void* (*fn)(struct std_s* std, void*),
+(ssz flags, void *child_stack, void* (*fn)(struct std_s* std, void *),
  struct std_s* std, void *arg);
 
 

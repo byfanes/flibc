@@ -16,6 +16,6 @@ error_t thread_create
         /* Check inputs - alloc checked in mem_alloc */
         (res = (func && thread) ? success : null_pointer) ||
         /* Call thread new to handle rest of the execution */
-        (res = __os_thread_new(&thread->opaque, user_func, nullptr, arg))
+        (res = __os_thread_new(&thread->tid, user_func, nullptr, arg))
     ), res);
 }

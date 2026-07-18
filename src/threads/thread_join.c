@@ -10,5 +10,5 @@ error_t thread_join
     if(!thread) { return null_pointer; }
 
     /* Pass to os layer to handle the rest and set a valid pointer for return */
-    return __os_thread_join(&thread->opaque, (ret_val) ? ret_val : &tmp);
+    return __os_thread_join(&thread->tid, (ret_val) ? ret_val : &tmp);
 }

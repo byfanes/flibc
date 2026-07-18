@@ -12,6 +12,6 @@ error_t __io_read_unlocked
         /* Validate user inputs */
         (res = (!(file->type == file_write || file->type == file_append)) ? success : io_invalid_op) ||
         /* Call read */
-        (res = __os_file_read(file->fd, buf_ptr, amount, read_count))
+        (res = __os_file_read(file->fid, buf_ptr, amount, read_count))
     ), res);
 }

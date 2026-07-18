@@ -12,7 +12,7 @@ static void __print_leak
     u8 buf[8192] = {0};
     sl_u8_t buf_sl = {0};
     usz len = 0;
-    os_fid_t handle = OS_INVALID_FILE_HANDLE;
+    os_fid_t fid = OS_INVALID_FILE_HANDLE;
     const sl_u8_t msg = ccstr_to_u8(
     "Warning in allocator %p:\n"
     "Memory Leak: Allocation in %s:%d for %u bytes has been leaked!\n");
@@ -20,10 +20,10 @@ static void __print_leak
     slice_set(&buf_sl, buf, sizeof(buf));
     formatf(buf_sl, msg, &len, header->alloc, header->file_name, header->line, header->wanted_alloc);
 
-    __os_file_get_std(&handle, os_file_stderr);
+    __os_file_get_std(&fid, os_file_stderr);
     /* Write directly to standard error */
     /* Ignore its fail state because it is not deinit's main goal */
-    __os_file_write(handle, buf_sl.items, len);
+    __os_file_write(fid, buf_sl.items, len);
 }
 
 error_t allocator_deinit

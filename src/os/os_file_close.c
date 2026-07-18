@@ -6,18 +6,18 @@ error_t __os_file_close
 (os_fid_t *set)
 {
     /* Init variables */
-    os_fid_t handle = *set;
+    os_fid_t fid = *set;
     ssz ret = 0;
 
     /* Set users' handle to invalid */
     *set = OS_INVALID_FILE_HANDLE;
 
     /* Avoid closing unix's standard io */
-    if(handle == UNIX_STDERR || handle == UNIX_STDIN || handle == UNIX_STDOUT)
+    if(fid == UNIX_STDERR || fid == UNIX_STDIN || fid == UNIX_STDOUT)
     { return success; }
     
     /* Ask kernel to close */
-    ret = syscall_1_linux(syscall_close, handle);
+    ret = syscall_1_linux(syscall_close, fid);
 
     /* Check the return */
     if (ret < 0 && ret >= -MAX_ERRNO)

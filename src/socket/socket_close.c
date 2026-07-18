@@ -9,7 +9,7 @@ error_t socket_close
     return ((void)(
         /* Check the pointer and pass it to os layer */
         (res = (sock) ? success : null_pointer) ||
-        (res = __os_socket_close(&sock->fd))
+        (res = __os_socket_close(&sock->sid))
     ), (void)( /* Cleanup it safe to use nullpointer */
         mem_zeroed(sock)
     ), res);

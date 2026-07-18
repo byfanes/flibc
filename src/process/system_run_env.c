@@ -5,11 +5,11 @@ error_t system_run_env
 {
     /* Init variables */
     error_t res = success;
-    const char* null_envp[] = {nullptr};
-    const char** envp = (env && env->list.items) ? env->list.items : null_envp;
+    ccstr_t null_envp[] = {nullptr};
+    ccstr_t* envp = (env && env->list.items) ? env->list.items : null_envp;
 
     return ((void)(
         (res = str_add_shadow_null(cmd)) ||
-        (res = system_run_cstr_envp((char*)cmd->items, envp))
+        (res = __os_system_exec(cmd->items, envp))
     ), res);
 }

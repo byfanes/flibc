@@ -6,7 +6,7 @@ error_t cmd_append
 {
     /* Init variables */
     error_t res = success;
-    def_da_t *def = (void*)cmd;
+    def_da_t *def = (void *)cmd;
 
     /* Check inputs */
     if(!cmd || !sl || !cmd->items || !sl->items)

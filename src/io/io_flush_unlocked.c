@@ -13,6 +13,6 @@ error_t __io_flush_unlocked
         /* Store the count */
         (count = file->count, file->count = 0, success) ||
         /* Call write */
-        (res = __os_file_write(file->fd, file->buf, count))
+        (res = __os_file_write(file->fid, file->buf, count))
     ), res);
 }
