@@ -25,7 +25,7 @@ typedef unsigned short     uint16_t;
 typedef int                int32_t;
 typedef unsigned int       uint32_t;
 
-/* Extensin:
+/* Extension:
  * C89 does not provide standardized fixed-width integer types so we use
  * a few compiler and platform-specific extensions to define 64-bit types
  * This improves portability and helps ensure consistent behavior across
@@ -127,7 +127,7 @@ typedef const u8* ccstr_t;
 #define FLIBC_STACK_THRESHOLD 4096
 #define FLIBC_FILE_BUFFER_SIZE 4096
 
-/* Note: We might add a config stage while compiling to get excat values */
+/* Note: We might add a config stage while compiling to get exact values */
 /* Most systems uses 4KiB in some systems it might different
  * such as 16KiB in macos(apple-chips) and ios systems.
  */
@@ -145,7 +145,7 @@ typedef __builtin_va_list va_list;
 #define va_arg(v,l)     __builtin_va_arg(v,l)
 #define va_copy(d,s)    __builtin_va_copy(d,s)
 
-/* Extension We define a unified system operating system identifier because
+/* Extension: We define a unified system operating system identifier because
  * compiler provided OS macros are not consistent across platforms
  * This allows platform specific code to use a single set of checks
  *
@@ -162,23 +162,14 @@ typedef __builtin_va_list va_list;
 #define SYS_OS_UNIX    4
 
 #if defined(_WIN32) || defined(_WIN64)
-    /* Windows (LLP64 ABI) */
     #define SYS_OS SYS_OS_WINDOWS
-
 #elif defined(__APPLE__) && defined(__MACH__)
-    /* Apple platforms (macOS, iOS, etc.) */
     #define SYS_OS SYS_OS_MACOS
-
 #elif defined(__linux__)
-    /* Linux systems */
     #define SYS_OS SYS_OS_LINUX
-
 #elif defined(__unix__) || defined(__unix)
-    /* Unix/POSIX compatible systems */
     #define SYS_OS SYS_OS_UNIX
-
 #else
-    /* Unsupported or unknown operating system */
     #define SYS_OS SYS_OS_UNKNOWN
 #endif
 
@@ -191,19 +182,14 @@ typedef __builtin_va_list va_list;
 
 #if defined(__x86_64__) || defined(_M_X64)
     #define SYS_ARCH SYS_ARCH_X86_64
-
 #elif defined(__i386__) || defined(_M_IX86)
     #define SYS_ARCH SYS_ARCH_X86
-
 #elif defined(__aarch64__)
     #define SYS_ARCH SYS_ARCH_AARCH64
-
 #elif defined(__arm__)
     #define SYS_ARCH SYS_ARCH_ARM
-
 #elif defined(__riscv) && (__riscv_xlen == 64)
     #define SYS_ARCH SYS_ARCH_RISCV64
-
 #else
     #define SYS_ARCH SYS_ARCH_UNKNOWN
 #endif

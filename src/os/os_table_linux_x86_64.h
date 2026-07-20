@@ -119,13 +119,24 @@ extern ssz syscall_6_linux
 #define CLOCK_MONOTONIC 1
 
 /* thread flags */
-#define CLONE_VM        0x00000100
-#define CLONE_FS        0x00000200
-#define CLONE_FILES     0x00000400
-#define CLONE_SIGHAND   0x00000800
-#define CLONE_THREAD    0x00010000
+#define CLONE_VM               0x00000100
+#define CLONE_FS               0x00000200
+#define CLONE_FILES            0x00000400
+#define CLONE_SIGHAND          0x00000800
+#define CLONE_THREAD           0x00010000
+#define CLONE_SYSVSEM          0x00040000
+#define CLONE_PARENT_SETTID    0x00100000
+#define CLONE_CHILD_CLEARTID   0x00200000
 
-#define THREAD_FLAGS (CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | CLONE_THREAD)
+#define THREAD_FLAGS \
+(CLONE_VM | \
+ CLONE_FS | \
+ CLONE_FILES | \
+ CLONE_SIGHAND | \
+ CLONE_THREAD | \
+ CLONE_SYSVSEM | \
+ CLONE_PARENT_SETTID | \
+ CLONE_CHILD_CLEARTID)
 
 /* futex operations */
 #define FUTEX_WAIT 0
@@ -192,8 +203,12 @@ extern ssz syscall_6_linux
 #define S_ISLNK(mode)  (((mode) & S_IFMT) == S_IFLNK)
 #define S_ISSOCK(mode) (((mode) & S_IFMT) == S_IFSOCK)
 
-/* Struct definitions */
+/* Struct declarations */
 typedef struct linux_dirent64_s linux_dirent64_t;
+typedef struct linux_clone_args_s linux_clone_args_t;
+/* C89 does not support flexible arrays so we cast it
+ * from char[1] to null terminated cstr
+ */
 struct linux_dirent64_s {
     u64 d_ino;
     i64 d_off;
@@ -202,14 +217,17 @@ struct linux_dirent64_s {
     char d_name[1];
 };
 
-/* Forward declaration */
-struct std_s;
-struct thread_s;
-
 /* For threads and this needs to be implemented in assembly */
-extern ssz __thread_clone_linux
-(ssz flags, void *child_stack, void* (*fn)(struct std_s* std, void *),
- struct std_s* std, void *arg);
-
+struct os_thread_s;
+/* Note: Parent and child tid are expect to put inside the struct
+ *       but those pointers can refer some where else too
+ */
+/* Note: It should not need the stack pointer since stack grow downwards
+ *       top of that pointer will be dispatcher struct everything under that
+ *       will be the stack area
+ *       [ - Usable stack - ][dispatcher]
+ *                           ^- points to here
+ */
+extern ssz __thread_clone_linux(ssz flags, struct os_thread_s *dispatcher, volatile i32 *parent_tid, volatile i32 *child_tid);
 
 #endif /* __OS_LINUX_TABLE_X86_64_H__ */

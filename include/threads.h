@@ -9,6 +9,7 @@ extern "C" {
 #include "memory.h"
 #include "atomics.h"
 #include "std.h"
+#include "os.h"
 
 typedef struct thread_cond_s thread_cond_t;
 typedef struct thread_s thread_t;

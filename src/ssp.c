@@ -1,6 +1,7 @@
 #include "error.h"
 #include "base.h"
 #include "std.h"
+#include "os/os_private.h"
 
 extern uintptr_t __stack_chk_guard;
 

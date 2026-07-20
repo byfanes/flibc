@@ -1,12 +1,6 @@
 #ifndef __OS_PRIVATE_H__
 #define __OS_PRIVATE_H__
 
-/* Right now this module is an internal modules so it does not
- * have a public header however we still use private naming here
- * both for consistency and for the case if we need to make a public
- * header in the future
- */
-
 /* Note: All function in here assumed to be only used internally so
  * no argument checks done here
  */
@@ -33,7 +27,6 @@ enum os_file_std_type_e {
 
 /* Private types */
 typedef enum os_file_std_type_e os_file_std_type_t;
-typedef struct thread_ctrl_s thread_ctrl_t;
 typedef struct sl_cstr_s os_slcstr_t;
 
 /* Use the same types from the public layer to avoid duplication */
@@ -49,10 +42,18 @@ typedef cstr_t      os_outcstr_t;
 
 struct std_s;
 
-/* We use ssz for both variables for alignment */
-struct thread_ctrl_s {
-    volatile ssz done;
-    volatile ssz ret_val;
+/* TODO: Add tls */
+struct os_thread_s {
+    volatile void* ret_val;
+    volatile i32 tid;
+
+    union {
+        f_std_thread_func with;
+        f_thread_func without;
+    } std_funcs;
+
+    struct std_s *std;
+    void *arg;
 };
 
 /* This function will differ for each operating system */
@@ -99,9 +100,12 @@ error_t __os_addr_wake_i32(volatile i32 *addr);
 error_t __os_addr_wake_all_u32(volatile u32 *addr);
 error_t __os_thread_cond_signal(volatile u32 *addr);
 error_t __os_thread_yield(void);
-error_t __os_thread_join(void **thread_handle, void **ret_val);
+error_t __os_thread_join(os_tid_t *set, void **ret_val);
+/* TODO: Use clone3 in linux instead */
 error_t __os_thread_new
-(void **thread_handle, void *(*func)(struct std_s *, void *), struct std_s *std, void *arg);
+(os_tid_t *set, f_std_thread_func func, struct std_s *std, void *arg);
+
+noreturn __os_thread_dispatcher(os_tid_t thread);
 
 error_t __os_system_exec(os_cstr_t cmd, os_cstr_t *envp);
 error_t __os_process_run(os_cstr_t cmd, os_cstr_t *env, ssz *exit_code);

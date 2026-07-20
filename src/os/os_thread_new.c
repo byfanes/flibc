@@ -3,35 +3,44 @@
 #if SYS_OS == SYS_OS_LINUX
 
 error_t __os_thread_new
-(void **thread_ctrl, void *(*func)(struct std_s *, void *), struct std_s *std, void *arg)
+(os_tid_t *set, f_std_thread_func func, struct std_s *std, void *arg)
 {
     /* Init variables */
     ssz ret = 0;
-    u8 *stack = nullptr;
+    char *stack = nullptr;
     error_t res = 0;
-    thread_ctrl_t *ctrl = nullptr;
+    os_tid_t disp = nullptr;
+
+    /* Set it to default in case of failure */
+    *set = nullptr;
 
     res = __os_memory_alloc(&stack, THREAD_STACK_SIZE);
-    if(res) { goto cleanup; }
+    if(res) { return res; }
 
-    ctrl = (thread_ctrl_t *)(uintptr_t)(stack + THREAD_STACK_SIZE - sizeof(thread_ctrl_t));
+    stack += THREAD_STACK_SIZE - sizeof(struct os_thread_s);
+    disp = (os_tid_t)stack;
 
     /* Set thread control to defaults */
-    ctrl->done = false;
-    ctrl->ret_val = 0;
+    disp->ret_val = nullptr;
+    /* It will be same for both so does not matter */
+    disp->std_funcs.with = func;
+    disp->std = std;
+    disp->arg = arg;
+    disp->tid = 0;
 
-    /* Create the new thread */
-    ret = __thread_clone_linux(THREAD_FLAGS, ctrl, func, std, arg);
+    /* RDI = THREAD_FLAGS */
+    /* RSI = disp */
+    /* RDX = parent_tid */
+    /* RCX = child_tid */
+    /* Non returning for child thread */
+    ret = __thread_clone_linux(THREAD_FLAGS, disp, &disp->tid, &disp->tid);
 
     if(0 > ret && ret > -MAX_ERRNO) {
         res = __os_error_map(ret);
-        goto cleanup;
+        __os_memory_free(&stack, THREAD_STACK_SIZE);
     }
 
-    *thread_ctrl = ctrl;
-    return res;
-cleanup:
-    if(stack) { __os_memory_free(&stack, THREAD_STACK_SIZE);}
+    *set = disp;
     return res;
 }
 

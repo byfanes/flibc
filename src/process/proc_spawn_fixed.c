@@ -19,7 +19,7 @@ error_t proc_spawn_fixed
         ((procs->count >= procs->capacity)
             ? (res = __os_process_wait_any_on_list(
                 procs->items, procs->count,
-                (const os_pid_t **)&pid_loc, code))
+                (const os_pid_t **)(uintptr_t)&pid_loc, code))
             : (res = (pid_loc = procs->items + procs->count, success))) ||
         /* Create new process */
         (res = __os_process_spawn(cmd->items, env->list.items, pid_loc))

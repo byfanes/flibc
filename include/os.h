@@ -18,7 +18,9 @@
 typedef ssz   os_fid_t;
 typedef ssz   os_pid_t;
 typedef ssz   os_sid_t;
-typedef void* os_tid_t;
+/* Forward declaration for thread structure to use in internals */
+struct os_thread_s;
+typedef struct os_thread_s *os_tid_t;
 #define OS_INVALID_FILE_HANDLE ((os_fid_t)(-1))
 #else
 #error "Current platform is not supported yet!"
@@ -75,5 +77,9 @@ struct sl_cstr_s {
     usz   count;
 };
 
+struct std_s;
+
+typedef void* (*f_std_thread_func)(struct std_s *, void *);
+typedef void* (*f_thread_func)(void *);
 
 #endif /* __OS_H__ */

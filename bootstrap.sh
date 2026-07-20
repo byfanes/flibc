@@ -30,7 +30,7 @@ gcc -O0 -g3  \
 
 echo $C_FILES $ASM_FILES
 echo "[2/3] Bootstrap complete. Running build..."
-./build -b
+./build -b -g
 echo "[3/3] Build completed! Now installing the library to system"
 sudo cp .build/flibc.* /usr/lib
 sudo cp include/* /usr/include/flibc/

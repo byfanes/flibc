@@ -1,7 +1,7 @@
 #include "threads_private.h"
 
 error_t thread_spawn
-(da_thread_t *threads, void *(*func)(void *), void *arg)
+(da_thread_t *threads, f_thread_func func, void *arg)
 {
     /* Init variables */
     error_t res = success;

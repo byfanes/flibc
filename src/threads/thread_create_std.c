@@ -1,7 +1,7 @@
 #include "threads_private.h"
 
 error_t thread_create_std
-(thread_t *thread, void *(*func)(std_t *, void *), std_t *std, void *arg)
+(thread_t *thread, f_std_thread_func func, std_t *std, void *arg)
 {
     /* Init variables */
     error_t res = success;
