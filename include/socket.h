@@ -114,13 +114,13 @@ error_t __socket_read(socket_t* sock, void* buf, usz el_size, usz* _Nullable rea
 error_t __socket_write(socket_t* sock, void* buf, usz el_size);
 #define socket_write(sock, buf) __socket_write(sock, ptr_meta(buf))
 
-u64 htonll(u64 x);
-u32 htonl(u32 x);
-u16 htons(u16 x);
+u64 net_htonll(u64 x);
+u32 net_htonl(u32 x);
+u16 net_htons(u16 x);
 
-u64 ntohll(u64 x);
-u32 ntohl(u32 x);
-u16 ntohs(u16 x);
+u64 net_ntohll(u64 x);
+u32 net_ntohl(u32 x);
+u16 net_ntohs(u16 x);
 
 error_t inet_pton(sock_family_t family, const char* src, void* dst);
 

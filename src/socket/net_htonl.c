@@ -1,6 +1,6 @@
 #include "socket_private.h"
 
-u32 htonl
+u32 net_htonl
 (u32 x)
 {
     union {
