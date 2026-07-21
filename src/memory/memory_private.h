@@ -51,6 +51,17 @@ typedef struct allocator_meta_s allocator_meta_t;
  */
 /* Safety array is set to ABCDEF... for checking */
 /* Note: If we need more elements in here we might truncate some bytes from safety */
+/* TODO: We can split the safety and put first chunk to the start and anything else to bottom
+ * via that we will have more area to hit in case of fail and via chaing the first safety guard
+ * we can distinguish if its a heap node or an allocator node
+ */
+/* Note: If size starts to be a porblem we can use factor out file name and line and merge them
+ * to one string at compiler time this will increase the size of static but headers will be smaller
+ * and if we move double part safety it will be easier because we can do a xor operation which will
+ * be safety_top ^ safety_bot ^ location and those parameters are defined on static constant string
+ * literals but this might be a security issuse because ELF files do not check the string and user
+ * can change them but pointer will be valid
+ */
 struct heap_header_s {
     allocator_t* alloc;
     const char* file_name;
@@ -62,6 +73,11 @@ struct heap_header_s {
     /* This should be last one */
     usz first_null;
 };
+
+/* For 32 bit systems it will use HEADER
+ * For 64 bit systems it will use HEADER_FLIBC
+ */
+#define __FLIBC_MEMORY_HEADER_SAFETY "HEADER_FLIBC"
 
 /* Some typedefs to keep clean the struct definition */
 typedef error_t (*f_allocator_alloc_pointer)

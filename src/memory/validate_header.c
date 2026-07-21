@@ -3,38 +3,25 @@
 error_t __validate_header
 (heap_header_t* header)
 {
-    u8 i = 0;
+    error_t res = success;
     usz null = 0;
-    bool is_null = false;
+    bool is_null = false, are_same = false;
 
-    /* Nullptr */
-    if(!header) { return invalid_pointer; }
-
-    /* We give aligned pointer so we expect aligned pointer */
-    if((uintptr_t)header % 16 != 0) { return invalid_pointer; }
-
-    if(!header->alloc) { return invalid_pointer; }
-
-    for(; i < sizeof(header->safety); ++i)
-    {
-        if(header->safety[i] != 'A' + i) {
-            header->alloc->meta.overflow(header->alloc, header);
-            /* should be dead end */
-            return heap_underflow;
-        }
-    }
-    if(header->first_null != 0) {
-        header->alloc->meta.underflow(header->alloc, header);
-        /* should be dead end */
-        return heap_underflow;
-    }
-
-    mem_cmp_raw(((u8*)(header + 1) + header->wanted_alloc), &null, sizeof(null), &is_null);
-    if(!is_null) {
-        header->alloc->meta.overflow(header->alloc, header);
-        /* should be dead end */
-        return heap_underflow;
-    }
-
-    return success;
+    return ((void)(
+        /* Check null case */
+        (res = (header) ? success : invalid_pointer) ||
+        /* We give aligned pointer so we expect aligned pointer */
+        (res = (header->alloc && ((uintptr_t)header % 16 == 0)) ? success : invalid_pointer) ||
+        /* Check the safety string */
+        (res = mem_cmp_raw(header->safety, __FLIBC_MEMORY_HEADER_SAFETY,
+                           sizeof(header->safety), &are_same)) ||
+            ((!are_same || (header->first_null != 0)) /* should be dead end - underflow case */
+                ? (header->alloc->meta.underflow(header->alloc, header), res = heap_underflow)
+                : (res = success)) ||
+        /* Check the last null - Used mem_cmp_raw to avoid alignment issues */
+        (res = mem_cmp_raw(((u8*)(header + 1) + header->wanted_alloc), &null, sizeof(null), &is_null)) ||
+            ((!is_null) /* should be dead end - overflow case*/
+                ? (header->alloc->meta.overflow(header->alloc, header), res = heap_overflow)
+                : (res = success))
+    ), res);
 }

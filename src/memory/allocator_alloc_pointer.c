@@ -4,7 +4,6 @@ static void set_header
 (allocator_t* alloc, void** set, void* ptr, u32 n, u16 idx, const char* file_name, usz line)
 {
     heap_header_t* header = 0;
-    u8 i = 0;
 
     /* Set Header */
     header = (heap_header_t*)ptr;
@@ -20,8 +19,7 @@ static void set_header
     header->first_null = 0;
 
     /* Compiler will unroll it */
-    for(; i < sizeof(header->safety); ++i)
-    { header->safety[i] = (u8)('A' + i); }
+    mem_cpy_raw(header->safety, __FLIBC_MEMORY_HEADER_SAFETY, sizeof(header->safety));
 
     /* Last null byte */
     mem_zeroed_len(((u8*)ptr + sizeof(heap_header_t) + n), sizeof(usz));
