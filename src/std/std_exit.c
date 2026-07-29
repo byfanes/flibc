@@ -6,11 +6,10 @@ noreturn std_exit
     /* Init variables */
     usz i = 0;
 
-    /* Slice pointers are constant so we cast to void* to avoid compiler errors and normaly
-    * slices should not be used for holding pointers in heap
-    */
-    /* TODO: Use malloc_sl and free_sl */
-    if(mem_free((void*)(uintptr_t)&std->args.items))
+    /* Free the slice list */
+    /* TODO: This will be a bug because in a normal startup we use stack rather than heap */
+    /* TODO: It is closed because of that */
+    if(0 && mem_free_sl(&std->args))
     { __panic("STD Exit Panic: Could not free the args slice!\n"); }
 
     /* Free the env variables */

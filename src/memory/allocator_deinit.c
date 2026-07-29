@@ -14,11 +14,11 @@ static void __print_leak
     usz len = 0;
     os_fid_t fid = OS_INVALID_FILE_HANDLE;
     const sl_u8_t msg = ccstr_to_u8(
-    "Warning in allocator %p:\n"
+    "Warning in allocator %p allocation %p:\n"
     "Memory Leak: Allocation in %s:%d for %u bytes has been leaked!\n");
 
     slice_set(&buf_sl, buf, sizeof(buf));
-    formatf(buf_sl, msg, &len, header->alloc, header->file_name, header->line, header->wanted_alloc);
+    formatf(buf_sl, msg, &len, header->alloc, header + 1, header->file_name, header->line, header->wanted_alloc);
 
     __os_file_get_std(&fid, os_file_stderr);
     /* Write directly to standard error */

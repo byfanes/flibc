@@ -7,18 +7,41 @@ extern "C" {
 
 #include "base.h"
 #include "error.h"
+#include "require.h"
 
 #define TRACE_ARGS const char* file_name, u32 line
 #define USE_TRACE_ARGS file_name, line
 #define LOC_ARGS __FILE__, __LINE__
 
-#define ccstr_to_u8(ccstr) {(void*)(uintptr_t)((ccstr)), sizeof(((ccstr))) - 1}
+/* Note: sizeof is not wrapped into parantheses because this macro expects
+ * string literals and sizeof can only work with string literals if it does
+ * not have parantheses */
+#define ccstr_to_u8(ccstr) {(void*)(uintptr_t)(ccstr), sizeof ccstr - 1}
 
 /* Those macros are used in most slice/da functions to improve readability */
 #define ptr_meta(ptr) (ptr), sizeof((ptr)->items[0])
 #define ptr_meta_check(ptr, item) (ptr), (sizeof((ptr)->items[0]) + 0 * sizeof((ptr)->items == item))
 #define two_ptr_meta_check(lhs, rhs) \
      (lhs), (rhs), (sizeof((lhs)->items[0]) + 0 * sizeof((lhs)->items == (rhs)->items))
+
+#define require_sl_type(sl) ((void)sizeof( \
+require_defereable((sl)->items), \
+require_integer((sl)->count), \
+require_addressable((sl)->count), \
+0))
+
+/* Note: Dont use require_sl_type inside the require_sl_type_2
+ * it will be bad for error messages
+ */
+#define require_sl_type_2(x, y) ((void)sizeof( \
+require_defereable((x)->items), \
+require_integer((x)->count), \
+require_addressable((x)->count), \
+require_defereable((y)->items), \
+require_integer((y)->count), \
+require_addressable((y)->count), \
+require_same_ptr((x)->items, (y)->items), \
+0))
 
 #define can_be_slice(type, name) \
     typedef struct {             \
@@ -75,57 +98,72 @@ enum allocator_flags_e {
 typedef struct allocator_s allocator_t;
 typedef enum allocator_flags_e allocator_flags_t;
 
-error_t allocator_set_flags(allocator_t* alloc, u32 flags);
-error_t allocator_init(allocator_t** set);
-error_t allocator_deinit(allocator_t** set);
-error_t allocator_get_from_ptr(void* ptr, allocator_t** set);
+error_t allocator_set_flags(allocator_t *alloc, u32 flags);
+error_t allocator_init(allocator_t **set);
+error_t allocator_deinit(allocator_t **set);
+error_t allocator_get_from_ptr(void *ptr, allocator_t **set);
 
-error_t slice_set(void* sl, const void* items, usz count);
-error_t slice_set_cstr(void* sl, const char* str);
+error_t slice_set(void *sl, const void *items, usz count);
+error_t slice_set_cstr(void *sl, const char *str);
 
-error_t __mem_alloc(allocator_t* alloc, void* set, usz n, TRACE_ARGS);
-#define mem_alloc(alloc, set, n) __mem_alloc((alloc), (set), (n), LOC_ARGS)
+error_t __mem_alloc(allocator_t *alloc, void *set, usz n, TRACE_ARGS);
+#define mem_alloc(alloc, set, n) \
+(require_writable_ptr(set), __mem_alloc((alloc), (set), (n), LOC_ARGS))
 
-error_t __mem_alloc_sl(allocator_t* alloc, void* set, usz el_size, usz n, TRACE_ARGS);
-#define mem_alloc_sl(alloc, sl, n) __mem_alloc_sl((alloc), ptr_meta(sl), n, LOC_ARGS)
+error_t __mem_alloc_sl(allocator_t *alloc, void *set, usz el_size, usz n, TRACE_ARGS);
+#define mem_alloc_sl(alloc, sl, n) \
+(require_sl_type(sl), __mem_alloc_sl((alloc), (sl), sizeof((sl)->items[0]), n, LOC_ARGS))
 
-error_t __mem_calloc(allocator_t* alloc, void* set, usz n, TRACE_ARGS);
-#define mem_calloc(alloc, set, n) __mem_calloc((alloc), (set), (n), LOC_ARGS)
+error_t __mem_calloc(allocator_t *alloc, void *set, usz n, TRACE_ARGS);
+#define mem_calloc(alloc, set, n) \
+(require_writable_ptr(set), __mem_calloc((alloc), (set), (n), LOC_ARGS))
 
-error_t __mem_calloc_sl(allocator_t* alloc, void* set, usz el_size, usz n, TRACE_ARGS);
-#define mem_calloc_sl(alloc, sl, n) __mem_calloc_sl((alloc), ptr_meta(sl), n, LOC_ARGS)
+error_t __mem_calloc_sl(allocator_t *alloc, void *set, usz el_size, usz n, TRACE_ARGS);
+#define mem_calloc_sl(alloc, sl, n) \
+(require_sl_type(sl), __mem_calloc_sl((alloc), (sl), sizeof((sl)->items[0]), n, LOC_ARGS))
 
 /* TODO: realloc can optimized */
-error_t __mem_realloc(allocator_t* alloc, void* set, usz n, TRACE_ARGS);
-#define mem_realloc(alloc, set, n) __mem_realloc((alloc), (set), (n), LOC_ARGS)
+error_t __mem_realloc(allocator_t *alloc, void *set, usz n, TRACE_ARGS);
+#define mem_realloc(alloc, set, n) \
+(require_writable_ptr(set), __mem_realloc((alloc), (set), (n), LOC_ARGS))
 
-error_t mem_free(void* set);
+error_t __mem_free_sl(void *set);
+#define mem_free_sl(set) (require_sl_type(set), __mem_free((set)))
 
-error_t __mem_set_sl(void* dst, usz el_size, u8 c);
-#define mem_set(dst, c) __mem_set_sl(ptr_meta((dst)), (c))
+error_t __mem_free(void *set);
+#define mem_free(set) (require_writable_ptr(set), __mem_free((set)))
 
-error_t __mem_cpy_sl(void* dst, void* src, usz el_size);
-#define mem_cpy(dst, src) __mem_cpy_sl(two_ptr_meta_check((dst), (src)))
+error_t __mem_set_sl(void *dst, usz el_size, u8 c);
+#define mem_set(dst, c) \
+(require_sl_type(dst), __mem_set_sl((dst), sizeof((dst)->items[0]), (c)))
 
-error_t __mem_swap_sl(void* lhs, void* rhs, usz el_size);
-#define mem_swap(lhs, rhs) __mem_swap_sl(two_ptr_meta_check((lhs), (rhs)))
+error_t __mem_cpy_sl(void *dst, void *src, usz el_size);
+#define mem_cpy(dst, src) \
+(require_sl_type_2((dst), (src)), __mem_cpy_sl((dst), (src), sizeof((dst)->items[0])))
 
-error_t __mem_move_sl(void* dst, void* src, usz el_size);
-#define mem_move(dst, src) __mem_move_sl(two_ptr_meta_check((dst), (src)))
+error_t __mem_swap_sl(void *lhs, void *rhs, usz el_size);
+#define mem_swap(lhs, rhs) \
+(require_sl_type_2((lhs), (rhs)), __mem_swap_sl((lhs), (rhs), sizeof((lhs)->items[0])))
 
-error_t __mem_cmp_sl(void* lhs, void* rhs, usz el_size, bool* out);
-#define mem_cmp(lhs, rhs, res) __mem_cmp_sl(two_ptr_meta_check((lhs), (rhs)), (res))
+error_t __mem_move_sl(void *dst, void *src, usz el_size);
+#define mem_move(dst, src) \
+(require_sl_type_2((dst), (src)), __mem_move_sl((dst), (src), sizeof((dst)->items[0])))
 
-error_t __mem_cmp_sl_min(void* lhs, void* rhs, usz el_size, bool* out);
-#define mem_cmp_min(lhs, rhs, res)  __mem_cmp_sl_min(two_ptr_meta_check((lhs), (rhs)), (res))
+error_t __mem_cmp_sl(void *lhs, void *rhs, usz el_size, bool *out);
+#define mem_cmp(lhs, rhs, out) \
+(require_sl_type_2((lhs), (rhs)), __mem_cmp_sl((lhs), (rhs), sizeof((lhs)->items[0]), out))
 
-error_t mem_set_raw(void* ptr, u8 c, usz n);
-error_t mem_cpy_raw(void* dst, const void* src, usz n);
-error_t mem_swap_raw(void* lhs, void* rhs, usz n);
-error_t mem_move_raw(void* dst, const void* src, usz n);
-error_t mem_cmp_raw(const void* lhs, const void* rhs, usz n, bool* out);
+error_t __mem_cmp_sl_min(void *lhs, void *rhs, usz el_size, bool *out);
+#define mem_cmp_min(lhs, rhs, res) \
+(require_sl_type_2((lhs), (rhs)), __mem_cmp_sl_min((lhs), (rhs), sizeof((lhs)->items[0]), res))
 
-error_t mem_zeroed_len(void* ptr, usz size);
+error_t mem_set_raw(void *ptr, u8 c, usz n);
+error_t mem_cpy_raw(void *dst, const void *src, usz n);
+error_t mem_swap_raw(void *lhs, void *rhs, usz n);
+error_t mem_move_raw(void *dst, const void *src, usz n);
+error_t mem_cmp_raw(const void *lhs, const void *rhs, usz n, bool *out);
+
+error_t mem_zeroed_len(void *ptr, usz size);
 #define mem_zeroed(ptr) mem_zeroed_len((ptr), sizeof(*ptr))
 
 #ifdef __cplusplus

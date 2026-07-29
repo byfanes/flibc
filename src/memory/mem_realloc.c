@@ -17,7 +17,7 @@ error_t __mem_realloc
     ba = *(void**)set;
 
     /* Act as free on new size is zero and has a pointer */
-    if(ba && !n) { return mem_free(set); }
+    if(ba && !n) { return mem_free((void **)set); }
 
     /* Validate user inputs */
     if(!n && !ba) { return invalid_realloc; }

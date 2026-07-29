@@ -1,6 +1,6 @@
 #include "memory_private.h"
 
-error_t mem_free
+error_t __mem_free
 (void* set)
 {
     /* This is wrapper function but its getting allocator by pointer */

@@ -27,11 +27,12 @@ void __std_from_args
     if(allocator_init(&std->alloc))
     { __panic("STD Init Panic: Allocator failed to init!\n"); }
 
-    /* TODO: Use malloc_sl and free_sl */
     /* Check for if its needed to allocate memory or not */
     if(args_ptr) {
-        if(mem_alloc(std->alloc, &args_ptr, sizeof(sl_u8_t) * (u32)argc))
+        if(mem_alloc_sl(std->alloc, &std->args, (u32)argc))
         { __panic("STD Init Panic: Could not allocate memory for args slice list!\n"); }
+        /* TODO: Remove this later its a workaround for 47th line */
+        args_ptr = std->args.items;
     }
 
     /* Open standard files */
