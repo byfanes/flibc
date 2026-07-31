@@ -51,7 +51,7 @@
     #elif __STDC_VERSION__ >= 199901L
         #define SYS_CVER SYS_CVER_C99
     #else
-        #define SYS_CVER SYS_CVER_C90
+        #define SYS_CVER SYS_CVER_C89
     #endif
 #else
     #define SYS_CVER SYS_CVER_C89
@@ -136,7 +136,13 @@
 /* Extension: We are using _Noreturn for compilers to not yap about after
  * calling function like abort/exit and for other static analyzers
  */
-#define __unreachable() __builtin_unreachable()
+#if SYS_CC == SYS_CC_MSVC
+    #define __unreachable() __assume(0)
+#elif SYS_CC == SYS_CC_GCC || SYS_CC == SYS_CC_CLANG
+    #define __unreachable() __builtin_unreachable()
+#else
+    #define __unreachable()
+#endif
 
 /* Extension: We use compiler's offset because this is usable in compiler
  * time which allows use to check offsets of the element which is usefull
@@ -182,21 +188,6 @@
     #endif
 #endif
 
-/* pointer-sized */
-#if SYS_ABI == SYS_ABI_LP64 || SYS_ABI == SYS_ABI_LLP64
-    /* 64-bit ABI */
-    typedef int64_t  intptr_t;
-    typedef uint64_t uintptr_t;
-    typedef uint64_t usize_t;
-    typedef int64_t  ssize_t;
-#else
-    /* 32-bit ABI */
-    typedef int32_t  intptr_t;
-    typedef uint32_t uintptr_t;
-    typedef uint32_t usize_t;
-    typedef int32_t  ssize_t;
-#endif
-
 typedef signed char        int8_t;
 typedef unsigned char      uint8_t;
 typedef short              int16_t;
@@ -215,6 +206,21 @@ typedef uint64_t u64;
 typedef  int64_t i64;
 typedef  usize_t usz;
 typedef  ssize_t ssz;
+
+/* pointer-sized */
+#if SYS_ABI == SYS_ABI_LP64 || SYS_ABI == SYS_ABI_LLP64
+    /* 64-bit ABI */
+    typedef int64_t  intptr_t;
+    typedef uint64_t uintptr_t;
+    typedef uint64_t usize_t;
+    typedef int64_t  ssize_t;
+#else
+    /* 32-bit ABI */
+    typedef int32_t  intptr_t;
+    typedef uint32_t uintptr_t;
+    typedef uint32_t usize_t;
+    typedef int32_t  ssize_t;
+#endif
 
 /* This types helps developers to know what is expected from the pointer */
 typedef u8*        cstr_t;
