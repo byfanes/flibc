@@ -37,7 +37,7 @@
  * and decouple somethings and make it little bit safer
  */
 #define ALLOCATOR_HEADER_COUNT \
-    ((PAGE_SIZE - sizeof(allocator_meta_t) - ALLOCATOR_NEEDED_BITS) \
+    ((SYS_PAGE_SIZE - sizeof(allocator_meta_t) - ALLOCATOR_NEEDED_BITS) \
     / sizeof(heap_header_t*))
 
 

@@ -32,6 +32,8 @@ can_be_da(u8 , __type_test_da);
 
 typedef struct sock_addr_s sock_addr_t;
 
+#define ARRAY_LEN(x) (sizeof((x)) / sizeof((x)[0]))
+
 #define VALID_VALUE 1
 #define INVALID_VALUE 256
 
@@ -91,8 +93,7 @@ _static_assert(sizeof(void*) == 4, pointer_size_must_be_4bytes);
 _static_assert(sizeof(usz) == sizeof(void*), usize_must_match_pointer_size);
 _static_assert(sizeof(ssz) == sizeof(void*), ssize_must_match_pointer_size);
 
-_static_assert(4096 == PAGE_SIZE, a_page_must_4kb);
-_static_assert(sizeof(allocator_t) == PAGE_SIZE, allocator_must_fit_to_a_page);
+_static_assert(sizeof(allocator_t) <= SYS_PAGE_SIZE, allocator_must_fit_to_a_page);
 _static_assert(
     ARRAY_LEN(((allocator_t*)0)->free_bits) == ALLOCATOR_NEEDED_BITS,
     free_bits_should_be_equal_to_allocator_need_bits);

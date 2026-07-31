@@ -18,7 +18,7 @@ error_t __os_thread_new
     if(res) { return res; }
 
     stack += THREAD_STACK_SIZE - sizeof(struct os_thread_s);
-    disp = (os_tid_t)stack;
+    disp = (os_tid_t)(uintptr_t)stack;
 
     /* Set thread control to defaults */
     disp->ret_val = nullptr;

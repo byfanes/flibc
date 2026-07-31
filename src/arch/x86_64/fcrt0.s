@@ -4,7 +4,7 @@
 
 _start:
         xor rbp, rbp
-        ;; xor rdx, rdx
+        xor rdx, rdx
         pop rdi
         mov rsi, rsp
         and rsp, -16

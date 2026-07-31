@@ -1,29 +1,155 @@
 #ifndef __FLIBC_BASE_H__
 #define __FLIBC_BASE_H__
 
-#ifndef __STDC_VERSION__
-#define __STDC_VERSION__ 0L
-#endif /* __STDC_VERSION__ - c89 does not have this macro */
+#define SYS_PAGE_SIZE_UNKNOWN 0
+#define SYS_PAGE_SIZE_4K      4096
+#define SYS_PAGE_SIZE_16K     16384
 
-#ifndef _Nullable
-#define _Nullable
-#endif /* _Nullable */
+#define SYS_ABI_UNKNOWN 0
+#define SYS_ABI_ILP32   1
+#define SYS_ABI_LP64    2
+#define SYS_ABI_LLP64   3
 
-/* 8-bit */
-typedef signed char        int8_t;
-typedef unsigned char      uint8_t;
+#define SYS_OS_UNKNOWN 0
+#define SYS_OS_WINDOWS 1
+#define SYS_OS_MACOS   2
+#define SYS_OS_LINUX   3
+#define SYS_OS_UNIX    4
 
-/* 16-bit
- * (short is guaranteed 16-bit on all 64-bit OS architectures)
+#define SYS_ARCH_UNKNOWN 0
+#define SYS_ARCH_X86     1
+#define SYS_ARCH_X86_64  2
+#define SYS_ARCH_ARM     3
+#define SYS_ARCH_AARCH64 4
+#define SYS_ARCH_RISCV64 5
+#define SYS_ARCH_PPC64   6
+#define SYS_ARCH_MIPS64  7
+#define SYS_ARCH_WASM32  8
+#define SYS_ARCH_WASM64  9
+
+#define SYS_CC_UNKNOWN 0
+#define SYS_CC_MSVC    1
+#define SYS_CC_GCC     2
+#define SYS_CC_CLANG   3
+#define SYS_CC_INTEL   4
+
+#define SYS_CVER_UNKNOWN 0
+#define SYS_CVER_C89     1
+#define SYS_CVER_C99     2
+#define SYS_CVER_C11     3
+#define SYS_CVER_C17     4
+#define SYS_CVER_C23     5
+
+/* SYS_CVER */
+#ifdef __STDC_VERSION__
+    #if __STDC_VERSION__ >= 202311L
+        #define SYS_CVER SYS_CVER_C23
+    #elif __STDC_VERSION__ >= 201710L
+        #define SYS_CVER SYS_CVER_C17
+    #elif __STDC_VERSION__ >= 201112L
+        #define SYS_CVER SYS_CVER_C11
+    #elif __STDC_VERSION__ >= 199901L
+        #define SYS_CVER SYS_CVER_C99
+    #else
+        #define SYS_CVER SYS_CVER_C90
+    #endif
+#else
+    #define SYS_CVER SYS_CVER_C89
+#endif
+
+/* SYS_CC */
+#if defined(_MSC_VER)
+    #define SYS_CC SYS_CC_MSVC
+#elif defined(__clang__)
+    #define SYS_CC SYS_CC_CLANG
+#elif defined(__GNUC__)
+    #define SYS_CC SYS_CC_GCC
+#elif defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER)
+    #define SYS_CC SYS_CC_INTEL
+#else
+    #define SYS_CC SYS_CC_UNKNOWN
+#endif
+
+/* SYS_ARCH */
+#if defined(__x86_64__) || defined(_M_X64)
+    #define SYS_ARCH SYS_ARCH_X86_64
+#elif defined(__i386__) || defined(_M_IX86)
+    #define SYS_ARCH SYS_ARCH_X86
+#elif defined(__aarch64__) || defined(_M_ARM64)
+    #define SYS_ARCH SYS_ARCH_AARCH64
+#elif defined(__arm__) || defined(_M_ARM)
+    #define SYS_ARCH SYS_ARCH_ARM
+#elif defined(__riscv) && (__riscv_xlen == 64)
+    #define SYS_ARCH SYS_ARCH_RISCV64
+#else
+    #define SYS_ARCH SYS_ARCH_UNKNOWN
+#endif
+
+/* SYS_OS */
+#if defined(_WIN32) || defined(_WIN64)
+    #define SYS_OS SYS_OS_WINDOWS
+#elif defined(__APPLE__) && defined(__MACH__)
+    #define SYS_OS SYS_OS_MACOS
+#elif defined(__linux__)
+    #define SYS_OS SYS_OS_LINUX
+#elif defined(__unix__) || defined(__unix)
+    #define SYS_OS SYS_OS_UNIX
+#else
+    #define SYS_OS SYS_OS_UNKNOWN
+#endif
+
+/* SYS_ABI */
+#if SYS_OS == SYS_OS_WINDOWS && \
+    (SYS_ARCH == SYS_ARCH_X86_64 || SYS_ARCH == SYS_ARCH_AARCH64)
+    #define SYS_ABI SYS_ABI_LLP64
+#elif SYS_ARCH == SYS_ARCH_X86_64 || \
+      SYS_ARCH == SYS_ARCH_AARCH64 || \
+      SYS_ARCH == SYS_ARCH_RISCV64
+    #define SYS_ABI SYS_ABI_LP64
+#else
+    #define SYS_ABI SYS_ABI_ILP32
+#endif
+
+/* SYS_PAGE_SIZE */
+#if SYS_OS == SYS_OS_MACOS && SYS_ARCH == SYS_ARCH_AARCH64
+    #define SYS_PAGE_SIZE SYS_PAGE_SIZE_16K
+#elif SYS_ARCH == SYS_ARCH_AARCH64 && SYS_OS != SYS_OS_WINDOWS
+    /* Most ARM64 systems are 4K unless configured otherwise */
+    #define SYS_PAGE_SIZE SYS_PAGE_SIZE_4K
+#else
+    #define SYS_PAGE_SIZE SYS_PAGE_SIZE_4K
+#endif
+
+/* __no_return */
+#if SYS_CC == SYS_CC_MSVC
+    #define __no_return __declspec(noreturn)
+#elif SYS_CC == SYS_CC_GCC || SYS_CC == SYS_CC_CLANG
+    #define __no_return __attribute__((__noreturn__))
+#elif SYS_CVER >= SYS_CVER_C23
+    #define __no_return [[noreturn]]
+#elif SYS_CVER >= SYS_CVER_C11
+    #define __no_return _Noreturn
+#else
+    #define __no_return
+#endif
+
+/* Extension: We are using _Noreturn for compilers to not yap about after
+ * calling function like abort/exit and for other static analyzers
  */
-typedef short              int16_t;
-typedef unsigned short     uint16_t;
+#define __unreachable() __builtin_unreachable()
 
-/* 32-bit
- * (int is guaranteed 32-bit on all 64-bit OS architectures)
+/* Extension: We use compiler's offset because this is usable in compiler
+ * time which allows use to check offsets of the element which is usefull
+ * for checking slice and dynamic arrays
  */
-typedef int                int32_t;
-typedef unsigned int       uint32_t;
+#define offsetof(type, member) __builtin_offsetof(type, member)
+
+#define noreturn __no_return void
+#define NULL 0
+#define nullptr ((void *)0)
+
+#define FLIBC_STACK_THRESHOLD 4096
+#define FLIBC_FILE_BUFFER_SIZE 4096
 
 /* Extension:
  * C89 does not provide standardized fixed-width integer types so we use
@@ -32,40 +158,51 @@ typedef unsigned int       uint32_t;
  * modern systems
  */
 /* 64-bit */
-#if defined(_WIN32) || defined(_WIN64)
-    /* Windows (LLP64): long is only 32-bit. We must use extensions. */
-    #if defined(__GNUC__) || defined(__clang__)
+#if SYS_ABI == SYS_ABI_LLP64
+    /* Windows 64-bit long is 32-bit use compiler extensions */
+    #if SYS_CC == SYS_CC_GCC || SYS_CC == SYS_CC_CLANG
         __extension__ typedef long long          int64_t;
         __extension__ typedef unsigned long long uint64_t;
     #else
-        /* MSVC / cl.exe */
         typedef __int64          int64_t;
         typedef unsigned __int64 uint64_t;
     #endif
-#elif defined(__x86_64__) || defined(__aarch64__) || defined(__LP64__)
-    /* 64-bit Linux / macOS / Unix (LP64): long is natively 64-bit */
-    typedef long               int64_t;
-    typedef unsigned long      uint64_t;
+#elif SYS_ABI == SYS_ABI_LP64
+    /* Unix-like 64-bit long is 64-bit */
+    typedef long          int64_t;
+    typedef unsigned long uint64_t;
 #else
-    /* 32-bit Linux / Unix: long is 32-bit, so we MUST use long long for 64-bit types */
-    __extension__ typedef long long          int64_t;
-    __extension__ typedef unsigned long long uint64_t;
+    /* ILP32: long is 32-bit use long long */
+    #if SYS_CC == SYS_CC_GCC || SYS_CC == SYS_CC_CLANG
+        __extension__ typedef long long          int64_t;
+        __extension__ typedef unsigned long long uint64_t;
+    #else
+        typedef long long          int64_t;
+        typedef unsigned long long uint64_t;
+    #endif
 #endif
 
 /* pointer-sized */
-#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64) || defined(__LP64__)
-    /* 64-bit architectures */
-    typedef  int64_t intptr_t;
+#if SYS_ABI == SYS_ABI_LP64 || SYS_ABI == SYS_ABI_LLP64
+    /* 64-bit ABI */
+    typedef int64_t  intptr_t;
     typedef uint64_t uintptr_t;
     typedef uint64_t usize_t;
-    typedef  int64_t ssize_t;
+    typedef int64_t  ssize_t;
 #else
-    /* 32-bit architectures */
-    typedef  int32_t intptr_t;
+    /* 32-bit ABI */
+    typedef int32_t  intptr_t;
     typedef uint32_t uintptr_t;
     typedef uint32_t usize_t;
-    typedef  int32_t ssize_t;
+    typedef int32_t  ssize_t;
 #endif
+
+typedef signed char        int8_t;
+typedef unsigned char      uint8_t;
+typedef short              int16_t;
+typedef unsigned short     uint16_t;
+typedef int                int32_t;
+typedef unsigned int       uint32_t;
 
 /* short aliases */
 typedef  uint8_t  u8;
@@ -84,56 +221,17 @@ typedef u8*        cstr_t;
 typedef const u8* ccstr_t;
 
 /* Booleans */
-#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
+#if SYS_CVER < SYS_CVER_C23 && !defined(__bool_true_false_are_defined)
     typedef u8 bool;
     #define true 1
     #define false 0
     #define __bool_true_false_are_defined 1
 #endif
 
-/* Extension: We are using _Noreturn for compilers to not yap about after
- * calling function like abort/exit and for other static analyzers
- */
-#define __unreachable() __builtin_unreachable()
-
-#if __STDC_VERSION__ >= 202311L
-    #define __no_return [[noreturn]]
-#elif __STDC_VERSION__ >= 201112L
-    #define __no_return _Noreturn
-#elif defined(__GNUC__) || defined(__clang__)
-    #define __no_return __attribute__((__noreturn__))
-#elif defined(_MSC_VER)
-    #define __no_return __declspec(noreturn)
-#else
-    #define __no_return
+/* _Nullable is just an annotation to know which function parameters can safely be null */
+#ifndef _Nullable
+    #define _Nullable
 #endif
-
-#define noreturn __no_return void
-
-#define NULL 0
-#define nullptr ((void *)0)
-
-/* Extension: We use compiler's offset because this is usable in compiler
- * time which allows use to check offsets of the element which is usefull
- * for checking slice and dynamic arrays
- */
-#define offsetof(type, member) __builtin_offsetof(type, member)
-
-#define ARRAY_LEN(x) (sizeof((x)) / sizeof((x)[0]))
-
-#define CONCAT_IMPL(a, b) a ## b
-#define CONCAT(a, b) CONCAT_IMPL(a, b)
-
-#define FLIBC_STACK_THRESHOLD 4096
-#define FLIBC_FILE_BUFFER_SIZE 4096
-
-/* Note: We might add a config stage while compiling to get exact values */
-/* Most systems uses 4KiB in some systems it might different
- * such as 16KiB in macos(apple-chips) and ios systems.
- */
-#ifndef PAGE_SIZE
-#define PAGE_SIZE (1024*4)
-#endif /* PAGE_SIZE */
 
 /* Extension: We are using builtin args from the compiler because its the safe
  * way to do we can add them manually with some pointer arithmetic but it
@@ -144,54 +242,5 @@ typedef __builtin_va_list va_list;
 #define va_end(v)       __builtin_va_end(v)
 #define va_arg(v,l)     __builtin_va_arg(v,l)
 #define va_copy(d,s)    __builtin_va_copy(d,s)
-
-/* Extension: We define a unified system operating system identifier because
- * compiler provided OS macros are not consistent across platforms
- * This allows platform specific code to use a single set of checks
- *
- * Supported systems
- *   Windows (_WIN32 / _WIN64)
- *   Apple platforms (__APPLE__ + __MACH__)
- *   Linux (__linux__)
- *   Unix-like systems (__unix__)
- */
-#define SYS_OS_UNKNOWN 0
-#define SYS_OS_WINDOWS 1
-#define SYS_OS_MACOS   2
-#define SYS_OS_LINUX   3
-#define SYS_OS_UNIX    4
-
-#if defined(_WIN32) || defined(_WIN64)
-    #define SYS_OS SYS_OS_WINDOWS
-#elif defined(__APPLE__) && defined(__MACH__)
-    #define SYS_OS SYS_OS_MACOS
-#elif defined(__linux__)
-    #define SYS_OS SYS_OS_LINUX
-#elif defined(__unix__) || defined(__unix)
-    #define SYS_OS SYS_OS_UNIX
-#else
-    #define SYS_OS SYS_OS_UNKNOWN
-#endif
-
-#define SYS_ARCH_UNKNOWN 0
-#define SYS_ARCH_X86     1
-#define SYS_ARCH_X86_64  2
-#define SYS_ARCH_ARM     3
-#define SYS_ARCH_AARCH64 4
-#define SYS_ARCH_RISCV64 5
-
-#if defined(__x86_64__) || defined(_M_X64)
-    #define SYS_ARCH SYS_ARCH_X86_64
-#elif defined(__i386__) || defined(_M_IX86)
-    #define SYS_ARCH SYS_ARCH_X86
-#elif defined(__aarch64__)
-    #define SYS_ARCH SYS_ARCH_AARCH64
-#elif defined(__arm__)
-    #define SYS_ARCH SYS_ARCH_ARM
-#elif defined(__riscv) && (__riscv_xlen == 64)
-    #define SYS_ARCH SYS_ARCH_RISCV64
-#else
-    #define SYS_ARCH SYS_ARCH_UNKNOWN
-#endif
 
 #endif /* __FLIBC_BASE_H__ */

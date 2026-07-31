@@ -12,7 +12,7 @@ error_t thread_create
     f_std_thread_func user_func = (f_std_thread_func)(uintptr_t)func;
 
     return ((void)(
-        /* Check inputs - alloc checked in mem_alloc */
+        /* Check inputs */
         (res = (func && thread) ? success : null_pointer) ||
         /* Call thread new to handle rest of the execution */
         (res = __os_thread_new(&thread->tid, user_func, nullptr, arg))
