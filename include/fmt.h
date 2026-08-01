@@ -1,6 +1,13 @@
 #ifndef __FLIBC_FMT_H__
 #define __FLIBC_FMT_H__
 
+/* Note: This module is the most macro heavy part of the library and error message
+ * can be messy and if the user enabled a lot warning including unused value and
+ * waring as errors most of the errors will came from the unused value (void) solves
+ * this if the value will be discarded. Second option it can be about if the user
+ * did not use the 'use_fmt_ctx' this will result with a bunch of errors in the compilation
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -37,13 +44,18 @@ extern "C" {
 /* TODO: #define arg_fp(num)      fmt_arg_1(__fmt_ctx_fp, num) */
 #define arg_hex(num)        fmt_arg_2(__fmt_ctx_hex, num, false)
 #define arg_HEX(num)        fmt_arg_2(__fmt_ctx_hex, num, true)
+#define arg_ptr(ptr)        fmt_arg_1(__fmt_ctx_ptr, ptr)
 #define arg_oct(num)        fmt_arg_1(__fmt_ctx_oct, num)
 #define arg_dec(num)        fmt_arg_1(__fmt_ctx_dec, num)
 #define arg_udec(num)       fmt_arg_1(__fmt_ctx_udec, num)
 #define arg_str(str)        fmt_arg_1(__fmt_ctx_str, str)
+#define arg_sl(sl)          fmt_arg_2(__fmt_ctx_sl, sl, (require_sl_type(sl), sizeof((sl)->items[0])))
 #define arg_cstr(cstr)      fmt_arg_1(__fmt_ctx_cstr, cstr)
 #define arg_buf(str, len)   fmt_arg_2(__fmt_ctx_buf, str, len)
 #define arg_str_lit(cstr)   fmt_arg_2(__fmt_ctx_buf, cstr, sizeof(cstr) - 1)
+#define arg_bool(b)         fmt_arg_1(__fmt_ctx_bool, b)
+#define arg_Bool(b)         fmt_arg_1(__fmt_ctx_Bool, b)
+#define arg_BOOL(b)         fmt_arg_1(__fmt_ctx_BOOL, b)
 
 /* Note: This is a private field user does not need this */
 enum __fmt_ctx_type_e {
@@ -102,55 +114,55 @@ struct fmt_ctx_s {
 
 /* IO - File */
 #define fmt_io(io, expr) \
-(__fmt_ctx_set_io(io) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr""), __fmt_ret())
+((void)(__fmt_ctx_set_io(io) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"")), __fmt_ret())
 
 #define fmt_io_wrote(io, wrote_out, expr) \
-(__fmt_ctx_set_io(io) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr""), __fmt_ret_wrote(wrote_out))
+((void)(__fmt_ctx_set_io(io) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"")), __fmt_ret_wrote(wrote_out))
 
 #define fmt_io_nl(io, expr) \
-(__fmt_ctx_set_io(io) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n"), __fmt_ret())
+((void)(__fmt_ctx_set_io(io) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n")), __fmt_ret())
 
 #define fmt_io_wrote_nl(io, wrote_out, expr) \
-(__fmt_ctx_set_io(io) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n"), __fmt_ret_wrote(wrote_out))
+((void)(__fmt_ctx_set_io(io) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n")), __fmt_ret_wrote(wrote_out))
 
 /* Slices */
 #define fmt_sl(sl, expr) \
-(__fmt_ctx_set_sl(sl) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr""), __fmt_ret())
+((void)(__fmt_ctx_set_sl(sl) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"")), __fmt_ret())
 
 #define fmt_sl_wrote(sl, wrote_out, expr) \
-(__fmt_ctx_set_sl(sl) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr""), __fmt_ret_wrote(wrote_out))
+((void)(__fmt_ctx_set_sl(sl) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"")), __fmt_ret_wrote(wrote_out))
 
 #define fmt_sl_nl(sl, expr) \
-(__fmt_ctx_set_sl(sl) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n"), __fmt_ret())
+((void)(__fmt_ctx_set_sl(sl) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n")), __fmt_ret())
 
 #define fmt_sl_wrote_nl(sl, wrote_out, expr) \
-(__fmt_ctx_set_sl(sl) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n"), __fmt_ret_wrote(wrote_out))
+((void)(__fmt_ctx_set_sl(sl) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n")), __fmt_ret_wrote(wrote_out))
 
 /* Strings */
 #define fmt_str(str, expr) \
-(__fmt_ctx_set_str(str) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr""), __fmt_ret())
+((void)(__fmt_ctx_set_str(str) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"")), __fmt_ret())
 
 #define fmt_str_wrote(str, wrote_out, expr) \
-(__fmt_ctx_set_str(str) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr""), __fmt_ret_wrote(wrote_out))
+((void)(__fmt_ctx_set_str(str) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"")), __fmt_ret_wrote(wrote_out))
 
 #define fmt_str_nl(str, expr) \
-(__fmt_ctx_set_str(str) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n"), __fmt_ret())
+((void)(__fmt_ctx_set_str(str) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n")), __fmt_ret())
 
 #define fmt_str_wrote_nl(str, wrote_out, expr) \
-(__fmt_ctx_set_str(str) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n"), __fmt_ret_wrote(wrote_out))
+((void)(__fmt_ctx_set_str(str) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n")), __fmt_ret_wrote(wrote_out))
 
 /* Buffers */
 #define fmt_buf(ptr, count, expr) \
-(__fmt_ctx_set_buf(ptr, count) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr""), __fmt_ret())
+((void)(__fmt_ctx_set_buf(ptr, count) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"")), __fmt_ret())
 
 #define fmt_buf_wrote(ptr, count, wrote_out, expr) \
-(__fmt_ctx_set_buf(ptr, count) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr""), __fmt_ret_wrote(wrote_out))
+((void)(__fmt_ctx_set_buf(ptr, count) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"")), __fmt_ret_wrote(wrote_out))
 
 #define fmt_buf_nl(ptr, count, expr) \
-(__fmt_ctx_set_buf(ptr, count) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n"), __fmt_ret())
+((void)(__fmt_ctx_set_buf(ptr, count) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n")), __fmt_ret())
 
 #define fmt_buf_wrote_nl(ptr, count, wrote_out, expr) \
-(__fmt_ctx_set_buf(ptr, count) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n"), __fmt_ret_wrote(wrote_out))
+((void)(__fmt_ctx_set_buf(ptr, count) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""expr"\n")), __fmt_ret_wrote(wrote_out))
 
 /* This function is avaible in this header because if user wants to define
  * their types they should use this function to print that to the target
@@ -159,13 +171,18 @@ fmt_status_t fmt_ctx_print(fmt_ctx_t *ctx, const void *ptr, u64 count);
 
 /* Those fmtters are private and shall not accessed directly */
 fmt_status_t __fmt_ctx_hex(fmt_ctx_t *ctx, u64 hex, bool use_capital);
+fmt_status_t __fmt_ctx_ptr(fmt_ctx_t *ctx, const void *ptr);
 fmt_status_t __fmt_ctx_oct(fmt_ctx_t *ctx, u64 oct);
 fmt_status_t __fmt_ctx_dec(fmt_ctx_t *ctx, i64 dec);
 fmt_status_t __fmt_ctx_udec(fmt_ctx_t *ctx, u64 udec);
 /* TODO: fmt_status_t __fmt_ctx_fp(fmt_ctx_t *ctx, double fp); */
 fmt_status_t __fmt_ctx_cstr(fmt_ctx_t *ctx, const char *str);
+fmt_status_t __fmt_ctx_sl(fmt_ctx_t *ctx, const void *sl, u64 el_size);
 fmt_status_t __fmt_ctx_buf(fmt_ctx_t *ctx, const void *buf, u64 len);
 fmt_status_t __fmt_ctx_str(fmt_ctx_t *ctx, const str_t *str);
+fmt_status_t __fmt_ctx_bool(fmt_ctx_t *ctx, bool b);
+fmt_status_t __fmt_ctx_Bool(fmt_ctx_t *ctx, bool b);
+fmt_status_t __fmt_ctx_BOOL(fmt_ctx_t *ctx, bool b);
 
 /* This function shall not accessed directly only via the macros */
 /* Note: for io and str types count is not used but for slices it acts

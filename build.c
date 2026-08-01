@@ -4,6 +4,7 @@
 #include "process.h"
 #include "memory.h"
 #include "time.h"
+#include "fmt.h"
 
 /* TODO: Check return of the functions */
 /* TODO: Move to sl_ccstr_t */
@@ -66,6 +67,7 @@ error_t main
     da_proc_t procs = {0};
     da_path_t objs = {0};
     usz count = 0;
+    use_fmt_ctx;
 
     /* Set basics */
     pack.general = &general;
@@ -119,7 +121,7 @@ error_t main
     str_deinit(&pack.full);
     str_deinit(&pack.ext);
 
-    io_printf(std->io.out, "Done!\n");
+    (void)fmt_io_nl(std->io.out, "Done!");
     return success;
 }
 
@@ -131,6 +133,7 @@ void build_file
     path_t tmp = {0};
     time_t in_time = {0}, out_time = {0};
     ssz exit_code = 0;
+    use_fmt_ctx;
 
     /* Get modification times of the files */
     path_mtime(full_path, &in_time);
@@ -147,11 +150,11 @@ void build_file
        (in_time.sec == out_time.sec && in_time.nsec <= out_time.nsec)))
     {
         if(pack->general->verbose)
-        { io_printf(pack->std->io.out,"Skipping %v its up to date\n", full_path); }
+        { (void)fmt_io_nl(pack->std->io.out,"Skipping " arg_str(full_path)" its up to date!"); }
         return;
     }
     if(pack->general->verbose)
-    { io_printf(pack->std->io.out,"Gotta rebuild %v to %v\n", full_path, out_path); }
+    { (void)fmt_io_nl(pack->std->io.out,"Gotta rebuild " arg_str(full_path)" to " arg_str(out_path)); }
 
     /* Allocate cmd and start building it */
     str_init(pack->std->alloc, &cmd, 256);
@@ -168,7 +171,8 @@ void build_file
     /* Spawn new process within the limit which is procs capacity */
     proc_spawn_fixed(&cmd, &pack->std->env, pack->procs, &exit_code);
     if(exit_code) {
-        io_printf(pack->std->io.out, "Error: A process has failed!\nExit code: %d\nExiting\n", exit_code);
+        (void)fmt_io_nl(pack->std->io.out, "Error: A process has failed!\n"
+        "Exit code: " arg_dec(exit_code) "\nExiting");
         allocator_set_flags(pack->std->alloc, allocator_dont_check_leaks);
         std_exit(pack->std, 255);
     }
@@ -185,6 +189,7 @@ void callback
     bool eq = false;
     packed_t *pack = arg, new = *pack;
     path_t* tmp = &pack->full;
+    use_fmt_ctx;
 
     /* Create the full path */
     /* strset */
@@ -195,7 +200,7 @@ void callback
     /* If its a directory iterate it too */
     if(is_dir) {
         if(pack->general->verbose)
-        { io_printf(pack->std->io.out, "Building files in'%v'\n", tmp); }
+        { (void)fmt_io_nl(pack->std->io.out, "Building files in '"arg_str(tmp)"'"); }
 
         /* Create a sub-directory in build directory with same name
          * if it does not exists and then roll-back the string
@@ -243,6 +248,7 @@ void make_libs
     cmd_t so_cmd = {0}, arc_cmd = {0};
     u32 i = 0;
     da_path_t* objs = pack->obj_files;
+    use_fmt_ctx;
 
     /* Set .a library command and flags */
     str_init(std->alloc, &arc_cmd, 2048);
@@ -255,18 +261,19 @@ void make_libs
     cmd_append(&so_cmd, &pack->general->so_flags);
 
     /* Iterate over the objects list and append to commands and free it */
-    io_printf(std->io.out, "Compiling now %d amount of objects to shared object and libray\n", objs->count);
+    (void)fmt_io_nl(std->io.out, "Compiling now " arg_udec(objs->count)
+    " amount of objects to shared object and libray");
     for(; i < objs->count; ++i) {
         if(pack->general->verbose)
-        { io_printf(std->io.out, "Adding %v to list\n", (objs->items + i)); }
+        { (void)fmt_io_nl(std->io.out, "Adding "arg_str(objs->items + i) " to list"); }
         cmd_append(&so_cmd, (sl_u8_t*)(objs->items + i));
         cmd_append(&arc_cmd, (sl_u8_t*)(objs->items + i));
         str_deinit(objs->items + i);
     }
 
     if(pack->general->verbose) {
-        io_printf(std->io.out, "Running (SO): %v\n", &so_cmd);
-        io_printf(std->io.out, "Running (ARC): %v\n", &arc_cmd);
+        (void)fmt_io_nl(std->io.out, "Running (SO): " arg_str(&so_cmd));
+        (void)fmt_io_nl(std->io.out, "Running (ARC): " arg_str(&arc_cmd));
     }
 
     /* Spawn both of the commands */
@@ -288,6 +295,7 @@ bool build_yourself
     u32 i = 0;
     error_t ret = 0;
     ssz ret_code = 0;
+    use_fmt_ctx;
 
     /* Allocate memory for file paths +2 is for '.o' extension
      * not mandatory but saves as a little bit of time
@@ -308,14 +316,14 @@ bool build_yourself
     if (c_time.sec < exe_time.sec ||
        (c_time.sec == exe_time.sec && c_time.nsec <= exe_time.nsec))
     {
-        io_printf(std->io.out, "Up to date script...\n");
+        (void)fmt_io_nl(std->io.out, "Up to date script...");
         str_deinit(&c_file);
         str_deinit(&exe_file);
         return true;
     }
 
-    io_printf(std->io.out, "Building script...\n");
-    io_printf(std->io.out, "This will rebuild all of the files...\n");
+    (void)fmt_io_nl(std->io.out, "Building script...");
+    (void)fmt_io_nl(std->io.out, "This will rebuild all of the files...");
     io_flush(std->io.out);
 
     /* Construct old path which 'build.old' and rename the 'build' file */
@@ -338,14 +346,14 @@ bool build_yourself
 
     /* Print the command if program is started with verbose */
     if(pack->general->verbose) {
-        io_printf(std->io.out, "Command which will be executed is: %v\n", &cmd);
+        (void)fmt_io_nl(std->io.out, "Command which will be executed is: " arg_str(&cmd));
         io_flush(std->io.out);
     }
 
     /* Run and wait the command */
     proc_run(&cmd, &std->env, &ret_code);
     if(ret_code) {
-        io_printf(std->io.out, "Could not build the script exiting\n");
+        (void)fmt_io_nl(std->io.out, "Could not build the script exiting");
         io_flush(std->io.out);
         path_rename(&old_exe, &exe_file);
         std_exit(std, 1);
@@ -362,7 +370,7 @@ bool build_yourself
     /* Overwrite the current program and start the new build script  */
     ret = system_run_env(&cmd, &std->env);
     if(ret) {
-        io_printf(std->io.out, "Could not execute the new build script...\n");
+        (void)fmt_io_nl(std->io.out, "Could not execute the new build script...");
         path_rename(&old_exe, &exe_file);
     }
 
@@ -381,23 +389,25 @@ void set_flags
     /* Init variables */
     u32 i = 0;
     char *arg = 0;
-    sl_u8_t *arg_sl = {0};
+    use_fmt_ctx;
 
     /* Iterate over the args and find given flags - arguments which are not a flag will be ignored */
     for(; i < std->args.count; ++i) {
         arg = (char*)std->args.items[i].items;
-        arg_sl = std->args.items + i;
         if(cstr_eq("-v", arg)) { pack->general->verbose = true; }
         else if(cstr_eq("-b", arg)) { pack->general->always_make = true; }
         else if(cstr_eq("-clang", arg)) { pack->general->is_clang = true; }
         else if(cstr_eq("-a", arg)) { pack->general->analyze = true; }
         else if(cstr_eq("-g", arg)) { pack->general->debug = true; }
-        else { io_printf(std->io.out, "Warning unknown flag: '%v' will be ignored!\n", arg_sl); }
+        else {
+            (void)fmt_io_nl(std->io.out, "Warning unknown flag: '"
+            arg_sl(std->args.items + i) "' will be ignored!");
+        }
     }
 
     if(pack->general->analyze && !pack->general->always_make) {
-        io_printf(std->io.out,
-        "Warning: Using '-a analyze' flag without '-b always_make' flag probably wont do anything\n");
+        (void)fmt_io_nl(std->io.out,
+        "Warning: Using '-a analyze' flag without '-b always_make' flag probably wont do anything");
     }
 }
 

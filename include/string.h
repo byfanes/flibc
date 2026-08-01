@@ -25,9 +25,6 @@ error_t str_to_cstr(allocator_t* alloc, str_t* base, char** out);
 error_t str_from_cstr(allocator_t* alloc, str_t* out, const char* cstr);
 error_t str_dup(allocator_t* alloc, str_t* base, str_t* out);
 
-error_t str_formatf(str_t* base, const char* fmt, ...);
-error_t str_formatf_sl(str_t* base, sl_u8_t fmt, ...);
-
 /* We allow user to pass different pointers in strcat_sl because we will check it for utf8 */
 error_t __str_cat_sl(str_t* base, void* sl, usz el_size);
 #define str_cat_sl(base, sl) __str_cat_sl((base), (sl), sizeof((sl)->items[0]))
@@ -58,12 +55,6 @@ bool cstr_eq(const char* l, const char* r);
 
 bool __sl_is_utf8(void* sl, usz el_size);
 #define sl_is_utf8(sl) __sl_is_utf8((sl), sizeof((sl)->base[0]))
-
-error_t sl_formatf(sl_u8_t buf, usz* _Nullable wrote_count, const char* fmt, ...);
-error_t sl_formatf_sl(sl_u8_t buf, usz* _Nullable wrote_count, sl_u8_t fmt, ...);
-
-error_t sl_vformatf(sl_u8_t buf, usz* _Nullable wrote_count, const char* fmt, va_list ap);
-error_t sl_vformatf_sl(sl_u8_t buf, usz* _Nullable wrote_count, sl_u8_t fmt, va_list ap);
 
 #ifdef __cplusplus
 }

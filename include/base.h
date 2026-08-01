@@ -241,14 +241,4 @@ typedef const u8* ccstr_t;
     #define _Nullable
 #endif
 
-/* Extension: We are using builtin args from the compiler because its the safe
- * way to do we can add them manually with some pointer arithmetic but it
- * wont be safe and wont be that compatiable with other architectures
- */
-typedef __builtin_va_list va_list;
-#define va_start(v,l)   __builtin_va_start(v,l)
-#define va_end(v)       __builtin_va_end(v)
-#define va_arg(v,l)     __builtin_va_arg(v,l)
-#define va_copy(d,s)    __builtin_va_copy(d,s)
-
 #endif /* __FLIBC_BASE_H__ */

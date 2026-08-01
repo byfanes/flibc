@@ -9,21 +9,19 @@ static void __print_leak_dummy
 static void __print_leak
 (heap_header_t* header)
 {
+    use_fmt_ctx;
     u8 buf[8192] = {0};
-    sl_u8_t buf_sl = {0};
     usz len = 0;
     os_fid_t fid = OS_INVALID_FILE_HANDLE;
-    const sl_u8_t msg = ccstr_to_u8(
-    "Warning in allocator %p allocation %p:\n"
-    "Memory Leak: Allocation in %s:%d for %u bytes has been leaked!\n");
 
-    slice_set(&buf_sl, buf, sizeof(buf));
-    formatf(buf_sl, msg, &len, header->alloc, header + 1, header->file_name, header->line, header->wanted_alloc);
+    (void)fmt_buf_wrote_nl(buf, sizeof(buf), len, "Warning in allocator " arg_ptr(header->alloc)
+    " allocation " arg_ptr(header + 1) ":\nMemory Leak: Allocation in " arg_cstr(header->file_name)
+    ":" arg_udec(header->line) " for " arg_udec(header->wanted_alloc) " bytes has been leaked!");
 
     __os_file_get_std(&fid, os_file_stderr);
     /* Write directly to standard error */
     /* Ignore its fail state because it is not deinit's main goal */
-    __os_file_write(fid, buf_sl.items, len);
+    __os_file_write(fid, buf, len);
 }
 
 error_t allocator_deinit

@@ -3,6 +3,7 @@
 
 #include "memory.h"
 #include "threads.h"
+#include "fmt.h"
 #include "../helpers/helpers.h"
 #include "../os/os_private.h"
 

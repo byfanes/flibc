@@ -43,12 +43,6 @@ error_t io_rewind(file_t* file);
 #define io_puts(file, sl) __io_write((file), ptr_meta(sl))
 error_t io_putc(file_t* file, u8 c);
 
-error_t io_printf(file_t* file, const char* fmt, ...);
-error_t io_printf_sl(file_t* file, sl_u8_t fmt, ...);
-
-error_t io_vprintf(file_t* file, const char* fmt, va_list ap);
-error_t io_vprintf_sl(file_t* file, sl_u8_t fmt, va_list ap);
-
 #ifdef __cplusplus
 }
 #endif
