@@ -204,8 +204,6 @@ typedef uint32_t u32;
 typedef  int32_t i32;
 typedef uint64_t u64;
 typedef  int64_t i64;
-typedef  usize_t usz;
-typedef  ssize_t ssz;
 
 /* pointer-sized */
 #if SYS_ABI == SYS_ABI_LP64 || SYS_ABI == SYS_ABI_LLP64
@@ -221,6 +219,9 @@ typedef  ssize_t ssz;
     typedef uint32_t usize_t;
     typedef int32_t  ssize_t;
 #endif
+
+typedef  usize_t usz;
+typedef  ssize_t ssz;
 
 /* This types helps developers to know what is expected from the pointer */
 typedef u8*        cstr_t;
