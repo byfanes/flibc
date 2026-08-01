@@ -19,6 +19,7 @@ enum error_e {
     small_buffer,
     invalid_utf8,
     elsize_zero,
+    operation_partial,
 
     /* Specific Errors */
     invalid_realloc,

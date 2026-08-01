@@ -156,6 +156,7 @@
 
 #define FLIBC_STACK_THRESHOLD 4096
 #define FLIBC_FILE_BUFFER_SIZE 4096
+#define FLIBC_FMT_TMP_BUF_SIZE 64
 
 /* Extension:
  * C89 does not provide standardized fixed-width integer types so we use
