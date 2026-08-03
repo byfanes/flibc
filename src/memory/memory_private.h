@@ -78,7 +78,7 @@ struct heap_header_s {
 /* For 32 bit systems it will use HEADER
  * For 64 bit systems it will use HEADER_FLIBC
  */
-#define __FLIBC_MEMORY_HEADER_SAFETY "HEADER_FLIBC"
+#define __FLIBC_MEMORY_HEADER_SAFETY "HEADER_FLIBC64"
 
 /* Some typedefs to keep clean the struct definition */
 typedef error_t (*f_allocator_alloc_pointer)
