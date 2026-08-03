@@ -11,7 +11,7 @@ fmt_status_t __fmt_ctx_dec
     udec = (dec < 0) ? (is_neg = true, (u64)(-(dec + 1)) + 1) : (u64)dec;
 
     do {
-        *--end = (char)(udec % 10) + '0';
+        *--end = (char)(udec % 10 + '0');
         udec /= 10;
     } while(udec);
 

@@ -7,7 +7,7 @@ fmt_status_t __fmt_ctx_udec
     char *end = buf + sizeof(buf);
 
     do {
-        *--end = (char)(udec % 10) + '0';
+        *--end = (char)(udec % 10 + '0');
         udec /= 10;
     } while(udec);
 
