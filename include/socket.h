@@ -122,7 +122,7 @@ u64 net_ntohll(u64 x);
 u32 net_ntohl(u32 x);
 u16 net_ntohs(u16 x);
 
-error_t inet_pton(sock_family_t family, const char* src, void* dst);
+error_t net_pton(sock_family_t family, const char* src, void* dst);
 
 #ifdef __cplusplus
 }

@@ -99,15 +99,15 @@ static error_t parse_ipv6
 }
 
 /* TODO: Those parsers are checking very simple thing */
-error_t inet_pton
+error_t net_pton
 (sock_family_t family, const char* src, void* dst)
 {
     if(!dst || !src) { return null_pointer; }
 
     if(family == AF_INET) {
-        return parse_ipv4(src, dst);
+        return parse_ipv4(src, (u8 *)dst);
     } else if(family == AF_INET6) {
-        return parse_ipv6(src, dst);
+        return parse_ipv6(src, (u8 *)dst);
     }
 
     return invalid_argument;

@@ -16,7 +16,7 @@ error_t socket_create
 
     if(family == AF_INET || family == AF_INET6) {
         in = (sock_addr_in_t *)(uintptr_t)&out->addr;
-        if((res = inet_pton(AF_INET, addr, &in->addr))) { return res; }
+        if((res = net_pton(family, addr, &in->addr))) { return res; }
         in->port = net_htons(port);
     }
 
