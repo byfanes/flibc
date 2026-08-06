@@ -13,7 +13,7 @@ error_t __da_pop
         (res = (el_size) ? success : elsize_zero) ||
         (res = (idx < def->count) ? success : out_of_bounds) ||
         /* Copy the data to users' memory and remove it from the list */
-        (res = mem_cpy_raw(out, def->items + idx * el_size, el_size)) ||
+        (res = mem_copy_raw(out, def->items + idx * el_size, el_size)) ||
         (res = __da_remove(da, idx, el_size))
     ), res);
 }

@@ -44,7 +44,7 @@ error_t __mem_realloc
     min = (prev > n) ? n : prev;
 
     /* Copy old data */
-    mem_cpy_raw(n_ba, ba, min);
+    mem_copy_raw(n_ba, ba, min);
 
     /* Zero-ing the new part */
     mem_zeroed_len(n_ba + min, n - min);

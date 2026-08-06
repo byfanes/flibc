@@ -12,7 +12,7 @@ error_t str_to_cstr
         /* Allocate new memory for c-string */
         (res = mem_alloc(alloc, out, base->count + 1)) ||
         /* Copy the data and set last byte to null */
-        (res = mem_cpy_raw((*out), base->items, base->count)) ||
+        (res = mem_copy_raw((*out), base->items, base->count)) ||
         ((*out)[base->count] = 0, success)
     ), (void)( /* Cleanup */
         ((res) ? mem_free(out) : (0))

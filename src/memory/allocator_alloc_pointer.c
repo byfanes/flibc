@@ -19,7 +19,7 @@ static void set_header
     header->first_null = 0;
 
     /* Compiler will unroll it */
-    mem_cpy_raw(header->safety, __FLIBC_MEMORY_HEADER_SAFETY, sizeof(header->safety));
+    mem_copy_raw(header->safety, __FLIBC_MEMORY_HEADER_SAFETY, sizeof(header->safety));
 
     /* Last null byte */
     mem_zeroed_len(((u8*)ptr + sizeof(heap_header_t) + n), sizeof(usz));

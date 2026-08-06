@@ -17,7 +17,7 @@ fmt_status_t  __fmt_ctx_set
             ctx->as.io = ptr;
         } break;
         case __fmt_ctx_type_sl: {
-            mem_cpy_raw(&ctx->as.sl, ptr, sizeof(ctx->as.sl));
+            mem_copy_raw(&ctx->as.sl, ptr, sizeof(ctx->as.sl));
             slice_set(&ctx->as.sl, ctx->as.sl.items, ctx->as.sl.count * count);
         } break;
         case __fmt_ctx_type_str: {

@@ -425,22 +425,22 @@ void set_general
 
     /* chose the compiler */
     if(pack->general->is_clang)
-    { mem_cpy_raw(&general->cc, &clang, sizeof(general->cc)); }
+    { mem_copy_raw(&general->cc, &clang, sizeof(general->cc)); }
     else
-    { mem_cpy_raw(&general->cc, &gcc, sizeof(general->cc)); }
+    { mem_copy_raw(&general->cc, &gcc, sizeof(general->cc)); }
 
     /* add compiler flags */
     if(pack->general->analyze && !pack->general->is_clang)
-    { mem_cpy_raw(&general->c_flags, &gcc_flags, sizeof(general->c_flags)); }
+    { mem_copy_raw(&general->c_flags, &gcc_flags, sizeof(general->c_flags)); }
     else if(pack->general->is_clang)
-    { mem_cpy_raw(&general->c_flags, &clang_flags, sizeof(general->c_flags)); }
+    { mem_copy_raw(&general->c_flags, &clang_flags, sizeof(general->c_flags)); }
     else
-    { mem_cpy_raw(&general->c_flags, &common_flags, sizeof(general->c_flags)); }
+    { mem_copy_raw(&general->c_flags, &common_flags, sizeof(general->c_flags)); }
 
     if(pack->general->debug)
-    { mem_cpy_raw(&general->opt_flags, &debug_flags, sizeof(general->opt_flags)); }
+    { mem_copy_raw(&general->opt_flags, &debug_flags, sizeof(general->opt_flags)); }
     else
-    { mem_cpy_raw(&general->opt_flags, &release_flags, sizeof(general->opt_flags)); }
+    { mem_copy_raw(&general->opt_flags, &release_flags, sizeof(general->opt_flags)); }
 
     slice_set_cstr(&general->so_flags, "-nostdlib -shared -o .build/flibc.so");
     slice_set_cstr(&general->ar_flags, "rcs -o .build/flibc.a");

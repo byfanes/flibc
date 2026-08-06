@@ -29,7 +29,7 @@ fmt_status_t fmt_ctx_print
             if(ctx->as.sl.count <= ctx->wrote) { ctx->code = small_buffer; return fmt_stop; }
             res = slice_set(&out_sl, ctx->as.sl.items + ctx->wrote, ctx->as.sl.count - ctx->wrote);
             if(res) { ctx->code = res; return fmt_stop; }
-            res = mem_cpy(&out_sl, &sl);
+            res = mem_copy(&out_sl, &sl);
         } break;
         case __fmt_ctx_type_str: {
             res = str_cat_sl(ctx->as.str, &sl);

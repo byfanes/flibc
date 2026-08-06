@@ -20,6 +20,6 @@ error_t __da_insert
                             def->items + idx * el_size,
                             (def->count - idx - 1) * el_size)) ||
         /* Insert the new data block */
-        (res = mem_cpy_raw(&def->items[idx*el_size], in, el_size))
+        (res = mem_copy_raw(&def->items[idx*el_size], in, el_size))
     ), res);
 }

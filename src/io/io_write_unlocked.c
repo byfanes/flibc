@@ -13,7 +13,7 @@ error_t __io_write_unlocked
             ? ((res = __io_flush_unlocked(file)) || (res = __os_file_write(file->fid, buf, n)))
             : (((n + file->count >= FLIBC_STACK_THRESHOLD)
                      ? (res = __io_flush_unlocked(file)) : success) ||
-                (res = mem_cpy_raw(&file->buf[file->count], buf, n)) ||
+                (res = mem_copy_raw(&file->buf[file->count], buf, n)) ||
                 (file->count += n, success))
         )
     ), res);

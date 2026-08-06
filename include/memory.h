@@ -137,9 +137,9 @@ error_t __mem_set_sl(void *dst, usz el_size, u8 c);
 #define mem_set(dst, c) \
 (require_sl_type(dst), __mem_set_sl((dst), sizeof((dst)->items[0]), (c)))
 
-error_t __mem_cpy_sl(void *dst, void *src, usz el_size);
-#define mem_cpy(dst, src) \
-(require_sl_type_2((dst), (src)), __mem_cpy_sl((dst), (src), sizeof((dst)->items[0])))
+error_t __mem_copy_sl(void *dst, const void *src, usz el_size);
+#define mem_copy(dst, src) \
+(require_sl_type_2((dst), (src)), __mem_copy_sl((dst), (src), sizeof((dst)->items[0])))
 
 error_t __mem_swap_sl(void *lhs, void *rhs, usz el_size);
 #define mem_swap(lhs, rhs) \
@@ -158,7 +158,7 @@ error_t __mem_cmp_sl_min(void *lhs, void *rhs, usz el_size, bool *out);
 (require_sl_type_2((lhs), (rhs)), __mem_cmp_sl_min((lhs), (rhs), sizeof((lhs)->items[0]), res))
 
 error_t mem_set_raw(void *ptr, u8 c, usz n);
-error_t mem_cpy_raw(void *dst, const void *src, usz n);
+error_t mem_copy_raw(void *dst, const void *src, usz n);
 error_t mem_swap_raw(void *lhs, void *rhs, usz n);
 error_t mem_move_raw(void *dst, const void *src, usz n);
 error_t mem_cmp_raw(const void *lhs, const void *rhs, usz n, bool *out);
