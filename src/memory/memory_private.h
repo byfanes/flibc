@@ -82,7 +82,7 @@ struct heap_header_s {
 
 /* Some typedefs to keep clean the struct definition */
 typedef error_t (*f_allocator_alloc_pointer)
-     (allocator_t* alloc, usz n, void* set, const char* file_name, usz line);
+     (allocator_t* alloc, usz n, void* set, const char* file_name, u32 line);
 
 typedef error_t (*f_allocator_free_pointer)(allocator_t* alloc, void* set);
 typedef error_t (*f_allocator_init)(allocator_t** set);
@@ -165,7 +165,7 @@ struct slice_dummy_s {
  * in fuctions like malloc/calloc etc we can use custom allocators too.
  */
 error_t allocator_alloc_pointer
-(allocator_t* alloc, usz n, void* set, const char* file_name, usz line);
+(allocator_t* alloc, usz n, void* set, const char* file_name, u32 line);
 error_t allocator_free_pointer(allocator_t* alloc, void* set);
 
 noreturn allocator_overflow(allocator_t* alloc, heap_header_t* header);

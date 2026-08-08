@@ -2,7 +2,7 @@
 #include "error.h"
 
 error_t __mem_realloc
-(allocator_t* alloc, void* set, usz n, TRACE_ARGS)
+(allocator_t *alloc, void *set, usz n, const char *file_name, u32 line)
 {
     /* Init variables */
     error_t res = success;
@@ -24,7 +24,7 @@ error_t __mem_realloc
 
     if(!ba) {
         /* set -> ptr(NULL) */
-        return __mem_alloc(alloc, set, n, USE_TRACE_ARGS);
+        return __mem_alloc(alloc, set, n, file_name, line);
     }
 
     /* set -> ptr(addr) -> data */
@@ -35,7 +35,7 @@ error_t __mem_realloc
     prev = he->wanted_alloc;
 
     /* Allocate new memory and set it*/
-    if((res = __mem_alloc(alloc, set, n, USE_TRACE_ARGS))) { return res; }
+    if((res = __mem_alloc(alloc, set, n, file_name, line))) { return res; }
 
     /* Get the new pointer back */
     n_ba = *(void**)set;

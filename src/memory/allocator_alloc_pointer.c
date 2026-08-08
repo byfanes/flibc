@@ -1,7 +1,7 @@
 #include "memory_private.h"
 
 static void set_header
-(allocator_t* alloc, void** set, void* ptr, u32 n, u16 idx, const char* file_name, usz line)
+(allocator_t* alloc, void** set, void* ptr, u32 n, u16 idx, const char* file_name, u32 line)
 {
     heap_header_t* header = 0;
 
@@ -10,9 +10,9 @@ static void set_header
     header->alloc = alloc;
     header->file_name = file_name;
     /* It is safe case a file should not have more line than
-    * 4B if it has it is not my problem
-    */
-    header->line = (u32)line;
+     * 4B if it has it is not my problem
+     */
+    header->line = line;
     header->wanted_alloc = n;
     header->idx = idx;
     /* Add safety to here */
@@ -29,7 +29,7 @@ static void set_header
 }
 
 static error_t alloc_big_chunk
-(allocator_t* alloc, u32 n, u32 chunk_count, void* set, const char* file_name, usz line)
+(allocator_t* alloc, u32 n, u32 chunk_count, void* set, const char* file_name, u32 line)
 {
     /* Header idx is 0 to 248 - 504 (depending on arch) */
     u16 header_idx = 0;
@@ -66,7 +66,7 @@ static error_t alloc_big_chunk
 }
 
 static error_t alloc_small_chunk
-(allocator_t* alloc, u32 n, u32 chunk_count, void* set, const char* file_name, usz line)
+(allocator_t* alloc, u32 n, u32 chunk_count, void* set, const char* file_name, u32 line)
 {
     /* Init variables */
     u32 idx = 0;
@@ -108,7 +108,7 @@ static error_t alloc_small_chunk
 }
 
 error_t allocator_alloc_pointer
-(allocator_t* alloc, usz n, void* set, const char* file_name, usz line)
+(allocator_t* alloc, usz n, void* set, const char* file_name, u32 line)
 {
     /* Init variables */
     usz needed = 0, chunk_count = 0;
