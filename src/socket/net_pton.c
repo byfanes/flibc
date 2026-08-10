@@ -3,7 +3,7 @@
 static error_t parse_ipv4
 (const char* src, u8* dst)
 {
-    i32 parts = 0, val = 0;
+    s32 parts = 0, val = 0;
     u8 c = 0;
 
     while((c = (u8)*src)) {
@@ -26,9 +26,9 @@ static error_t parse_ipv4
 static error_t parse_ipv6
 (const char* src, u8* dst)
 {
-    i32 w = 0, i = 0, val = 0, digits = 0, hv = 0;
+    s32 w = 0, i = 0, val = 0, digits = 0, hv = 0;
     /* Use -1 to indicate :: has not been seen yet */
-    i32 col_idx = -1;
+    s32 col_idx = -1;
     u16 words[8] = {0};
     u8 c = 0;
 
@@ -72,7 +72,7 @@ static error_t parse_ipv6
 
     /* If we saw a '::' shift the post-col words to the right and fill with zeros */
     if (col_idx != -1) {
-        i32 zeros = 8 - w;
+        s32 zeros = 8 - w;
 
         /* Shift words parsed after '::' to the very end of the array */
         for (i = w - 1; i >= col_idx; --i) {
