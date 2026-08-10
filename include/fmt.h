@@ -173,7 +173,7 @@ fmt_status_t fmt_ctx_print(fmt_ctx_t *ctx, const void *ptr, u64 count);
 fmt_status_t __fmt_ctx_hex(fmt_ctx_t *ctx, u64 hex, bool use_capital);
 fmt_status_t __fmt_ctx_ptr(fmt_ctx_t *ctx, const void *ptr);
 fmt_status_t __fmt_ctx_oct(fmt_ctx_t *ctx, u64 oct);
-fmt_status_t __fmt_ctx_dec(fmt_ctx_t *ctx, i64 dec);
+fmt_status_t __fmt_ctx_dec(fmt_ctx_t *ctx, s64 dec);
 fmt_status_t __fmt_ctx_udec(fmt_ctx_t *ctx, u64 udec);
 /* TODO: fmt_status_t __fmt_ctx_fp(fmt_ctx_t *ctx, double fp); */
 fmt_status_t __fmt_ctx_cstr(fmt_ctx_t *ctx, const char *str);

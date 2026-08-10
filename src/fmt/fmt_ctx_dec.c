@@ -1,7 +1,7 @@
 #include "fmt_private.h"
 
 fmt_status_t __fmt_ctx_dec
-(fmt_ctx_t *ctx, i64 dec)
+(fmt_ctx_t *ctx, s64 dec)
 {
     char buf[FLIBC_FMT_TMP_BUF_SIZE];
     char *end = buf + sizeof(buf);
