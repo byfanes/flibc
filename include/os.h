@@ -64,7 +64,7 @@ struct thread_s {
 };
 
 struct mutex_s {
-    volatile i32 state;
+    volatile s32 state;
 };
 
 struct thread_cond_s {

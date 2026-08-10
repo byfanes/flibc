@@ -45,7 +45,7 @@ struct std_s;
 /* TODO: Add tls */
 struct os_thread_s {
     volatile void* ret_val;
-    volatile i32 tid;
+    volatile s32 tid;
 
     union {
         f_std_thread_func with;
@@ -94,9 +94,9 @@ error_t __os_time_now(os_time_t *out);
 error_t __os_time_sleep_ms(u64 ms);
 
 /* For consistency and error chaining purposes they are returning an error */
-error_t __os_addr_wait_i32(volatile i32 *addr, i32 expected);
+error_t __os_addr_wait_s32(volatile s32 *addr, s32 expected);
 error_t __os_addr_wait_u32(volatile u32 *addr, u32 expected);
-error_t __os_addr_wake_i32(volatile i32 *addr);
+error_t __os_addr_wake_s32(volatile s32 *addr);
 error_t __os_addr_wake_all_u32(volatile u32 *addr);
 error_t __os_thread_cond_signal(volatile u32 *addr);
 error_t __os_thread_yield(void);

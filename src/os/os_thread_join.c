@@ -9,12 +9,12 @@ error_t __os_thread_join
 {
     os_tid_t thread = *set;
     u8 *ptr = (u8 *)(thread + 1) - THREAD_STACK_SIZE;
-    i32 tid = 0;
+    s32 tid = 0;
 
     *set = nullptr;
 
-    while ((tid = atomic_load_i32(&thread->tid)) != 0)
-    { __os_addr_wait_i32(&thread->tid, tid); }
+    while ((tid = atomic_load_s32(&thread->tid)) != 0)
+    { __os_addr_wait_s32(&thread->tid, tid); }
 
     *ret_val = (void *)(uintptr_t)atomic_load_ssz((volatile ssz *)&thread->ret_val);
 

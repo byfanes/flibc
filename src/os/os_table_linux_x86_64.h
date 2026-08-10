@@ -211,7 +211,7 @@ typedef struct linux_clone_args_s linux_clone_args_t;
  */
 struct linux_dirent64_s {
     u64 d_ino;
-    i64 d_off;
+    s64 d_off;
     u16 d_reclen;
     u8 d_type;
     char d_name[1];
@@ -228,6 +228,6 @@ struct os_thread_s;
  *       [ - Usable stack - ][dispatcher]
  *                           ^- points to here
  */
-extern ssz __thread_clone_linux(ssz flags, struct os_thread_s *dispatcher, volatile i32 *parent_tid, volatile i32 *child_tid);
+extern ssz __thread_clone_linux(ssz flags, struct os_thread_s *dispatcher, volatile s32 *parent_tid, volatile s32 *child_tid);
 
 #endif /* __OS_LINUX_TABLE_X86_64_H__ */
