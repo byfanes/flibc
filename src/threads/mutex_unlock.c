@@ -4,12 +4,12 @@ error_t mutex_unlock(mutex_t* mutex)
 {
     if(!mutex) { return null_pointer; }
 
-    if(atomic_fetch_sub_i32(&mutex->state, 1) == 1) { 
-        return success; 
+    if(atomic_fetch_sub_s32(&mutex->state, 1) == 1) {
+        return success;
     }
 
     mutex->state = 0;
-    __os_addr_wake_i32(&mutex->state);
+    __os_addr_wake_s32(&mutex->state);
 
     return success;
 }
