@@ -9,9 +9,11 @@ extern "C" {
 #include "error.h"
 #include "require.h"
 
-#define TRACE_ARGS const char* file_name, u32 line
-#define USE_TRACE_ARGS file_name, line
-#define LOC_ARGS __FILE__, __LINE__
+/* Note: The line parameters is set to u32 to which is enough
+ * for the #line directive which uses 31 bits if it goes pass that
+ * limit it will overflow but its a rare case which in normal day wont happend
+ * except for unity builds in large projects
+ */
 
 /* Note: sizeof is not wrapped into parantheses because this macro expects
  * string literals and sizeof can only work with string literals if it does
@@ -53,10 +55,10 @@ can_be_slice(u8, sl_u8_t);
 can_be_slice(u16, sl_u16_t);
 can_be_slice(u32, sl_u32_t);
 can_be_slice(u64, sl_u64_t);
-can_be_slice(i8, sl_i8_t);
-can_be_slice(i16, sl_i16_t);
-can_be_slice(i32, sl_i32_t);
-can_be_slice(i64, sl_i64_t);
+can_be_slice(s8, sl_s8_t);
+can_be_slice(s16, sl_s16_t);
+can_be_slice(s32, sl_s32_t);
+can_be_slice(s64, sl_s64_t);
 can_be_slice(ssz, sl_ssz_t);
 can_be_slice(usz, sl_usz_t);
 
@@ -73,10 +75,6 @@ struct sl_ccstr_s {
 
 typedef struct sl_ccstr_s sl_ccstr_t;
 typedef sl_u8_t sl_cstr_t;
-
-/* TODO: Right now a lot of functions dont free the memory (when they failed) which they allocated
- * and this causes some leak we should migrate to goto defer system rather than if return
- */
 
 /* We can support up to 32 flags (its usize_t but it shrinks down to 32 bits in x86 system)
  * this value depends so to be safe we can only use maxium 32 flags
@@ -106,26 +104,26 @@ error_t allocator_get_from_ptr(void *ptr, allocator_t **set);
 error_t slice_set(void *sl, const void *items, usz count);
 error_t slice_set_cstr(void *sl, const char *str);
 
-error_t __mem_alloc(allocator_t *alloc, void *set, usz n, TRACE_ARGS);
+error_t __mem_alloc(allocator_t *alloc, void *set, usz n, const char *file_name, u32 line);
 #define mem_alloc(alloc, set, n) \
-(require_writable_ptr(set), __mem_alloc((alloc), (set), (n), LOC_ARGS))
+(require_writable_ptr(set), __mem_alloc((alloc), (set), (n), __FILE__, __LINE__))
 
-error_t __mem_alloc_sl(allocator_t *alloc, void *set, usz el_size, usz n, TRACE_ARGS);
+error_t __mem_alloc_sl(allocator_t *alloc, void *set, usz el_size, usz n, const char* file_name, u32 line);
 #define mem_alloc_sl(alloc, sl, n) \
-(require_sl_type(sl), __mem_alloc_sl((alloc), (sl), sizeof((sl)->items[0]), n, LOC_ARGS))
+(require_sl_type(sl), __mem_alloc_sl((alloc), (sl), sizeof((sl)->items[0]), n, __FILE__, __LINE__))
 
-error_t __mem_calloc(allocator_t *alloc, void *set, usz n, TRACE_ARGS);
+error_t __mem_calloc(allocator_t *alloc, void *set, usz n, const char *file_name, u32 line);
 #define mem_calloc(alloc, set, n) \
-(require_writable_ptr(set), __mem_calloc((alloc), (set), (n), LOC_ARGS))
+(require_writable_ptr(set), __mem_calloc((alloc), (set), (n), __FILE__, __LINE__))
 
-error_t __mem_calloc_sl(allocator_t *alloc, void *set, usz el_size, usz n, TRACE_ARGS);
+error_t __mem_calloc_sl(allocator_t *alloc, void *set, usz el_size, usz n, const char *file_name, u32 line);
 #define mem_calloc_sl(alloc, sl, n) \
-(require_sl_type(sl), __mem_calloc_sl((alloc), (sl), sizeof((sl)->items[0]), n, LOC_ARGS))
+(require_sl_type(sl), __mem_calloc_sl((alloc), (sl), sizeof((sl)->items[0]), n, __FILE__, __LINE__))
 
 /* TODO: realloc can optimized */
-error_t __mem_realloc(allocator_t *alloc, void *set, usz n, TRACE_ARGS);
+error_t __mem_realloc(allocator_t *alloc, void *set, usz n, const char *file_name, u32 line);
 #define mem_realloc(alloc, set, n) \
-(require_writable_ptr(set), __mem_realloc((alloc), (set), (n), LOC_ARGS))
+(require_writable_ptr(set), __mem_realloc((alloc), (set), (n), __FILE__, __LINE__))
 
 error_t __mem_free_sl(void *set);
 #define mem_free_sl(set) (require_sl_type(set), __mem_free((set)))
