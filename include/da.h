@@ -36,10 +36,10 @@ can_be_da(u8, da_u8_t);
 can_be_da(u16, da_u16_t);
 can_be_da(u32, da_u32_t);
 can_be_da(u64, da_u64_t);
-can_be_da(i8, da_i8_t);
-can_be_da(i16, da_i16_t);
-can_be_da(i32, da_i32_t);
-can_be_da(i64, da_i64_t);
+can_be_da(s8, da_s8_t);
+can_be_da(s16, da_s16_t);
+can_be_da(s32, da_s32_t);
+can_be_da(s64, da_s64_t);
 can_be_da(ssz, da_ssz_t);
 can_be_da(usz, da_usz_t);
 
