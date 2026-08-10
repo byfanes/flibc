@@ -4,9 +4,9 @@
 #include "std/std_private.h"
 
 /* This function will be called from assembly */
-noreturn __flibc_runtime_start(i32 argc, char** argv);
+noreturn __flibc_runtime_start(s32 argc, char** argv);
 noreturn __flibc_runtime_start
-(i32 argc, char** argv)
+(s32 argc, char** argv)
 {
     /* Init variables */
     error_t ret = 0;
