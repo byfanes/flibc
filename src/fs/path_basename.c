@@ -34,6 +34,8 @@ error_t path_basename
         if(base->items[i] == '/') { ++i; break; }
     }
 
+    if (i < 0) { i = 0; };
+
     /* Set the find part */
     slice_set(&sl, &base->items[i], (usz)(start - i - off));
     str_cat_sl(out, &sl);
