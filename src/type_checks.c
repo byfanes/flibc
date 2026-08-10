@@ -146,7 +146,7 @@ void __flibc_struct_member_check_function(void)
 
     /* linux_dirent64_t's members should never change its baked so */
     _struct_member_baked(linux_dirent64_t, d_ino, u64, 0);
-    _struct_member_baked(linux_dirent64_t, d_off, i64, 8);
+    _struct_member_baked(linux_dirent64_t, d_off, s64, 8);
     _struct_member_baked(linux_dirent64_t, d_reclen, u16, 16);
     _struct_member_baked(linux_dirent64_t, d_type, u8, 18);
     _struct_array_baked(linux_dirent64_t, d_name, char, 1, 19);
