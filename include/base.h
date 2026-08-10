@@ -168,61 +168,48 @@
 #if SYS_ABI == SYS_ABI_LLP64
     /* Windows 64-bit long is 32-bit use compiler extensions */
     #if SYS_CC == SYS_CC_GCC || SYS_CC == SYS_CC_CLANG
-        __extension__ typedef long long          int64_t;
-        __extension__ typedef unsigned long long uint64_t;
+        __extension__ typedef   signed long long s64;
+        __extension__ typedef unsigned long long u64;
     #else
-        typedef __int64          int64_t;
-        typedef unsigned __int64 uint64_t;
+        typedef   signed __int64 s64;
+        typedef unsigned __int64 u64;
     #endif
 #elif SYS_ABI == SYS_ABI_LP64
     /* Unix-like 64-bit long is 64-bit */
-    typedef long          int64_t;
-    typedef unsigned long uint64_t;
+    typedef   signed long s64;
+    typedef unsigned long u64;
 #else
     /* ILP32: long is 32-bit use long long */
     #if SYS_CC == SYS_CC_GCC || SYS_CC == SYS_CC_CLANG
-        __extension__ typedef long long          int64_t;
-        __extension__ typedef unsigned long long uint64_t;
+        __extension__ typedef   signed long long s64;
+        __extension__ typedef unsigned long long u64;
     #else
-        typedef long long          int64_t;
-        typedef unsigned long long uint64_t;
+        typedef   signed long long s64;
+        typedef unsigned long long u64;
     #endif
 #endif
 
-typedef signed char        int8_t;
-typedef unsigned char      uint8_t;
-typedef short              int16_t;
-typedef unsigned short     uint16_t;
-typedef int                int32_t;
-typedef unsigned int       uint32_t;
-
-/* short aliases */
-typedef  uint8_t  u8;
-typedef   int8_t  i8;
-typedef uint16_t u16;
-typedef  int16_t i16;
-typedef uint32_t u32;
-typedef  int32_t i32;
-typedef uint64_t u64;
-typedef  int64_t i64;
+typedef   signed char      s8;
+typedef unsigned char      u8;
+typedef   signed short     s16;
+typedef unsigned short     u16;
+typedef   signed int       s32;
+typedef unsigned int       u32;
 
 /* pointer-sized */
 #if SYS_ABI == SYS_ABI_LP64 || SYS_ABI == SYS_ABI_LLP64
     /* 64-bit ABI */
-    typedef int64_t  intptr_t;
-    typedef uint64_t uintptr_t;
-    typedef uint64_t usize_t;
-    typedef int64_t  ssize_t;
+    typedef s64 intptr_t;
+    typedef u64 uintptr_t;
+    typedef u64 usz;
+    typedef s64 ssz;
 #else
     /* 32-bit ABI */
-    typedef int32_t  intptr_t;
-    typedef uint32_t uintptr_t;
-    typedef uint32_t usize_t;
-    typedef int32_t  ssize_t;
+    typedef s32 intptr_t;
+    typedef u32 uintptr_t;
+    typedef u32 usz;
+    typedef s32 ssz;
 #endif
-
-typedef  usize_t usz;
-typedef  ssize_t ssz;
 
 /* This types helps developers to know what is expected from the pointer */
 typedef u8*        cstr_t;
