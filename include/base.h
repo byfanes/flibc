@@ -40,6 +40,47 @@
 #define SYS_CVER_C17     4
 #define SYS_CVER_C23     5
 
+#define SYS_CPPVER_UNKNOWN 0
+#define SYS_CPPVER_CPP98   1
+#define SYS_CPPVER_CPP11   2
+#define SYS_CPPVER_CPP14   3
+#define SYS_CPPVER_CPP17   4
+#define SYS_CPPVER_CPP20   5
+#define SYS_CPPVER_CPP23   6
+#define SYS_CPPVER_CPP26   7
+
+/* SYS_ISCPP */
+#ifdef __cplusplus
+    #define SYS_ISCPP 1
+#else
+    #define SYS_ISCPP 0
+#endif
+
+/* SYS_CPPVER */
+#ifdef __cplusplus
+    /* MSVC may report an old __cplusplus value unless /Zc:__cplusplus is enabled */
+    #if defined(_MSVC_LANG)
+        #define SYS_CPPVER_VALUE _MSVC_LANG
+    #else
+        #define SYS_CPPVER_VALUE __cplusplus
+    #endif
+    #if SYS_CPPVER_VALUE >= 202302L
+        #define SYS_CPPVER SYS_CPPVER_CPP23
+    #elif SYS_CPPVER_VALUE >= 202002L
+        #define SYS_CPPVER SYS_CPPVER_CPP20
+    #elif SYS_CPPVER_VALUE >= 201703L
+        #define SYS_CPPVER SYS_CPPVER_CPP17
+    #elif SYS_CPPVER_VALUE >= 201402L
+        #define SYS_CPPVER SYS_CPPVER_CPP14
+    #elif SYS_CPPVER_VALUE >= 201103L
+        #define SYS_CPPVER SYS_CPPVER_CPP11
+    #else
+        #define SYS_CPPVER SYS_CPPVER_CPP98
+    #endif
+#else
+    #define SYS_CPPVER SYS_CPPVER_UNKNOWN
+#endif
+
 /* SYS_CVER */
 #ifdef __STDC_VERSION__
     #if __STDC_VERSION__ >= 202311L
@@ -151,8 +192,15 @@
 #define offsetof(type, member) __builtin_offsetof(type, member)
 
 #define noreturn __no_return void
-#define NULL 0
-#define nullptr ((void *)0)
+
+/* Instead of NULL being ((void *)0)
+ * we use integer zero which is 'null' 0 and for
+ * pointer null which is 'nullptr' ((void *)0)
+ */
+#define null 0
+#if !SYS_ISCPP
+    #define nullptr ((void *)0)
+#endif
 
 #define FLIBC_STACK_THRESHOLD 4096
 #define FLIBC_FILE_BUFFER_SIZE 4096
@@ -216,7 +264,7 @@ typedef u8*        cstr_t;
 typedef const u8* ccstr_t;
 
 /* Booleans */
-#if SYS_CVER < SYS_CVER_C23 && !defined(__bool_true_false_are_defined)
+#if !SYS_ISCPP && (SYS_CVER < SYS_CVER_C23 && !defined(__bool_true_false_are_defined))
     typedef u8 bool;
     #define true 1
     #define false 0

@@ -4,7 +4,7 @@ error_t __validate_header
 (heap_header_t* header)
 {
     error_t res = success;
-    usz null = 0;
+    usz zeroed = 0;
     bool is_null = false, are_same = false;
 
     return ((void)(
@@ -19,7 +19,7 @@ error_t __validate_header
                 ? (header->alloc->meta.underflow(header->alloc, header), res = heap_underflow)
                 : (res = success)) ||
         /* Check the last null - Used mem_cmp_raw to avoid alignment issues */
-        (res = mem_cmp_raw(((u8*)(header + 1) + header->wanted_alloc), &null, sizeof(null), &is_null)) ||
+        (res = mem_cmp_raw(((u8*)(header + 1) + header->wanted_alloc), &zeroed, sizeof(zeroed), &is_null)) ||
             ((!is_null) /* should be dead end - overflow case*/
                 ? (header->alloc->meta.overflow(header->alloc, header), res = heap_overflow)
                 : (res = success))

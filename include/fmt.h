@@ -104,10 +104,10 @@ struct fmt_ctx_s {
 (require_sl_type(sl), __fmt_ctx_set(&__FMT_CTX_NAME__, __fmt_ctx_type_sl, sl, sizeof((sl)->items[0])))
 
 #define __fmt_ctx_set_str(str) \
-(require_typed_ptr(str, str_t), __fmt_ctx_set(&__FMT_CTX_NAME__, __fmt_ctx_type_str, str, NULL))
+(require_typed_ptr(str, str_t), __fmt_ctx_set(&__FMT_CTX_NAME__, __fmt_ctx_type_str, str, null))
 
 #define __fmt_ctx_set_io(io) \
-(require_typed_incom_ptr(io, struct file_s), __fmt_ctx_set(&__FMT_CTX_NAME__, __fmt_ctx_type_io, io, NULL))
+(require_typed_incom_ptr(io, struct file_s), __fmt_ctx_set(&__FMT_CTX_NAME__, __fmt_ctx_type_io, io, null))
 
 #define __fmt_ret() (__FMT_CTX_NAME__.code)
 #define __fmt_ret_wrote(wrote_out) (wrote_out = __FMT_CTX_NAME__.wrote, __FMT_CTX_NAME__.code)
