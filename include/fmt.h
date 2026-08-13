@@ -41,21 +41,22 @@ extern "C" {
    "") || func(&__FMT_CTX_NAME__, a, b, c, d, e) || __fmt_ctx_cstr(&__FMT_CTX_NAME__, ""
 
 /* Public formatters */
-/* TODO: #define arg_fp(num)      fmt_arg_1(__fmt_ctx_fp, num) */
-#define arg_hex(num)        fmt_arg_2(__fmt_ctx_hex, num, false)
-#define arg_HEX(num)        fmt_arg_2(__fmt_ctx_hex, num, true)
-#define arg_ptr(ptr)        fmt_arg_1(__fmt_ctx_ptr, ptr)
-#define arg_oct(num)        fmt_arg_1(__fmt_ctx_oct, num)
-#define arg_dec(num)        fmt_arg_1(__fmt_ctx_dec, num)
-#define arg_udec(num)       fmt_arg_1(__fmt_ctx_udec, num)
-#define arg_str(str)        fmt_arg_1(__fmt_ctx_str, str)
-#define arg_sl(sl)          fmt_arg_2(__fmt_ctx_sl, sl, (require_sl_type(sl), sizeof((sl)->items[0])))
-#define arg_cstr(cstr)      fmt_arg_1(__fmt_ctx_cstr, cstr)
-#define arg_buf(str, len)   fmt_arg_2(__fmt_ctx_buf, str, len)
-#define arg_str_lit(cstr)   fmt_arg_2(__fmt_ctx_buf, cstr, sizeof(cstr) - 1)
-#define arg_bool(b)         fmt_arg_1(__fmt_ctx_bool, b)
-#define arg_Bool(b)         fmt_arg_1(__fmt_ctx_Bool, b)
-#define arg_BOOL(b)         fmt_arg_1(__fmt_ctx_BOOL, b)
+#define arg_fp(num)            fmt_arg_2(__fmt_ctx_fp, num, false)
+#define arg_fp_scientific(num) fmt_arg_2(__fmt_ctx_fp, num, true)
+#define arg_hex(num)           fmt_arg_2(__fmt_ctx_hex, num, false)
+#define arg_HEX(num)           fmt_arg_2(__fmt_ctx_hex, num, true)
+#define arg_ptr(ptr)           fmt_arg_1(__fmt_ctx_ptr, ptr)
+#define arg_oct(num)           fmt_arg_1(__fmt_ctx_oct, num)
+#define arg_dec(num)           fmt_arg_1(__fmt_ctx_dec, num)
+#define arg_udec(num)          fmt_arg_1(__fmt_ctx_udec, num)
+#define arg_str(str)           fmt_arg_1(__fmt_ctx_str, str)
+#define arg_sl(sl)             fmt_arg_2(__fmt_ctx_sl, sl, (require_sl_type(sl), sizeof((sl)->items[0])))
+#define arg_cstr(cstr)         fmt_arg_1(__fmt_ctx_cstr, cstr)
+#define arg_buf(str, len)      fmt_arg_2(__fmt_ctx_buf, str, len)
+#define arg_str_lit(cstr)      fmt_arg_2(__fmt_ctx_buf, cstr, sizeof(cstr) - 1)
+#define arg_bool(b)            fmt_arg_1(__fmt_ctx_bool, b)
+#define arg_Bool(b)            fmt_arg_1(__fmt_ctx_Bool, b)
+#define arg_BOOL(b)            fmt_arg_1(__fmt_ctx_BOOL, b)
 
 /* Note: This is a private field user does not need this */
 enum __fmt_ctx_type_e {
@@ -175,7 +176,7 @@ fmt_status_t __fmt_ctx_ptr(fmt_ctx_t *ctx, const void *ptr);
 fmt_status_t __fmt_ctx_oct(fmt_ctx_t *ctx, u64 oct);
 fmt_status_t __fmt_ctx_dec(fmt_ctx_t *ctx, s64 dec);
 fmt_status_t __fmt_ctx_udec(fmt_ctx_t *ctx, u64 udec);
-/* TODO: fmt_status_t __fmt_ctx_fp(fmt_ctx_t *ctx, double fp); */
+fmt_status_t __fmt_ctx_fp(fmt_ctx_t *ctx, double fp, bool force_scientific);
 fmt_status_t __fmt_ctx_cstr(fmt_ctx_t *ctx, const char *str);
 fmt_status_t __fmt_ctx_sl(fmt_ctx_t *ctx, const void *sl, u64 el_size);
 fmt_status_t __fmt_ctx_buf(fmt_ctx_t *ctx, const void *buf, u64 len);

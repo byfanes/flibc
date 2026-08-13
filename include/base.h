@@ -276,4 +276,10 @@ typedef const u8* ccstr_t;
     #define _Nullable
 #endif
 
+
+
+#define TYPES_DOUBLE_MANTISSA_BITS 52
+#define TYPES_DOUBLE_EXPONENT_BITS 11
+#define TYPES_DOUBLE_BIAS 1023
+
 #endif /* __FLIBC_BASE_H__ */
