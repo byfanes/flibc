@@ -55,6 +55,7 @@ error_t env_get_var(env_t *env, str_t *key, str_t *val);
 /* Note: std_deinit and std_from_args(acts like std_init) dont return an
  *       error code because any error treated as panic
  */
+/* Note: std_from_args expects user to give the struct memory expected stack memory for that */
 /* This assumes envp comes after argv */
 void std_from_args(std_t *std, int argc, char **argv);
 void std_deinit(std_t **std);

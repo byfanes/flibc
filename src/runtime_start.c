@@ -11,10 +11,12 @@ noreturn __flibc_runtime_start
     /* Init variables */
     error_t ret = 0;
     std_t std = {0};
-    sl_u8_t args[MAX_ARGS_COUNT] = {0};
 
     /* Setup std things like in/out/err and args & env variables */
-    __std_from_args(&std, argc, argv, args);
+    /* TODO: Even though we use out entry we allocate the
+     *       argv list in heap which can be slow
+     */
+    std_from_args(&std, argc, argv);
 
     /* Call the main function and execute the user program */
     ret = main(&std);
