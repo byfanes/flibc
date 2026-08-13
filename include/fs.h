@@ -16,7 +16,7 @@ typedef struct fs_stat_s fs_stat_t;
 can_be_da(path_t, da_path_t);
 
 /* TODO: This is not cross-platform like other functions
- * This struct has been stolen from linux kernel
+ * This structure required for Linux syscall
  */
 struct fs_stat_s {
     usz st_dev;
