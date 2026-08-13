@@ -47,7 +47,7 @@ error_t path_cwd_set(path_t* p);
 error_t path_cwd_get(allocator_t* alloc, path_t* p);
 
 error_t path_size(path_t* p, usz* out);
-error_t path_mtime(path_t* p, time_t* out);
+error_t path_mtime(path_t* p, timestamp_t* out);
 error_t path_stat(path_t* p, fs_stat_t* out);
 
 error_t path_join(path_t* path, sl_u8_t* extend);

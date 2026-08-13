@@ -9,12 +9,12 @@ extern "C" {
 #include "error.h"
 #include "os.h"
 
-typedef struct time_s time_t;
+typedef struct time_s timestamp_t;
 
-error_t time_now(time_t* out);
+error_t time_now(timestamp_t* out);
 error_t time_sleep_ms(u64 ms);
-u64 time_diff_ms(time_t a, time_t b);
-u64 time_diff_sec(time_t a, time_t b);
+u64 time_diff_ms(timestamp_t a, timestamp_t b);
+u64 time_diff_sec(timestamp_t a, timestamp_t b);
 
 #ifdef __cplusplus
 }

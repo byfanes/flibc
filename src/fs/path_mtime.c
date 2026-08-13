@@ -1,7 +1,7 @@
 #include "fs_private.h"
 
 error_t path_mtime
-(path_t* p, time_t* out)
+(path_t* p, timestamp_t* out)
 {
     /* Init variables */
     fs_stat_t stats = {0};

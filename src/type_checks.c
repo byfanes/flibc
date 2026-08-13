@@ -114,8 +114,8 @@ _static_assert(sizeof(fs_stat_t) == ((sizeof(void*) == 8) ? 18*8 : 4*20), fs_sta
 _static_assert(sizeof(sock_addr_t) % 16 == 0, sock_addr_t_must_align_to_16bytes);
 _static_assert(sizeof(sock_addr_t) == 16, sock_addr_t_must_be_16_bytes);
 
-_static_assert(sizeof(time_t) % 16 == 0, time_t_must_align_to_16bytes);
-_static_assert(sizeof(time_t) == 16, time_t_must_be_16_bytes);
+_static_assert(sizeof(timestamp_t) % 16 == 0, timestamp_t_must_align_to_16bytes);
+_static_assert(sizeof(timestamp_t) == 16, timestamp_t_must_be_16_bytes);
 
 _static_assert(sizeof(__type_test_slice) == 16, slices_are_same_with_iovecs_size_should_be_same);
 
@@ -175,8 +175,8 @@ void __flibc_struct_member_check_function(void)
     _struct_member_baked(sock_addr_t, family, u16, 0);
     _struct_array_baked(sock_addr_t, data, u8, 14, 2);
 
-    /* time_t's members should never change its baked so */
-    _struct_member_baked(time_t, sec, u64, 0);
-    _struct_member_baked(time_t, nsec, u64, 8);
+    /* timestamp_t's members should never change its baked so */
+    _struct_member_baked(timestamp_t, sec, u64, 0);
+    _struct_member_baked(timestamp_t, nsec, u64, 8);
 
 }
