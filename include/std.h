@@ -32,7 +32,7 @@ struct env_s {
 };
 
 struct std_s {
-    allocator_t* alloc;
+    allocator_t *alloc;
     io_t io;
     sl_u8_t exe;
     sl_cstrs_t args;
@@ -44,17 +44,22 @@ struct std_s {
  * and if user wants to use old main they are probably use it with a glibc/musl or any other library
  * so those libraries should start/init their internals and thats mostly done before the main
  */
-extern error_t main(std_t* std);
+extern error_t main(std_t *std);
 #endif /* FLIBC_OLD_MAIN */
 
-error_t env_add_var_t(env_t* env, env_var_t var);
-error_t env_add_var(allocator_t* alloc, env_t* env, sl_u8_t* key, sl_u8_t* val);
+error_t env_add_var_t(env_t *env, env_var_t var);
+error_t env_add_var(allocator_t *alloc, env_t *env, sl_u8_t *key, sl_u8_t *val);
 
-error_t env_get_var(env_t* env, str_t* key, str_t* val);
+error_t env_get_var(env_t *env, str_t *key, str_t *val);
 
+/* Note: std_deinit and std_from_args(acts like std_init) dont return an
+ *       error code because any error treated as panic
+ */
 /* This assumes envp comes after argv */
-void std_from_args(std_t* std, int argc, char** argv);
-noreturn std_exit(std_t* std, ssz code);
+void std_from_args(std_t *std, int argc, char **argv);
+void std_deinit(std_t **std);
+
+noreturn std_exit(std_t *std, ssz code);
 noreturn std_abort(ssz code);
 
 #ifdef __cplusplus

@@ -1,15 +1,7 @@
 #include "std_private.h"
 
-/* For stds which are different than __flibc_runtime_start's use heap memory */
 void std_from_args
 (std_t* std, s32 argc, char** argv)
-{
-    __std_from_args(std, argc, argv, nullptr);
-}
-
-/* args_ptr expected to be a nullptr or a valid sl_u8_t[MAX_ARGS_COUNT] */
-void __std_from_args
-(std_t* std, s32 argc, char** argv, sl_u8_t *args_ptr)
 {
     /* Init varaibles */
     s32 i = 0;
@@ -28,12 +20,8 @@ void __std_from_args
     { __panic("STD Init Panic: Allocator failed to init!\n"); }
 
     /* Check for if its needed to allocate memory or not */
-    if(args_ptr) {
-        if(mem_alloc_sl(std->alloc, &std->args, (u32)argc))
-        { __panic("STD Init Panic: Could not allocate memory for args slice list!\n"); }
-        /* TODO: Remove this later its a workaround for 47th line */
-        args_ptr = std->args.items;
-    }
+    if(mem_alloc_sl(std->alloc, &std->args, (u32)argc))
+    { __panic("STD Init Panic: Could not allocate memory for args slice list!\n"); }
 
     /* Open standard files */
     if(io_open_stdin(std->alloc, &std->io.in))
@@ -42,9 +30,6 @@ void __std_from_args
     { __panic("STD Init Panic: Could not open standard output file!\n"); }
     if(io_open_stderr(std->alloc, &std->io.err))
     { __panic("STD Init Panic: Could not open standard error file!\n"); }
-
-    /* Set slice for _args to parse now */
-    slice_set(&std->args, args_ptr, (u32)argc);
 
     /* Set all of the arguments one by one */
     for(i = 0; i < argc; ++i) {
