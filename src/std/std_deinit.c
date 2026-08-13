@@ -1,16 +1,13 @@
 #include "std_private.h"
 
 void std_deinit
-(std_t **in)
+(std_t *std)
 {
     /* Init variables */
     usz i = 0;
-    std_t *std = nullptr;
 
     /* If its a nullptr return */
-    if(!in || !*in) { return; }
-
-    std = *in;
+    if(!std) { return; }
 
     /* Free the slice list */
     if(mem_free_sl(&std->args))
