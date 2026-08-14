@@ -101,7 +101,7 @@ error_t __da_push(void* da, usz el_size, void* item);
 (require_da_type((da)), require_same_ptr((da)->items, item), \
  __da_push((da), sizeof((da)->items[0]), (item)))
 
-error_t __da_push_sl(void* da, usz el_size, void* sl);
+error_t __da_push_sl(void *da, usz el_size, const void *sl);
 #define da_push_sl(da, sl) \
 (require_da_type((da)), require_sl_type((sl)), \
 __da_push_sl((da), sizeof((da)->items[0]), (sl)))

@@ -1,12 +1,12 @@
 #include "da_private.h"
 
 error_t __da_push_sl
-(void* da, usz el_size, void* sl)
+(void* da, usz el_size, const void* sl)
 {
     /* Init variables */
     error_t res = success;
     def_da_t *def = da;
-    sl_u8_t *ssl = sl;
+    const sl_u8_t *ssl = sl;
 
     return ((void)(
         /* Check user input if count is zero early return */
