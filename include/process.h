@@ -9,6 +9,7 @@ extern "C" {
 #include "fs.h"
 #include "std.h"
 #include "os.h"
+#include "memory.h"
 
 typedef str_t cmd_t;
 typedef os_pid_t proc_t;
@@ -27,7 +28,11 @@ error_t proc_spawn(cmd_t* cmd, env_t* env, da_proc_t* procs);
 error_t proc_spawn_fixed(cmd_t* cmd, env_t* env, da_proc_t* procs, ssz *code);
 error_t proc_wait(da_proc_t* procs, da_ssz_t *codes);
 
-error_t cmd_append(cmd_t* cmd, sl_u8_t* sl);
+error_t __cmd_append(cmd_t *cmd, const void *sl, usz el_size);
+#define cmd_append(cmd, sl) ( \
+    require_same_ptr((sl)->items, (cmd)->items), \
+    require_sl_type((sl)), \
+    __cmd_append(cmd, sl, sizeof((sl)->items[0])))
 
 #ifdef __cplusplus
 }
