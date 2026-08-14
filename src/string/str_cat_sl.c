@@ -1,11 +1,11 @@
 #include "string_private.h"
 
 error_t __str_cat_sl
-(str_t* base, void* raw_sl, usz el_size)
+(str_t *base, const void* raw_sl, usz el_size)
 {
     /* Init variables */
     error_t res = success;
-    sl_u8_t* ssl = raw_sl;
+    const sl_u8_t *ssl = raw_sl;
 
     return ((void)(
         /* Validate user input */

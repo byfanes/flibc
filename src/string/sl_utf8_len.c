@@ -1,7 +1,7 @@
 #include "string_private.h"
 
 error_t __sl_utf8_len
-(void* raw_sl, usz el_size, usz* out)
+(const void *raw_sl, usz el_size, usz *out)
 {
     /* Init variables */
     usz i = 0, count = 0;
@@ -13,7 +13,7 @@ error_t __sl_utf8_len
     if(!out || !raw_sl) { return null_pointer; }
     if(!el_size) { return elsize_zero; }
 
-    slice_set(&sl, ((sl_u8_t*)raw_sl)->items, ((sl_u8_t*)raw_sl)->count * el_size);
+    slice_set(&sl, ((const sl_u8_t*)raw_sl)->items, ((const sl_u8_t*)raw_sl)->count * el_size);
     if(!sl.items || !sl.count) { *out = 0; return success; }
     
     /* Last byte of each sequence increments the loop
