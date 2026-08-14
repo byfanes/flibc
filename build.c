@@ -7,11 +7,13 @@
 #include "fmt.h"
 
 /* TODO: Check return of the functions */
-/* TODO: Move to sl_ccstr_t */
 
 /* Compiler flags (gcc and clang) should contain common flags inside them */
-const sl_u8_t gcc, gcc_flags, clang, clang_flags, debug_flags, release_flags;
-const sl_ccstr_t common_flags;
+/* Those are customaziables if you want to change them they are in the bottom of the file */
+const sl_ccstr_t
+gcc, gcc_flags, clang, clang_flags, debug_flags, release_flags,
+common_flags, ar, ld, obj_ext, crt_name, so_flags, ar_flags,
+old_ext, c_ext, build_yourself_flags, freestanding_flags;
 
 /* General variables which is setted in main - set_general */
 typedef struct general_s general_t;
@@ -21,19 +23,19 @@ struct general_s {
     bool is_clang;
     bool analyze;
     bool debug;
-    sl_u8_t ar;
-    sl_u8_t cc;
-    sl_u8_t ld;
-    sl_u8_t c_ext;
-    sl_u8_t old_ext;
-    sl_u8_t obj_ext;
-    sl_u8_t crt_name;
-    sl_u8_t c_flags;
-    sl_u8_t opt_flags;
-    sl_u8_t so_flags;
-    sl_u8_t ar_flags;
-    sl_u8_t freestanding_flags;
-    sl_u8_t build_yourself_flags;
+    const sl_ccstr_t *ar;
+    const sl_ccstr_t *cc;
+    const sl_ccstr_t *ld;
+    const sl_ccstr_t *c_ext;
+    const sl_ccstr_t *old_ext;
+    const sl_ccstr_t *obj_ext;
+    const sl_ccstr_t *crt_name;
+    const sl_ccstr_t *c_flags;
+    const sl_ccstr_t *opt_flags;
+    const sl_ccstr_t *so_flags;
+    const sl_ccstr_t *ar_flags;
+    const sl_ccstr_t *freestanding_flags;
+    const sl_ccstr_t *build_yourself_flags;
 };
 
 /* Packed struct which is used in callbacks to pass data around */
@@ -131,7 +133,7 @@ void build_file
     /* Init variables */
     cmd_t cmd = {0};
     path_t tmp = {0};
-    time_t in_time = {0}, out_time = {0};
+    timestamp_t in_time = {0}, out_time = {0};
     ssz exit_code = 0;
     use_fmt_ctx;
 
@@ -158,10 +160,10 @@ void build_file
 
     /* Allocate cmd and start building it */
     str_init(pack->std->alloc, &cmd, 256);
-    str_cat_sl(&cmd, &pack->general->cc);
-    cmd_append(&cmd, &pack->general->freestanding_flags);
-    cmd_append(&cmd, &pack->general->c_flags);
-    cmd_append(&cmd, &pack->general->opt_flags);
+    str_cat_sl(&cmd, pack->general->cc);
+    cmd_append(&cmd, pack->general->freestanding_flags);
+    cmd_append(&cmd, pack->general->c_flags);
+    cmd_append(&cmd, pack->general->opt_flags);
     str_cat_cstr(&cmd, " -c -o ");
     /* Its safe to cast path_t* to slice_u8* */
     /* Dynamic arrays can decay to slices */
@@ -218,7 +220,7 @@ void callback
     }
 
     /* Check if its the crt file or not */
-    mem_cmp(name, &pack->general->crt_name, &eq);
+    mem_cmp(name, pack->general->crt_name, &eq);
 
     /* Get extension */
     path_ext(tmp, &pack->ext);
@@ -231,7 +233,7 @@ void callback
         /* Construct output path */
         str_cat_sl(pack->build_dir, path);
         path_join(pack->build_dir, name);
-        path_change_ext(pack->build_dir, &pack->general->obj_ext);
+        path_change_ext(pack->build_dir, pack->general->obj_ext);
 
         /* Build the current file */
         build_file(tmp, pack->build_dir, arg, eq);
@@ -252,13 +254,13 @@ void make_libs
 
     /* Set .a library command and flags */
     str_init(std->alloc, &arc_cmd, 2048);
-    cmd_append(&arc_cmd, &pack->general->ar);
-    cmd_append(&arc_cmd, &pack->general->ar_flags);
+    cmd_append(&arc_cmd, pack->general->ar);
+    cmd_append(&arc_cmd, pack->general->ar_flags);
 
     /* Set .a library command and flags */
     str_init(std->alloc, &so_cmd, 2048);
-    cmd_append(&so_cmd, &pack->general->ld);
-    cmd_append(&so_cmd, &pack->general->so_flags);
+    cmd_append(&so_cmd, pack->general->ld);
+    cmd_append(&so_cmd, pack->general->so_flags);
 
     /* Iterate over the objects list and append to commands and free it */
     (void)fmt_io_nl(std->io.out, "Compiling now " arg_udec(objs->count)
@@ -290,7 +292,7 @@ bool build_yourself
 {
     /* Init variables */
     path_t c_file = {0}, exe_file = {0}, old_exe = {0};
-    time_t exe_time = {0}, c_time = {0};
+    timestamp_t exe_time = {0}, c_time = {0};
     cmd_t cmd = {0};
     u32 i = 0;
     error_t ret = 0;
@@ -306,7 +308,7 @@ bool build_yourself
     /* Construct the paths */
     str_cat_sl(&c_file, &std->exe);
     str_cat_sl(&exe_file, &std->exe);
-    path_change_ext(&c_file, &pack->general->c_ext);
+    path_change_ext(&c_file, pack->general->c_ext);
 
     /* Get last modification times */
     path_mtime(&c_file, &c_time);
@@ -328,21 +330,19 @@ bool build_yourself
 
     /* Construct old path which 'build.old' and rename the 'build' file */
     str_dup(std->alloc, &exe_file, &old_exe);
-    path_change_ext(&old_exe, &pack->general->old_ext);
+    path_change_ext(&old_exe, pack->general->old_ext);
     path_rename(&exe_file, &old_exe);
 
     /* Construct the command */
     str_init(std->alloc, &cmd, 128);
-    cmd_append(&cmd, &pack->general->cc);
-    cmd_append(&cmd, &pack->general->freestanding_flags);
+    cmd_append(&cmd, pack->general->cc);
+    cmd_append(&cmd, pack->general->freestanding_flags);
     /* Build script always uses debug flags - cast will be removed in the future */
-    cmd_append(&cmd, (sl_u8_t *)&debug_flags);
-    /* Its safe to cast path_t* to slice_u8* */
-    /* Dynamic arrays can decay to slices */
-    cmd_append(&cmd, (sl_u8_t*)&c_file);
-    cmd_append(&cmd, &pack->general->build_yourself_flags);
+    cmd_append(&cmd, &debug_flags);
+    cmd_append(&cmd, &c_file);
+    cmd_append(&cmd, pack->general->build_yourself_flags);
     str_cat_cstr(&cmd, " -o ");
-    cmd_append(&cmd, (sl_u8_t*)&exe_file);
+    cmd_append(&cmd, &exe_file);
 
     /* Print the command if program is started with verbose */
     if(pack->general->verbose) {
@@ -361,7 +361,7 @@ bool build_yourself
 
     /* Clear and start construct the new command and append the args */
     str_clear(&cmd);
-    cmd_append(&cmd, (sl_u8_t*)&exe_file);
+    cmd_append(&cmd, &exe_file);
     str_cat_cstr(&cmd, " -b");
     for(i = 0; i < std->args.count; ++i) {
         cmd_append(&cmd, std->args.items + i);
@@ -418,52 +418,52 @@ void set_general
     general_t* general = pack->general;
 
     /* Set basic thins */
-    slice_set_cstr(&general->ar, "ar");
-    slice_set_cstr(&general->ld, "ld");
-    slice_set_cstr(&general->obj_ext, "o");
-    slice_set_cstr(&general->crt_name, "fcrt0.s");
+    general->ar = &ar;
+    general->ld = &ld;
+    general->obj_ext = &obj_ext;
+    general->crt_name = &crt_name;
 
     /* chose the compiler */
-    if(pack->general->is_clang)
-    { mem_copy_raw(&general->cc, &clang, sizeof(general->cc)); }
-    else
-    { mem_copy_raw(&general->cc, &gcc, sizeof(general->cc)); }
-
+    general->cc = (pack->general->is_clang) ? &clang : &gcc;
+    
     /* add compiler flags */
-    if(pack->general->analyze && !pack->general->is_clang)
-    { mem_copy_raw(&general->c_flags, &gcc_flags, sizeof(general->c_flags)); }
-    else if(pack->general->is_clang)
-    { mem_copy_raw(&general->c_flags, &clang_flags, sizeof(general->c_flags)); }
-    else
-    { mem_copy_raw(&general->c_flags, &common_flags, sizeof(general->c_flags)); }
+    general->c_flags = (pack->general->analyze && !pack->general->is_clang) ? &gcc_flags : (pack->general->is_clang) ? &clang_flags : &common_flags;
+    general->opt_flags = (pack->general->debug) ? &debug_flags : &release_flags;
 
-    if(pack->general->debug)
-    { mem_copy_raw(&general->opt_flags, &debug_flags, sizeof(general->opt_flags)); }
-    else
-    { mem_copy_raw(&general->opt_flags, &release_flags, sizeof(general->opt_flags)); }
+    general->so_flags = &so_flags;
+    general->ar_flags = &ar_flags;
 
-    slice_set_cstr(&general->so_flags, "-nostdlib -shared -o .build/flibc.so");
-    slice_set_cstr(&general->ar_flags, "rcs -o .build/flibc.a");
+    general->freestanding_flags = &freestanding_flags;
 
-    slice_set_cstr(&general->freestanding_flags,
-        "-nostdlib -ffreestanding -Iinclude -nodefaultlibs");
+    general->c_ext = &c_ext;
+    general->old_ext = &old_ext;
 
-    slice_set_cstr(&general->c_ext, ".c");
-    slice_set_cstr(&general->old_ext, ".old");
-
-    /* It ends with -o reason same as c_flags */
-    slice_set_cstr(&general->build_yourself_flags,
-        ".build/src/arch/x86_64/fcrt0.o -L. -l:.build/flibc.so -g3 ");
+    general->build_yourself_flags = &build_yourself_flags;
 }
 
 /* Used for bare bones building not checking anything just to build */
 const sl_ccstr_t common_flags = ccstr_to_u8(" -Iinclude -fPIC -std=c89 ");
 
-const sl_u8_t release_flags = ccstr_to_u8(" -march=native -O3 -g0 ");
-const sl_u8_t debug_flags = ccstr_to_u8(" -g3 ");
+const sl_ccstr_t c_ext = ccstr_to_u8(".c");
+const sl_ccstr_t old_ext = ccstr_to_u8(".old");
 
-const sl_u8_t gcc = ccstr_to_u8("gcc");
-const sl_u8_t gcc_flags = ccstr_to_u8(
+const sl_ccstr_t ar = ccstr_to_u8("ar");
+const sl_ccstr_t ld = ccstr_to_u8("ld");
+const sl_ccstr_t obj_ext = ccstr_to_u8("o");
+const sl_ccstr_t crt_name = ccstr_to_u8("fcrt0.s");
+
+const sl_ccstr_t freestanding_flags = ccstr_to_u8("-nostdlib -ffreestanding -Iinclude -nodefaultlibs");
+/* It ends with -o reason same as c_flags */
+const sl_ccstr_t build_yourself_flags = ccstr_to_u8(".build/src/arch/x86_64/fcrt0.o -L. -l:.build/flibc.so -g3 ");
+
+const sl_ccstr_t release_flags = ccstr_to_u8(" -march=native -O3 -g0 ");
+const sl_ccstr_t debug_flags = ccstr_to_u8(" -g3 ");
+
+const sl_ccstr_t so_flags = ccstr_to_u8("-nostdlib -shared -o .build/flibc.so ");
+const sl_ccstr_t ar_flags = ccstr_to_u8("rcs -o .build/flibc.a");
+
+const sl_ccstr_t gcc = ccstr_to_u8("gcc");
+const sl_ccstr_t gcc_flags = ccstr_to_u8(
 /* Core, optimization, and Sanitizers */
 " -std=c89 -Iinclude -fPIC "
 " -fsanitize-trap=undefined -fsanitize=undefined "
@@ -568,5 +568,5 @@ const sl_u8_t gcc_flags = ccstr_to_u8(
 " -Wsuggest-attribute=returns_nonnull "
 );
 
-const sl_u8_t clang = ccstr_to_u8("clang");
-const sl_u8_t clang_flags = ccstr_to_u8(" -Wno-unused-command-line-argument -Iinclude -fPIC -std=c89 ");
+const sl_ccstr_t clang = ccstr_to_u8("clang");
+const sl_ccstr_t clang_flags = ccstr_to_u8(" -Wno-unused-command-line-argument -Iinclude -fPIC -std=c89 ");
