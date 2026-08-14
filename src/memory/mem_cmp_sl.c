@@ -2,10 +2,10 @@
 #include "error.h"
 
 error_t __mem_cmp_sl
-(void* lhs, void* rhs, usz el_size, bool* out)
+(const void *lhs, const void *rhs, usz el_size, bool* out)
 {
     /* Init variables */
-    sl_u8_t *lsl = lhs, *rsl = rhs;
+    const sl_u8_t *lsl = lhs, *rsl = rhs;
 
     return
         (!lsl || !rsl || !out) ? null_pointer :

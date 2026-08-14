@@ -18,7 +18,7 @@ extern "C" {
 /* Note: sizeof is not wrapped into parantheses because this macro expects
  * string literals and sizeof can only work with string literals if it does
  * not have parantheses */
-#define ccstr_to_u8(ccstr) {(void*)(uintptr_t)(ccstr), sizeof ccstr - 1}
+#define ccstr_to_u8(ccstr) {(const u8 *)(ccstr), sizeof ccstr - 1}
 
 /* Those macros are used in most slice/da functions to improve readability */
 #define ptr_meta(ptr) (ptr), sizeof((ptr)->items[0])
@@ -73,6 +73,7 @@ struct sl_ccstr_s {
     const usz count;
 };
 
+/* sl_ccstr_t's and sl_cstr_t's count should not include the null termination */
 typedef struct sl_ccstr_s sl_ccstr_t;
 typedef sl_u8_t sl_cstr_t;
 
@@ -147,11 +148,11 @@ error_t __mem_move_sl(void *dst, void *src, usz el_size);
 #define mem_move(dst, src) \
 (require_sl_type_2((dst), (src)), __mem_move_sl((dst), (src), sizeof((dst)->items[0])))
 
-error_t __mem_cmp_sl(void *lhs, void *rhs, usz el_size, bool *out);
+error_t __mem_cmp_sl(const void *lhs, const void *rhs, usz el_size, bool *out);
 #define mem_cmp(lhs, rhs, out) \
 (require_sl_type_2((lhs), (rhs)), __mem_cmp_sl((lhs), (rhs), sizeof((lhs)->items[0]), out))
 
-error_t __mem_cmp_sl_min(void *lhs, void *rhs, usz el_size, bool *out);
+error_t __mem_cmp_sl_min(const void *lhs, const void *rhs, usz el_size, bool *out);
 #define mem_cmp_min(lhs, rhs, res) \
 (require_sl_type_2((lhs), (rhs)), __mem_cmp_sl_min((lhs), (rhs), sizeof((lhs)->items[0]), res))
 
