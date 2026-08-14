@@ -51,7 +51,11 @@ error_t path_mtime(path_t* p, timestamp_t* out);
 error_t path_stat(path_t* p, fs_stat_t* out);
 
 error_t path_join(path_t* path, sl_u8_t* extend);
-error_t path_change_ext(path_t* path, sl_u8_t* ext);
+error_t __path_change_ext(path_t *path, const void *ext, usz el_size);
+#define path_change_ext(path, ext) ( \
+    require_same_ptr((path)->items, (ext)->items),\
+    require_sl_type(ext), \
+    __path_change_ext((path), (ext), sizeof((ext)->items[0])))
 
 error_t path_is_absolute(path_t* p, bool* out);
 error_t path_is_relative(path_t* p, bool* out);

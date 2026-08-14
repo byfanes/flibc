@@ -1,7 +1,7 @@
 #include "fs_private.h"
 
-error_t path_change_ext
-(path_t* path, sl_u8_t* ext)
+error_t __path_change_ext
+(path_t *path, const void *vext, usz el_size)
 {
     /* Init variables */
     ssz i = 0;
@@ -9,10 +9,18 @@ error_t path_change_ext
     bool has_dot = false;
     bool has_ext_dot = false;
     error_t res = success;
+    sl_u8_t extension = {0};
+    const sl_u8_t *ext = vext;
 
     /* Check inputs - Right now we treat zero counts as null pointer */
+    if(!el_size) { return elsize_zero; }
+
     if(!path || !ext || !path->items || !path->count || !ext->items || !ext->count)
     { return null_pointer; }
+
+    /* */
+    slice_set(&extension, ext->items, ext->count * el_size);
+    ext = &extension;
 
     /* Check extension has a '.'  */
     has_ext_dot = (ext->items[0] == '.');
@@ -53,5 +61,5 @@ error_t path_change_ext
          */
     }
 
-    return da_push_sl(path, ext);
+    return __da_push_sl(path, el_size, vext);
 }
