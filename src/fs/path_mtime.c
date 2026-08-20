@@ -12,7 +12,6 @@ error_t path_mtime
         (res = (out) ? (out->sec = 0, out->nsec = 0, success) : null_pointer) ||
         /* Get the stats of the file and set the time modifiers */
         (res = path_stat(p, &stats)) ||
-        (out->nsec = stats.st_mtime_nsec, success) ||
-        (out->sec = stats.st_mtime, success)
+        (*out = stats.mtime, success)
     ), res);
 }

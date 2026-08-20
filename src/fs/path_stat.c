@@ -10,8 +10,8 @@ error_t path_stat
         /* Check users' input - p is checked in shadow null */
         (res = (out) ? success : null_pointer) ||
         (res = str_add_shadow_null(p)) ||
+        (res = mem_zeroed(out)) ||
         /* Give the path to kernel to handle the rest */
-        ((0 > syscall_2_linux(syscall_stat, (ssz)p->items, (ssz)out))
-            ? (res = fs_error) : (res = success))
+        (res = __os_path_stat(p->items, out))
     ), res);
 }

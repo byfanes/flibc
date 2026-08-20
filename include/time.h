@@ -9,7 +9,7 @@ extern "C" {
 #include "error.h"
 #include "os.h"
 
-typedef struct time_s timestamp_t;
+typedef struct timestamp_s timestamp_t;
 
 error_t time_now(timestamp_t* out);
 error_t time_sleep_ms(u64 ms);

@@ -175,10 +175,15 @@ extern ssz syscall_6_linux
 
 #define S_IRUSR (1 << 8)
 #define S_IWUSR (1 << 7)
+#define S_IXUSR (1 << 6)
+
 #define S_IRGRP (1 << 5)
 #define S_IWGRP (1 << 4)
+#define S_IXGRP (1 << 3)
+
 #define S_IROTH (1 << 2)
 #define S_IWOTH (1 << 1)
+#define S_IXOTH (1 << 0)
 
 #define S_IFMT  0170000
 
@@ -205,6 +210,7 @@ extern ssz syscall_6_linux
 
 /* Struct declarations */
 typedef struct linux_dirent64_s linux_dirent64_t;
+typedef struct linux_stat64_s linux_stat64_t;
 typedef struct linux_clone_args_s linux_clone_args_t;
 /* C89 does not support flexible arrays so we cast it
  * from char[1] to null terminated cstr
@@ -215,6 +221,29 @@ struct linux_dirent64_s {
     u16 d_reclen;
     u8 d_type;
     char d_name[1];
+};
+
+struct linux_stat64_s {
+    usz st_dev;
+    usz st_ino;
+    usz st_nlink;
+    u32 st_mode;
+    u32 st_uid;
+    u32 st_gid;
+    u32 __pad0;
+    usz st_rdev;
+    ssz st_size;
+    ssz st_blksize;
+    ssz st_blocks;
+
+    usz st_atime;
+    usz st_atime_nsec;
+    usz st_mtime;
+    usz st_mtime_nsec;
+    usz st_ctime;
+    usz st_ctime_nsec;
+
+    ssz __unused[3];
 };
 
 /* For threads and this needs to be implemented in assembly */

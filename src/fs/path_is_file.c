@@ -12,6 +12,6 @@ error_t path_is_file
         (res = (out) ? (*out = false, success) : null_pointer) ||
         /* Get that stats of the file and check for dir flag */
         (res = path_stat(p, &stats)) ||
-        (*out = S_ISREG(stats.st_mode), success)
+        (*out = (stats.type == fs_file_regular), success)
     ), res);
 }

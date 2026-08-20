@@ -32,8 +32,9 @@ typedef struct sl_cstr_s os_slcstr_t;
 /* Use the same types from the public layer to avoid duplication */
 typedef enum file_type_e os_file_type_t;
 typedef enum seek_type_e os_seek_type_t;
+typedef struct fs_stat_generic_s os_stat_generic_t;
 typedef struct sock_addr_s os_saddr_t;
-typedef struct time_s os_time_t;
+typedef struct timestamp_s os_time_t;
 
 typedef void*       os_outptr_t;
 typedef const void* os_inptr_t;
@@ -89,6 +90,7 @@ error_t __os_dir_remove(os_cstr_t path);
 
 error_t __os_path_rename(os_cstr_t from, os_cstr_t to);
 error_t __os_path_exists(os_cstr_t path, bool *out);
+error_t __os_path_stat(os_cstr_t path, os_stat_generic_t *out);
 
 error_t __os_time_now(os_time_t *out);
 error_t __os_time_sleep_ms(u64 ms);

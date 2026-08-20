@@ -1,7 +1,7 @@
 #include "fs_private.h"
 
 error_t path_size
-(path_t* p, usz* out)
+(path_t* p, ssz* out)
 {
     /* Init variables */
     fs_stat_t stats = {0};
@@ -12,6 +12,6 @@ error_t path_size
         (res = (out) ? (*out = 0, success) : null_pointer) ||
         /* Get the stats and get size from that */
         (res = path_stat(p, &stats)) ||
-        (*out = (usz)stats.st_size, success)
+        (*out = stats.size, success)
     ), res);
 }

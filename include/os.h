@@ -54,7 +54,7 @@ struct socket_s {
     u32 __padding;
 };
 
-struct time_s {
+struct timestamp_s {
     u64 sec;
     u64 nsec;
 };
@@ -76,6 +76,69 @@ struct sl_cstr_s {
     char *items;
     usz   count;
 };
+
+#define FS_STAT_VALID_TYPE      (1u << 0)
+#define FS_STAT_VALID_UID       (1u << 1)
+#define FS_STAT_VALID_GID       (1u << 2)
+#define FS_STAT_VALID_PERM      (1u << 3)
+#define FS_STAT_VALID_RDEV      (1u << 4)
+#define FS_STAT_VALID_BLOCKS    (1u << 5)
+#define FS_STAT_VALID_BLKSIZE   (1u << 6)
+#define FS_STAT_VALID_CTIME     (1u << 7)
+#define FS_STAT_VALID_BTIME     (1u << 8)
+
+/* Generic type and mode fields */
+enum fs_file_type_e {
+    fs_file_unknown = 0,
+    fs_file_regular,
+    fs_file_directory,
+    fs_file_symlink,
+    fs_file_char_device,
+    fs_file_block_device,
+    fs_file_fifo,
+    fs_file_socket
+};
+
+struct fs_stat_generic_s {
+    /* valid field's bits determines which variables are valid to use */
+    u32 valid;
+    u32 __pad;
+
+    u64 dev;
+    u64 ino;
+    u64 nlink;
+
+    /* Same as enum fs_file_type_e type */
+    u32 type;
+    u32 perm;
+
+    u32 uid;
+    u32 gid;
+
+    u64 rdev;
+
+    s64 size;
+    s64 blksize;
+    s64 blocks;
+
+    struct timestamp_s atime;
+    struct timestamp_s mtime;
+    struct timestamp_s ctime;
+    struct timestamp_s btime;
+};
+
+/* Generic Unix-style permission bits. */
+#define FS_STAT_MODE_UR  0x0001
+#define FS_STAT_MODE_UW  0x0002
+#define FS_STAT_MODE_UX  0x0004
+
+#define FS_STAT_MODE_GR  0x0008
+#define FS_STAT_MODE_GW  0x0010
+#define FS_STAT_MODE_GX  0x0020
+
+#define FS_STAT_MODE_OR  0x0040
+#define FS_STAT_MODE_OW  0x0080
+#define FS_STAT_MODE_OX  0x0100
 
 struct std_s;
 

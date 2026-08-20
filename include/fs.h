@@ -11,42 +11,20 @@ extern "C" {
 #include "da.h"
 
 typedef str_t path_t;
-typedef struct fs_stat_s fs_stat_t;
+typedef struct fs_stat_generic_s fs_stat_t;
 
 can_be_da(path_t, da_path_t);
 
 /* TODO: This is not cross-platform like other functions
  * This structure required for Linux syscall
  */
-struct fs_stat_s {
-    usz st_dev;
-    usz st_ino;
-    usz st_nlink;
-    u32 st_mode;
-    u32 st_uid;
-    u32 st_gid;
-    u32 __pad0;
-    usz st_rdev;
-    ssz st_size;
-    ssz st_blksize;
-    ssz st_blocks;
-
-    usz st_atime;
-    usz st_atime_nsec;
-    usz st_mtime;
-    usz st_mtime_nsec;
-    usz st_ctime;
-    usz st_ctime_nsec;
-
-    ssz __unused[3];
-};
 
 error_t path_exists(path_t* p, bool* out);
 error_t path_rename(path_t* from, path_t* to);
 error_t path_cwd_set(path_t* p);
 error_t path_cwd_get(allocator_t* alloc, path_t* p);
 
-error_t path_size(path_t* p, usz* out);
+error_t path_size(path_t* p, ssz* out);
 error_t path_mtime(path_t* p, timestamp_t* out);
 error_t path_stat(path_t* p, fs_stat_t* out);
 

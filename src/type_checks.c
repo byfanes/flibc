@@ -1,5 +1,6 @@
 #include "base.h"
 #include "os.h"
+#include "time.h"
 #include "memory/memory_private.h"
 #include "da/da_private.h"
 #include "fs/fs_private.h"
@@ -108,8 +109,10 @@ _static_assert(sizeof(linux_dirent64_t) == 24, linux_dirent64_should_be_20bytes)
 
 _static_assert(sizeof(heap_header_t) % 16 == 0, heap_header_t_must_align_to_16bytes);
 
-_static_assert(sizeof(fs_stat_t) % 16 == 0, fs_stat_t_must_align_to_16bytes);
-_static_assert(sizeof(fs_stat_t) == ((sizeof(void*) == 8) ? 18*8 : 4*20), fs_stat_t_size_check);
+#if SYS_OS == SYS_OS_LINUX && SYS_ARCH == SYS_ARCH_X86_64
+_static_assert(sizeof(linux_stat64_t) % 16 == 0, linux_stat64_t_must_align_to_16bytes);
+_static_assert(sizeof(linux_stat64_t) == ((sizeof(void*) == 8) ? 18*8 : 4*20), linux_stat64_t_size_check);
+#endif
 
 _static_assert(sizeof(sock_addr_t) % 16 == 0, sock_addr_t_must_align_to_16bytes);
 _static_assert(sizeof(sock_addr_t) == 16, sock_addr_t_must_be_16_bytes);
@@ -144,6 +147,7 @@ void __flibc_struct_member_check_function(void)
     _struct_member_baked(sock_addr_in_t, addr, u32, 4);
     _struct_array_baked(sock_addr_in_t, zeros, u8, 8, 8);
 
+#if SYS_OS == SYS_OS_LINUX && SYS_ARCH == SYS_ARCH_X86_64
     /* linux_dirent64_t's members should never change its baked so */
     _struct_member_baked(linux_dirent64_t, d_ino, u64, 0);
     _struct_member_baked(linux_dirent64_t, d_off, s64, 8);
@@ -151,26 +155,27 @@ void __flibc_struct_member_check_function(void)
     _struct_member_baked(linux_dirent64_t, d_type, u8, 18);
     _struct_array_baked(linux_dirent64_t, d_name, char, 1, 19);
 
-    /* fs_stat_t's members should never change its baked so */
-    _struct_member_baked(fs_stat_t, st_dev, usz, 0);
-    _struct_member_baked(fs_stat_t, st_ino, usz, 1*sizeof(usz));
-    _struct_member_baked(fs_stat_t, st_nlink, usz, 2*sizeof(usz));
-    _struct_member_baked(fs_stat_t, st_mode, u32, 3*sizeof(usz));
-    _struct_member_baked(fs_stat_t, st_uid, u32, 3*sizeof(usz) + 1*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_gid, u32, 3*sizeof(usz) + 2*sizeof(u32));
-    _struct_member_baked(fs_stat_t, __pad0, u32, 3*sizeof(usz) + 3*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_rdev, usz, 3*sizeof(usz) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_size, ssz, 4*sizeof(usz) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_blksize, ssz, 5*sizeof(usz) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_blocks, ssz, 6*sizeof(usz) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_atime, usz, 7*sizeof(usz) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_atime_nsec, usz, 8*sizeof(usz) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_mtime, usz, 9*sizeof(usz) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_mtime_nsec, usz, 10*sizeof(usz) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_ctime, usz, 11*sizeof(usz) + 4*sizeof(u32));
-    _struct_member_baked(fs_stat_t, st_ctime_nsec, usz, 12*sizeof(usz) + 4*sizeof(u32));
-    _struct_array_baked(fs_stat_t, __unused, ssz, 3, 13*sizeof(usz) + 4*sizeof(u32));
-
+    /* linux_stat64_t's members should never change its baked so */
+    _struct_member_baked(linux_stat64_t, st_dev, usz, 0);
+    _struct_member_baked(linux_stat64_t, st_ino, usz, 1*sizeof(usz));
+    _struct_member_baked(linux_stat64_t, st_nlink, usz, 2*sizeof(usz));
+    _struct_member_baked(linux_stat64_t, st_mode, u32, 3*sizeof(usz));
+    _struct_member_baked(linux_stat64_t, st_uid, u32, 3*sizeof(usz) + 1*sizeof(u32));
+    _struct_member_baked(linux_stat64_t, st_gid, u32, 3*sizeof(usz) + 2*sizeof(u32));
+    _struct_member_baked(linux_stat64_t, __pad0, u32, 3*sizeof(usz) + 3*sizeof(u32));
+    _struct_member_baked(linux_stat64_t, st_rdev, usz, 3*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(linux_stat64_t, st_size, ssz, 4*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(linux_stat64_t, st_blksize, ssz, 5*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(linux_stat64_t, st_blocks, ssz, 6*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(linux_stat64_t, st_atime, usz, 7*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(linux_stat64_t, st_atime_nsec, usz, 8*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(linux_stat64_t, st_mtime, usz, 9*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(linux_stat64_t, st_mtime_nsec, usz, 10*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(linux_stat64_t, st_ctime, usz, 11*sizeof(usz) + 4*sizeof(u32));
+    _struct_member_baked(linux_stat64_t, st_ctime_nsec, usz, 12*sizeof(usz) + 4*sizeof(u32));
+    _struct_array_baked(linux_stat64_t, __unused, ssz, 3, 13*sizeof(usz) + 4*sizeof(u32));
+#endif
+    
     /* sock_addr_t's members should never change its baked so */
     _struct_member_baked(sock_addr_t, family, u16, 0);
     _struct_array_baked(sock_addr_t, data, u8, 14, 2);
