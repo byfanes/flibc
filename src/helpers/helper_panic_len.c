@@ -1,6 +1,6 @@
 #include "helpers.h"
 
-noreturn __panic_len
+noreturn __helper_panic_len
 (const void* msg, usz msg_len)
 {
     /* Ignore its failure because we will close the program after it */

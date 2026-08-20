@@ -11,5 +11,5 @@ noreturn allocator_overflow
     "\nOverflow deteced: Allocation in " arg_cstr(header->file_name) ":" arg_udec(header->line)
     " for " arg_udec(header->wanted_alloc) " bytes has overflow!");
 
-    __panic_len(buf, len);
+    __helper_panic_len(buf, len);
 }

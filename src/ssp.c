@@ -3,6 +3,7 @@
 #include "std.h"
 #include "memory.h"
 #include "os/os_private.h"
+#include "helpers/helpers.h"
 
 extern uintptr_t __stack_chk_guard;
 extern u64 __flibc_hardware_random(void);
@@ -20,14 +21,7 @@ void __flibc_stack_chk_init(s32 argc, char **argv);
 noreturn __stack_chk_fail
 (void)
 {
-    sl_ccstr_t sl = ccstr_to_u8("Stack smashing detected. The program will now terminate.\n");
-    os_fid_t fid = OS_INVALID_FILE_HANDLE;
-
-    __os_file_get_std(&fid, os_file_stderr);
-    /* Write directly to standard error */
-    /* Ignore its fail state because program will terminate */
-    __os_file_write(fid, sl.items, sl.count);
-    std_abort(ssp_fail);
+    __helper_panic("Stack smashing detected. The program will now terminate.\n");
 }
 
 void __flibc_stack_chk_init

@@ -5,8 +5,10 @@
 #include "memory.h"
 #include "base.h"
 #include "../os/os_private.h"
+#include "require.h"
 
-#define __panic(msg) ((void)(sizeof(msg == (const char *)0)), __panic_len(msg, sizeof(msg) - 1))
-noreturn __panic_len(const void* msg, usz msg_len);
+#define __helper_panic(msg) \
+     (require_typed_ptr(msg, const char), __helper_panic_len(msg, sizeof(msg) - 1))
+noreturn __helper_panic_len(const void* msg, usz msg_len);
 
 #endif /* __FLIBC_HELPERS_H__ */
