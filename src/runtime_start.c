@@ -3,6 +3,9 @@
 #include "helpers/helpers.h"
 #include "std/std_private.h"
 
+/* Declared in ssp.c used here */
+extern void __flibc_stack_chk_init(s32 argc, char **argv);
+
 /* This function will be called from assembly */
 noreturn __flibc_runtime_start(s32 argc, char** argv);
 noreturn __flibc_runtime_start
@@ -11,6 +14,9 @@ noreturn __flibc_runtime_start
     /* Init variables */
     error_t ret = 0;
     std_t std = {0};
+
+    /* Set the stack check variable */
+    __flibc_stack_chk_init(argc, argv);
 
     /* Setup std things like in/out/err and args & env variables */
     /* TODO: Even though we use out entry we allocate the
