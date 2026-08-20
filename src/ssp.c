@@ -50,6 +50,10 @@ void __flibc_stack_chk_init
             return;
         }
     }
+    #else
+    /* For other platforms argc and argv are unused */
+    (void)argc;
+    (void)argv;
     #endif
 
     /* Second try: We will try with cpu's random generation */
